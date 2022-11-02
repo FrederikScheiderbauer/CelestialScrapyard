@@ -1,4 +1,6 @@
- # ignore cmake generated files
+
+
+# ignore cmake generated files
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
@@ -44,7 +46,7 @@ _deps
 *.exe
 *.out
 *.app
-pt
+ggd
 
 #ignore swap files
 *.swo
