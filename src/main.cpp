@@ -1,6 +1,7 @@
 #include "glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "ShaderProgram/ShaderProgram.hpp"
 
 //https://www.glfw.org/documentation.html
 int main(void)
