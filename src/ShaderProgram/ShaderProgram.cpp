@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include <memory>
 
 class Shader
 {
@@ -63,15 +64,15 @@ public:
 
 ShaderProgram::ShaderProgram(const std::vector<std::string> &shaderPaths, const std::vector<GLenum> &shaderTypes) {
     assert (shaderPaths.size() == shaderTypes.size());
-    std::vector<Shader> shaders;
+    std::vector<std::shared_ptr<Shader>> shaders;
     for (int i = 0; i < shaderPaths.size(); ++i) {
-        auto shader = Shader(shaderPaths[i], shaderTypes[i]);
+        auto shader = std::make_shared<Shader>(shaderPaths[i], shaderTypes[i]);
         shaders.push_back(shader);
     }
 
     this->name = glCreateProgram();
     for(auto shader : shaders) {
-        glAttachShader(name, shader.getName());
+        glAttachShader(name, shader->getName());
     }
     glLinkProgram(name);
     checkForLinkingErrors();
