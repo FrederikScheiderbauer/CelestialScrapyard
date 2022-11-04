@@ -1,9 +1,9 @@
-#include "glad.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "ShaderProgram/ShaderProgram.hpp"
+using namespace std;
 
-//https://www.glfw.org/documentation.html
+
 int main(void)
 {
     GLFWwindow* window;
