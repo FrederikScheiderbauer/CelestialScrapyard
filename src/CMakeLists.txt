@@ -8,4 +8,4 @@ add_library(glad STATIC ../lib/glad/glad.c)
 target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../lib/glad/include)
 
 add_executable(${PROJECT_NAME} main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/ShaderProgram/ShaderProgram.cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC glad GL dl glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC glad glfw)
