@@ -3,6 +3,17 @@
 #include <iostream>
 using namespace std;
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+//https://learnopengl.com/Getting-started/Hello-Window
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
 
 int main(void)
 {
@@ -30,9 +41,17 @@ int main(void)
         return -1;
     }
 
+    glViewport(0,0,640,480);
+
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        //Input handling here
+        processInput(window);
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
