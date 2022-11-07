@@ -1,3 +1,7 @@
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -45,6 +49,13 @@ int main(void)
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    //ImGUI install tutorial: https://www.youtube.com/watch?v=VRwhNKoxUtk
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    //ImGuiIO& io = ImGui::GetID(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window,true);
+    ImGui_ImplOpenGL3_Init("#version 460");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -55,12 +66,28 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        //renderssmall text window element
+        ImGui::Begin("New Window");
+        ImGui::Text("Test text");
+        ImGui::End();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+    //shutdown for ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;

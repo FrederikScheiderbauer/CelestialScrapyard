@@ -5,16 +5,34 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #give Project a better name
 project(ggd VERSION 1.0)
 
+set(IMGUI_SOURCE_FILES
+  src/imgui/imgui.cpp
+  src/imgui/imgui_draw.cpp
+  src/imgui/imgui_impl_glfw.cpp
+  src/imgui/imgui_impl_opengl3.cpp
+  src/imgui/imgui_tables.cpp
+  src/imgui/imgui_widgets.cpp
+  )
+
 #add&link libraries
+add_library(imgui STATIC ${IMGUI_SOURCE_FILES})
+#set_target_properties(imgui PROPERTIES COMPILE_FLAGS " ")
+
+target_include_directories(imgui PUBLIC ${CMAKE_SOURCE_DIR}/Include/imgui)
+target_include_directories(imgui PUBLIC ${CMAKE_SOURCE_DIR}/Include/)
+
 add_library(glad STATIC ${CMAKE_SOURCE_DIR}/lib/glad/glad.c)
 target_include_directories(glad PUBLIC ${CMAKE_SOURCE_DIR}/Include)
 
 
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp)
+#set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS " ")
+target_link_libraries(${PROJECT_NAME} PUBLIC ${imgui})
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Include)
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Lib/GLFW/glfw3.lib glad)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Lib/GLFW/glfw3.lib glad imgui)
 endif (WIN32)
 
 if(UNIX)
