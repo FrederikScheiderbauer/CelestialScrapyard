@@ -36,5 +36,5 @@ if (WIN32)
 endif (WIN32)
 
 if(UNIX)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glfw glad)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glfw glad imgui)
 endif (UNIX)
