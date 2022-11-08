@@ -50,3 +50,4 @@ ggd
 #ignore swap files
 *.swo
 *.swp
+.vscode/settings.json

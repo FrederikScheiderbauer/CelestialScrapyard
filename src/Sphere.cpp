@@ -1,8 +1,11 @@
 #include "Sphere.hpp"
 #include <string>
 #include <vector>
+#include <filesystem>
 
 const std::vector<std::string> SHADER_PATHS = {"../src/shader/sphere.vert", "../src/shader/sphere.frag"};
+const std::vector<std::string> SHADER_PATHS_WINDOWS = {"../../src/shader/sphere.vert", "../../src/shader/sphere.frag"}; //TODO automate
+
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 //https://learnopengl.com/Getting-started/Hello-Triangle
@@ -24,7 +27,11 @@ Sphere::Sphere() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    if(std::filesystem::exists("../../src/shader/")) {
+        sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS_WINDOWS, SHADER_TYPES);
+    } else {
+        sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    }
 }
 
 void Sphere::draw() {
