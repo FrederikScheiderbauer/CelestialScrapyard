@@ -78,8 +78,8 @@ ShaderProgram::ShaderProgram(const std::vector<std::string> &shaderPaths, const 
     checkForLinkingErrors();
 }
 
-GLuint ShaderProgram::getName() const {
-    return this->name;
+void ShaderProgram::use() {
+    glUseProgram(name);
 }
 
 void ShaderProgram::checkForLinkingErrors() {

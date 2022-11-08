@@ -12,7 +12,7 @@ private:
     void checkForLinkingErrors();
 public:
     ShaderProgram(const std::vector<std::string> &shaderPaths, const std::vector<GLenum> &shaderTypes);
-    GLuint getName() const;
+    void use();
 };
 
 #endif

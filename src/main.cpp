@@ -5,6 +5,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+
+#include "Sphere.hpp"
+
 using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -57,6 +60,8 @@ int main(void)
     ImGui_ImplGlfw_InitForOpenGL(window,true);
     ImGui_ImplOpenGL3_Init("#version 460");
 
+    Sphere sphere = Sphere();
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -65,6 +70,8 @@ int main(void)
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        sphere.draw();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
