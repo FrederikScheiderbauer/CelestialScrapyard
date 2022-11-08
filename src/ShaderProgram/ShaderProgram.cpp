@@ -36,10 +36,11 @@ private:
             GLint infolog_length;
             glGetShaderiv(this->shaderName, GL_INFO_LOG_LENGTH, &infolog_length);
 
-            char infolog[infolog_length+1];
-            glGetShaderInfoLog(this->shaderName, infolog_length, NULL, &infolog[0]);
+            char *infolog = new char[infolog_length+1];
+            glGetShaderInfoLog(this->shaderName, infolog_length, NULL, infolog);
 
             std::cout << this->shaderName << ": " << infolog << std::endl;
+            delete[] infolog;
         }
     }
 
@@ -89,9 +90,10 @@ void ShaderProgram::checkForLinkingErrors() {
         GLint infolog_length;
         glGetProgramiv(this->name, GL_INFO_LOG_LENGTH, &infolog_length);
 
-        char infolog[infolog_length+1];
-        glGetProgramInfoLog(this->name, infolog_length, NULL, &infolog[0]);
+        char *infolog = new char[infolog_length+1];
+        glGetProgramInfoLog(this->name, infolog_length, NULL, infolog);
 
         std::cout << this->name << ": " << infolog << std::endl;
+        delete[] infolog;
     }
 }
