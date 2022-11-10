@@ -4,8 +4,12 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <chrono>
 
+#include "gui.hpp"
 #include "Sphere.hpp"
 
 using namespace std;
@@ -14,6 +18,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+
 
 //https://learnopengl.com/Getting-started/Hello-Window
 void processInput(GLFWwindow *window)
@@ -52,49 +57,50 @@ int main(void)
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    //ImGUI install tutorial: https://www.youtube.com/watch?v=VRwhNKoxUtk
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    //ImGuiIO& io = ImGui::GetID(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window,true);
-    ImGui_ImplOpenGL3_Init("#version 460");
+    Gui gui_Object;
+    gui_Object.imgui_Init(window);
 
     Sphere sphere = Sphere();
+
+    //get time
+    auto last_Time = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point current_Time;
+    std::chrono::duration<double> elapsed_Time;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        //Input handling here
+        current_Time = std::chrono::system_clock::now();
+        elapsed_Time = current_Time - last_Time;
+        //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
+
+        /*Input handling here*/
         processInput(window);
+
+
+        /*Update Game state*/
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+
+        gui_Object.imgui_Frame_Setup();
+
         sphere.draw();
+        gui_Object.imgui_Test_Window();
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        gui_Object.imgui_Render();
 
-        //renderssmall text window element
-        ImGui::Begin("New Window");
-        ImGui::Text("Test text");
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
+
+        last_Time = current_Time;
     }
 
-    //shutdown for ImGui
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    gui_Object.imgui_Shutdown();
 
     glfwTerminate();
     return 0;

@@ -14,6 +14,13 @@ set(IMGUI_SOURCE_FILES
   src/imgui/imgui_widgets.cpp
   )
 
+set(GGD_SOURCE_FILES 
+  ${CMAKE_SOURCE_DIR}/src/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ShaderProgram/ShaderProgram.cpp 
+  ${CMAKE_SOURCE_DIR}/src/Sphere.cpp
+  ${CMAKE_SOURCE_DIR}/src/gui.cpp
+)
+
 #add&link libraries
 add_library(imgui STATIC ${IMGUI_SOURCE_FILES})
 #set_target_properties(imgui PROPERTIES COMPILE_FLAGS " ")
@@ -25,7 +32,7 @@ add_library(glad STATIC ${CMAKE_SOURCE_DIR}/lib/glad/glad.c)
 target_include_directories(glad PUBLIC ${CMAKE_SOURCE_DIR}/Include)
 
 
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ShaderProgram/ShaderProgram.cpp ${CMAKE_SOURCE_DIR}/src/Sphere.cpp)
+add_executable(${PROJECT_NAME} ${GGD_SOURCE_FILES})
 #set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS " ")
 target_link_libraries(${PROJECT_NAME} PUBLIC ${imgui})
 
