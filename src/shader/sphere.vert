@@ -1,8 +1,10 @@
-//https://learnopengl.com/Getting-started/Hello-Triangle
 #version 460 core
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 position;
+out vec3 normal;
 
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = vec4(position, 1.0);
+    //Currently, this just a unit sphere, so the normal n = p - o is just p because o = (0,0)
+    normal = position;
 }
