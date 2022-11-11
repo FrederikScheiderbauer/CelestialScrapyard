@@ -96,7 +96,6 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
 
-        sphere.rotate_Camera();
         sphere.draw();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
 
