@@ -1,39 +1,30 @@
 #include "CubeFace.hpp"
+
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
-
-// constexpr int calculateNumVertices(int resolution) {
-//     return resolution * resolution;
-// }
-//
-constexpr int calculateNumIndices(int resolution) {
-    return (resolution - 1) * (resolution - 1) * 6;
-}
-
 CubeFace::CubeFace(glm::vec3 localUp) {
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
-    //TODO: replace hardcoded resolution
-    glm::vec3 vertices[100];
-    int indices[486];
+    glm::vec3 vertices[NUM_VERTICES];
+    int indices[NUM_INDICES];
     int triangleIndex = 0;
 
-    for (int y = 0; y < resolution; y++) {
-        for (int x = 0; x < resolution; x++) {
-            int i = x + y * resolution;
-            glm::vec2 percent = glm::vec2(x, y) / (resolution - 1.0f);
+    for (int y = 0; y < RESOLUTION; y++) {
+        for (int x = 0; x < RESOLUTION; x++) {
+            int i = x + y * RESOLUTION;
+            glm::vec2 percent = glm::vec2(x, y) / (RESOLUTION - 1.0f);
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
             vertices[i] = pointOnUnitSphere;
 
-            if (x != resolution - 1 && y != resolution - 1) {
+            if (x != RESOLUTION - 1 && y != RESOLUTION - 1) {
                 indices[triangleIndex] = i;
-                indices[triangleIndex + 1] = i + resolution + 1;
-                indices[triangleIndex + 2] = i + resolution;
+                indices[triangleIndex + 1] = i + RESOLUTION + 1;
+                indices[triangleIndex + 2] = i + RESOLUTION;
 
                 indices[triangleIndex + 3] = i;
                 indices[triangleIndex + 4] = i + 1;
-                indices[triangleIndex + 5] = i + resolution + 1;
+                indices[triangleIndex + 5] = i + RESOLUTION + 1;
                 triangleIndex += 6;
             }
         }
@@ -59,6 +50,6 @@ CubeFace::CubeFace(glm::vec3 localUp) {
 
 void CubeFace::draw() {
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, calculateNumIndices(resolution), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

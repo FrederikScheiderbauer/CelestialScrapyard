@@ -22,7 +22,7 @@ Sphere::Sphere() {
 }
 
 void Sphere::draw() {
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         sphereProgram->use();
         cubefaces[i]->draw();
