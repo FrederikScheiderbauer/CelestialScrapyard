@@ -25,7 +25,22 @@ void Gui::imgui_Test_Window()
 {
     //renders small text window element
     ImGui::Begin("New Window");
-    ImGui::Text("Test text");
+    ImGui::Text("Test");
+    ImGui::End();
+}
+/*
+Display Window that shows Options the Control of the Camera:
+-Camera Speed -> Slider
+-Camera Movement:
+    -Locked Camera-> Camera that is always locked to look at Planet, but can move around it. Zoom in/out.
+    -Freeflight Camera-> Camera with completely free controls
+*/
+void Gui::imgui_Camera_Control_Window(bool* is_Locked_Camera,bool* is_Free_Camera, float* current_Speed)
+{
+    ImGui::Begin("Camera Controls");
+        if(ImGui::Checkbox("Locked Camera",is_Locked_Camera)) { *is_Free_Camera = !(*is_Locked_Camera);}
+        if(ImGui::Checkbox("Freeflight Camera",is_Free_Camera)) {*is_Locked_Camera = !(*is_Free_Camera);}
+        ImGui::SliderFloat("Camera Speed",current_Speed,0.0f,1.0f);
     ImGui::End();
 }
 

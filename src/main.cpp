@@ -43,6 +43,12 @@ int main(void)
         return -1;
     }
 
+    //Camera configurations for Menu purposes,till that part is done.
+    bool is_Locked_Camera = true;
+    bool is_Free_Camera = false;
+    float current_Camera_Speed = 0.5f;
+    //
+
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
@@ -86,8 +92,9 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
 
+        sphere.rotate_Camera();
         sphere.draw();
-        gui_Object.imgui_Test_Window();
+        gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
 
         gui_Object.imgui_Render();
 
