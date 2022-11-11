@@ -70,6 +70,8 @@ int main(void)
     std::chrono::system_clock::time_point current_Time;
     std::chrono::duration<double> elapsed_Time;
 
+    glEnable(GL_DEPTH_TEST);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -84,8 +86,7 @@ int main(void)
         /*Update Game state*/
 
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         gui_Object.imgui_Frame_Setup();
 
