@@ -2,6 +2,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
+#include <cmath>
 
 Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target,glm::vec3 first_up, float speed)
 {
@@ -9,6 +11,9 @@ Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target,glm
     cameraTarget = first_camera_Target;
     up = first_up;
     camera_Speed = speed;
+    theta = std::acos((glm::normalize(first_camera_Position - first_camera_Target)).y);
+    phi = std::atan((glm::normalize(first_camera_Position - first_camera_Target)).z /(glm::normalize(first_camera_Position - first_camera_Target)).x);
+
 }
 
 glm::vec3 Camera::get_Camera_Position()
@@ -37,6 +42,14 @@ float Camera::get_Camera_Speed()
 {
     return camera_Speed;
 }
+float Camera::get_Theta()
+{
+    return theta;
+}
+float Camera::get_Phi()
+{
+    return phi;
+}
 
 /*
 glm::vec3 Camera::get_View_Matrix()
@@ -49,4 +62,12 @@ glm::vec3 Camera::get_View_Matrix()
 void Camera::set_Camera_Position(glm::vec3 new_Camera_Position)
 {
     cameraPos = new_Camera_Position;
+}
+void Camera::set_Theta(float new_Theta)
+{
+    theta = new_Theta;
+}
+void Camera::set_Phi(float new_Phi)
+{
+    phi = new_Phi;
 }

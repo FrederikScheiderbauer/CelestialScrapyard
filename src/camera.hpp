@@ -12,11 +12,15 @@ class Camera
         glm::vec3 up;
         glm::mat4 viewMatrix;
         float camera_Speed;
+        float theta;
+        float phi;
 
     public:
         Camera(glm::vec3 cameraPos,glm::vec3 cameraTarget,glm::vec3 up,float speed); 
         glm::vec3 get_Camera_Position();
         float get_Camera_Speed();
+        float get_Theta();
+        float get_Phi();
         glm::vec3 get_Camera_Front();
         glm::vec3 get_Camera_Target();
         glm::vec3 get_Camera_Up();
@@ -27,4 +31,6 @@ class Camera
         void set_Camera_Target(glm::vec3 cameraTarget);
         void set_Up_Vektor(glm::vec3 up);
         void set_View_Matrix();
+        void set_Theta(float new_Theta);
+        void set_Phi(float new_Phi);
 };

@@ -35,9 +35,23 @@ void processInput(GLFWwindow *window, Camera* camera)
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera->set_Camera_Position(camera->get_Camera_Position() - (camera->get_Camera_Speed() * camera->get_Camera_Front()));
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera->set_Camera_Position(camera->get_Camera_Position() - (glm::normalize(glm::cross(camera->get_Camera_Front(), camera->get_Camera_Up())) * camera->get_Camera_Speed()));
+    {
+        float new_phi = camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f);
+        camera->set_Phi(new_phi);
+        float new_x_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
+        float new_y_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta());
+        float new_z_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
+        camera->set_Camera_Position(glm::vec3((camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f)),(camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta()),new_z_vec));
+     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera->set_Camera_Position(camera->get_Camera_Position() + (glm::normalize(glm::cross(camera->get_Camera_Front(), camera->get_Camera_Up())) * camera->get_Camera_Speed()));
+    {
+        float new_phi = camera->get_Phi() - (camera->get_Camera_Speed() * 0.1f);
+        camera->set_Phi(new_phi);
+        float new_x_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
+        float new_y_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta());
+        float new_z_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
+        camera->set_Camera_Position(glm::vec3((camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f)),(camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta()),new_z_vec));
+    }
 }
 
 const int WIDTH = 512;
