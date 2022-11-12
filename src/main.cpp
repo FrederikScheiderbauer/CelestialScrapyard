@@ -46,7 +46,6 @@ const int HEIGHT = 512;
 int main(void)
 {
     GLFWwindow* window;
-    Camera* camera;
 
     /* Initialize the library */
     if (!glfwInit())
@@ -59,7 +58,7 @@ int main(void)
     glm::vec3 first_up = glm::vec3(0.0,1.0,0.0);
     float speed = 0.3f;
 
-    camera = &Camera(first_camera_Position,first_camera_Target,first_up,speed);
+    Camera camera = Camera(first_camera_Position,first_camera_Target,first_up,speed);
 
     if (!window)
     {
@@ -108,7 +107,7 @@ int main(void)
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
-        processInput(window,camera);
+        processInput(window,&camera);
 
 
         /*Update Game state*/
@@ -118,7 +117,7 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
 
-        sphere.draw(camera);
+        sphere.draw(&camera);
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
 
         gui_Object.imgui_Render();
