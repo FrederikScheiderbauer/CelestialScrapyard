@@ -8,9 +8,9 @@
 class ShaderProgram
 {
 private:
-    GLuint name;
     void checkForLinkingErrors();
 public:
+    GLuint name;
     ShaderProgram(const std::vector<std::string> &shaderPaths, const std::vector<GLenum> &shaderTypes);
     void use();
 };

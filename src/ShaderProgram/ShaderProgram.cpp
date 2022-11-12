@@ -7,7 +7,6 @@
 class Shader
 {
 private:
-    GLuint shaderName;
 
     //https://stackoverflow.com/questions/32842617/read-glsl-shaders-from-file
     std::string readShaderFile(std::string &pathToFile) {
@@ -45,6 +44,7 @@ private:
     }
 
 public:
+    GLuint shaderName;
     Shader(std::string path, GLenum shaderType) {
         std::string shaderSource = readShaderFile(path);
         shaderName = glCreateShader(shaderType);
