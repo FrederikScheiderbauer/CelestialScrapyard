@@ -38,19 +38,21 @@ void processInput(GLFWwindow *window, Camera* camera)
     {
         float new_phi = camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f);
         camera->set_Phi(new_phi);
-        float new_x_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
-        float new_y_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta());
-        float new_z_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
-        camera->set_Camera_Position(glm::vec3((camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f)),(camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta()),new_z_vec));
-     }
+        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(new_phi);
+        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
+        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(new_phi);
+        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
+    
+ //camera->set_Camera_Position(camera->get_Camera_Position() - (glm::normalize(glm::cross(camera->get_Camera_Front(), camera->get_Camera_Up())) * camera->get_Camera_Speed()));
+    }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         float new_phi = camera->get_Phi() - (camera->get_Camera_Speed() * 0.1f);
         camera->set_Phi(new_phi);
-        float new_x_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
-        float new_y_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta());
-        float new_z_vec = (camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f));
-        camera->set_Camera_Position(glm::vec3((camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f)),(camera->get_Camera_Position() - camera->get_Camera_Target()).length() * std::cos(camera->get_Theta()),new_z_vec));
+        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(new_phi);
+        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
+        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(new_phi);
+        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
     }
 }
 
