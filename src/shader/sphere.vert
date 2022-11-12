@@ -10,5 +10,5 @@ void main()
 {
     gl_Position = projection * view * model * vec4(position, 1.0);
     //Currently, this just a unit sphere, so the normal n = p - o is just p because o = (0,0)
-    normal = position;
+    normal = vec3(model * vec4(position, 0.0));
 }

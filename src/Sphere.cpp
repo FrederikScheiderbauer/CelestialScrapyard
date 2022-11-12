@@ -49,10 +49,13 @@ void Sphere::draw(Camera* camera) {
 
     glm::mat4 view = glm::mat4(1.0f);
     //view = glm::lookAt(glm::vec3(camX/3.0, 0.0, camZ/3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-    view = glm::lookAt(camera->get_Camera_Position(),camera->get_Camera_Target(),camera->get_Camera_Up());
+
+    glm::vec3 cameraPos = camera->get_Camera_Position();
+    view = glm::lookAt(cameraPos,camera->get_Camera_Target(),camera->get_Camera_Up());
     setViewMatrix(view);
     //
 
+    glUniform3fv(glGetUniformLocation(sphereProgram->name, "cameraPos"), 1, &cameraPos[0]);
 
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->draw();
