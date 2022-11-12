@@ -6,11 +6,14 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <chrono>
 
+
 #include "gui.hpp"
 #include "Sphere.hpp"
+#include "camera.hpp"
 
 using namespace std;
 
@@ -21,10 +24,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 
 //https://learnopengl.com/Getting-started/Hello-Window
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, Camera* camera)
 {
+    glm::vec3 newPosition;
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        //newPosition = camera->get_Camera_Position() + camera->get_Camera_Speed() * camera->get_Camera_Front();
+        camera->set_Camera_Position(camera->get_Camera_Position() + (camera->get_Camera_Speed() * camera->get_Camera_Front()));
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera->set_Camera_Position(camera->get_Camera_Position() - (camera->get_Camera_Speed() * camera->get_Camera_Front()));
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera->set_Camera_Position(camera->get_Camera_Position() - (glm::normalize(glm::cross(camera->get_Camera_Front(), camera->get_Camera_Up())) * camera->get_Camera_Speed()));
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera->set_Camera_Position(camera->get_Camera_Position() + (glm::normalize(glm::cross(camera->get_Camera_Front(), camera->get_Camera_Up())) * camera->get_Camera_Speed()));
 }
 
 const int WIDTH = 512;
@@ -33,6 +46,7 @@ const int HEIGHT = 512;
 int main(void)
 {
     GLFWwindow* window;
+    Camera* camera;
 
     /* Initialize the library */
     if (!glfwInit())
@@ -40,6 +54,13 @@ int main(void)
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(WIDTH, WIDTH, "Hello World", NULL, NULL);
+    glm::vec3 first_camera_Position = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 first_camera_Target = glm::vec3(0.0,0.0,0.0);
+    glm::vec3 first_up = glm::vec3(0.0,1.0,0.0);
+    float speed = 0.3f;
+
+    camera = &Camera(first_camera_Position,first_camera_Target,first_up,speed);
+
     if (!window)
     {
         glfwTerminate();
@@ -77,6 +98,7 @@ int main(void)
     std::chrono::duration<double> elapsed_Time;
 
     glEnable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -86,7 +108,7 @@ int main(void)
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
-        processInput(window);
+        processInput(window,camera);
 
 
         /*Update Game state*/
@@ -96,7 +118,7 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
 
-        sphere.draw();
+        sphere.draw(camera);
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
 
         gui_Object.imgui_Render();

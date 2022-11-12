@@ -20,6 +20,7 @@ set(GGD_SOURCE_FILES
   ${CMAKE_SOURCE_DIR}/src/Sphere.cpp
   ${CMAKE_SOURCE_DIR}/src/CubeFace.cpp
   ${CMAKE_SOURCE_DIR}/src/gui.cpp
+  ${CMAKE_SOURCE_DIR}/src/camera.cpp
 )
 
 #add&link libraries
