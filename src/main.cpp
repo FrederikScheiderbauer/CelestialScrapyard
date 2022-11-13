@@ -21,19 +21,43 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+//https://www.glfw.org/docs/3.3/input_guide.html
+void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    auto camera = Camera::get_Active_Camera();
+    camera->set_Camera_Position(camera->get_Camera_Position() + (camera->get_Camera_Speed() * ((float)yoffset/2.5f) * camera->get_Camera_Front()));
 
+}
 
 //https://learnopengl.com/Getting-started/Hello-Window
-void processInput(GLFWwindow *window, Camera* camera)
+void processInput(GLFWwindow *window)
 {
+    auto camera = Camera::get_Active_Camera();
     glm::vec3 newPosition;
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        //newPosition = camera->get_Camera_Position() + camera->get_Camera_Speed() * camera->get_Camera_Front();
-        camera->set_Camera_Position(camera->get_Camera_Position() + (camera->get_Camera_Speed() * camera->get_Camera_Front()));
+    {
+        float new_Theta = camera->get_Theta() - (camera->get_Camera_Speed() * 0.1f);
+        //float new_Theta = camera->get_Theta() + (camera->get_Camera_Speed() * 0.1f);
+        camera->set_Theta(new_Theta);
+        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi());
+        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
+        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi());
+        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
+    }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera->set_Camera_Position(camera->get_Camera_Position() - (camera->get_Camera_Speed() * camera->get_Camera_Front()));
+    {
+        //float new_Theta = camera->get_Theta() - (camera->get_Camera_Speed() * 0.1f);
+        float new_Theta = camera->get_Theta() + (camera->get_Camera_Speed() * 0.1f);
+
+
+        camera->set_Theta(new_Theta);
+        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi());
+        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
+        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi());
+        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
+    }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
         float new_phi = camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f);
@@ -101,6 +125,7 @@ int main(void)
     glViewport(0,0,WIDTH,HEIGHT);
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetScrollCallback(window,mouse_scroll_callback);
 
     Gui gui_Object;
     gui_Object.imgui_Init(window);
@@ -123,7 +148,7 @@ int main(void)
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
-        processInput(window,&camera);
+        processInput(window);
 
 
         /*Update Game state*/

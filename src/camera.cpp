@@ -4,6 +4,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
+
+Camera* Camera::active_camera = nullptr;
+
+Camera* Camera::get_Active_Camera()
+{
+	return active_camera;
+}
+
+void Camera::set_As_Active_Camera()
+{
+	active_camera = this;
+}
 
 Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target,glm::vec3 first_up, float speed)
 {
@@ -13,6 +26,7 @@ Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target,glm
     camera_Speed = speed;
     theta = std::acos((glm::normalize(first_camera_Position - first_camera_Target)).y);
     phi = std::atan((glm::normalize(first_camera_Position - first_camera_Target)).z /(glm::normalize(first_camera_Position - first_camera_Target)).x);
+    active_camera = this;
 
 }
 
@@ -44,6 +58,7 @@ float Camera::get_Camera_Speed()
 }
 float Camera::get_Theta()
 {
+
     return theta;
 }
 float Camera::get_Phi()
