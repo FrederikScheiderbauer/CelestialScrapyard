@@ -28,6 +28,7 @@ private:
         return content;
     }
 
+    //https://stackoverflow.com/questions/35378656/opengl-not-reporting-shader-compiler-errors
     void checkForCompileErrors() {
         GLint status;
         glGetShaderiv(this->shaderName, GL_COMPILE_STATUS, &status);
@@ -83,6 +84,7 @@ void ShaderProgram::use() {
     glUseProgram(name);
 }
 
+//based on: https://stackoverflow.com/questions/35378656/opengl-not-reporting-shader-compiler-errors
 void ShaderProgram::checkForLinkingErrors() {
     GLint status;
     glGetProgramiv(this->name, GL_LINK_STATUS, &status);
