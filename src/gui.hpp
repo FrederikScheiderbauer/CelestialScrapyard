@@ -14,5 +14,5 @@ class Gui
         void imgui_Camera_Control_Window(bool* is_Locked_Camera,bool* is_Free_Camera, float* current_speed);
         void imgui_Close_Game_Button();
         void imgui_FPS_Counter();
-        void imgui_Debug_Window();
+        void imgui_Debug_Window(bool* is_Wireframe);
 };

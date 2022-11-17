@@ -136,7 +136,7 @@ int main(void)
     auto last_Time = std::chrono::system_clock::now();
     std::chrono::system_clock::time_point current_Time;
     std::chrono::duration<double> elapsed_Time;
-
+    bool is_Wireframe = false;
     glEnable(GL_DEPTH_TEST);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -160,6 +160,7 @@ int main(void)
 
         sphere.draw(&camera);
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
+        gui_Object.imgui_Debug_Window(&is_Wireframe);
 
         gui_Object.imgui_Render();
 

@@ -20,7 +20,12 @@ void Gui::imgui_Init(GLFWwindow* window)
     ImGui_ImplGlfw_InitForOpenGL(window,true);
     ImGui_ImplOpenGL3_Init("#version 460");
 }
-
+void Gui::imgui_Debug_Window(bool* is_Wireframe)
+{
+    ImGui::Begin("Debug Window");
+    if(ImGui::Checkbox("Wireframe Mode",is_Wireframe)) {}
+    ImGui::End();
+}
 void Gui::imgui_Test_Window()
 {
     //renders small text window element
