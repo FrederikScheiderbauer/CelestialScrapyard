@@ -14,20 +14,12 @@
 std::string source_Directory = Project_SOURCE_DIR;
 
 const std::vector<std::string> SHADER_PATHS = {source_Directory +"/src/shader/sphere.vert", source_Directory + "/src/shader/sphere.frag"};
-//const std::vector<std::string> SHADER_PATHS = {"../src/shader/sphere.vert", "../src/shader/sphere.frag"};
-//const std::vector<std::string> SHADER_PATHS_WINDOWS = {test + "/src/shader/sphere.vert", "../../src/shader/sphere.frag"}; //TODO automate
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 Sphere::Sphere() {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    /*
-    if(std::filesystem::exists("../../src/shader/")) {
-        sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS_WINDOWS, SHADER_TYPES);
-    } else {
-        sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    }
-*/
+
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
         cubefaces[i] = std::make_unique<CubeFace>(direction);
