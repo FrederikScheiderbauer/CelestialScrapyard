@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include "config/config.h"
+#include "PerlinNoise/PerlinNoise.hpp"
 
 std::string source_Directory = Project_SOURCE_DIR;
 
