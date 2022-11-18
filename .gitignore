@@ -11,6 +11,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 build
+Include/config/config.h
 
 # ignore C++ generated files
 # Prerequisites
