@@ -1,4 +1,5 @@
 #include "Sphere.hpp"
+#include "definitions.hpp"
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -20,9 +21,19 @@ const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 Sphere::Sphere() {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
+    const siv::PerlinNoise::seed_type seed = 123456u;
+    const siv::PerlinNoise perlin{seed};
+    std::vector<double> heightmap(HEIGHTMAP_RESOLUTION);
+
+    for (int x = 0; x < HEIGHTMAP_WIDTH; ++x) {
+        for (int y = 0; y < HEIGHTMAP_HEIGHT; ++y) {
+            heightmap[x * HEIGHTMAP_WIDTH + y] = perlin.octave2D_01((x * 0.01), (y * 0.01), 4);
+        }
+    }
+
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, heightmap);
     }
 }
 

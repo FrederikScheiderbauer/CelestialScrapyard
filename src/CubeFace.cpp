@@ -1,7 +1,14 @@
 #include "CubeFace.hpp"
 
+glm::vec2 vertexToSpherical(glm::vec3 vertexPos) {
+    //https://mathworld.wolfram.com/SphericalCoordinates.html
+    float phi = glm::acos(vertexPos.z);
+    float theta = glm::atan(vertexPos.y / vertexPos.x);
+    return glm::vec2(phi / M_PI, theta / (2 * M_PI));
+}
+
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
-CubeFace::CubeFace(glm::vec3 localUp) {
+CubeFace::CubeFace(glm::vec3 localUp, std::vector<double> &heightmap) {
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
@@ -15,6 +22,13 @@ CubeFace::CubeFace(glm::vec3 localUp) {
             glm::vec2 percent = glm::vec2(x, y) / (RESOLUTION - 1.0f);
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
+
+            glm::vec2 heightmapCoords = vertexToSpherical(pointOnUnitSphere);
+            int heightmap_x = HEIGHTMAP_WIDTH * heightmapCoords.x;
+            int heightmap_y = HEIGHTMAP_HEIGHT * heightmapCoords.y;
+            float displacement = heightmap[heightmap_x * HEIGHTMAP_WIDTH + heightmap_y];
+            pointOnUnitSphere = displacement * pointOnUnitSphere;
+
             vertices[i] = pointOnUnitSphere;
 
             if (x != RESOLUTION - 1 && y != RESOLUTION - 1) {

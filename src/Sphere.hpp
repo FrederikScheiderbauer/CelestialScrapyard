@@ -9,8 +9,6 @@
 #include <glm/glm.hpp>
 #include "camera.hpp"
 
-#define CUBE_NUM_FACES 6
-
 class Sphere
 {
 private:

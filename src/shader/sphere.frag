@@ -4,7 +4,7 @@ out vec4 fragColor;
 
 uniform vec3 cameraPos;
 
-//const vec3 k_d = vec3(0.455, 0.478, 0.259);
+const vec3 k_d = vec3(0.455, 0.478, 0.259);
 const vec3 k_s = vec3(0.5f);
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
@@ -21,7 +21,7 @@ void main()
 
     fragColor = vec4(normal, 1.0f);
 
-    vec3 k_d = normal;
+    //vec3 k_d = normal;
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     vec3 sum = diffuse + specular;
