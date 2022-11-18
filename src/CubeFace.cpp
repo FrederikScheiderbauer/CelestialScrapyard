@@ -1,4 +1,7 @@
 #include "CubeFace.hpp"
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <glm/glm.hpp>
 
 glm::vec2 vertexToSpherical(glm::vec3 vertexPos) {
     //https://mathworld.wolfram.com/SphericalCoordinates.html
