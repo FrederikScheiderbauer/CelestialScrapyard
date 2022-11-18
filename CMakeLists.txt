@@ -22,10 +22,8 @@ set(GGD_SOURCE_FILES
   ${CMAKE_SOURCE_DIR}/src/gui.cpp
   ${CMAKE_SOURCE_DIR}/src/camera.cpp
 )
-if(WIN32)
 set(Project_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/Include/config/config.h.in ${CMAKE_SOURCE_DIR}/Include/config/config.h)
-endif (WIN32)
 #add&link libraries
 add_library(imgui STATIC ${IMGUI_SOURCE_FILES})
 #set_target_properties(imgui PROPERTIES COMPILE_FLAGS " ")
