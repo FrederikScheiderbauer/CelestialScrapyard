@@ -1,5 +1,6 @@
 #version 460 core
-in vec3 normal;
+in vec3 worldNormal;
+in vec3 worldPosition;
 out vec4 fragColor;
 
 uniform vec3 cameraPos;
@@ -12,22 +13,22 @@ const vec3 light_intensity = vec3(20.0f);
 void main()
 {
     //on the unit sphere, position and normal are equivalent
-    vec3 worldPos = normal;
-    vec3 N = normalize(normal);
-    vec3 V = normalize(cameraPos - worldPos);
+    vec3 worldPosition = worldNormal;
+    vec3 N = normalize(worldNormal);
+    vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));
 
-    vec3 L = normalize(cameraPos - worldPos);
+    vec3 L = normalize(cameraPos - worldPosition);
 
-    fragColor = vec4(normal, 1.0f);
+    fragColor = vec4(worldNormal, 1.0f);
 
-    //vec3 k_d = normal;
+    //vec3 k_d = worldNormal;
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     vec3 sum = diffuse + specular;
 
 /* leave out for now, gets too bright when close to the sphere*/
-//     float distance = dot(worldPos - cameraPos, worldPos - cameraPos);
+//     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
 //     vec3 intensity = light_intensity / distance;
 
     fragColor = vec4(sum /** intensity*/, 1.0);
