@@ -10,23 +10,16 @@ glm::vec2 vertexToSpherical(glm::vec3 vertexPos) {
     return glm::vec2(phi / M_PI, theta / (2 * M_PI));
 }
 
-class Triangle {
-private:
-    glm::vec3 a;
-    glm::vec3 b;
-public:
-    Triangle(glm::vec3 a, glm::vec3 b)
-        : a{a}, b{b} {}
-    glm::vec3 computeNormal() {
-        return glm::cross(a,b);
-    }
-};
+glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
+    return glm::cross(a,b);
+}
 
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
 CubeFace::CubeFace(glm::vec3 localUp, std::vector<double> &heightmap) {
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
+    //vertex position stored interleaved with vertex normal
     glm::vec3 vertices[NUM_VERTICES * 2] = {};
     int indices[NUM_INDICES];
     int triangleIndex = 0;
@@ -34,7 +27,7 @@ CubeFace::CubeFace(glm::vec3 localUp, std::vector<double> &heightmap) {
     //compute vertices
     for (int y = 0; y < RESOLUTION; y++) {
         for (int x = 0; x < RESOLUTION; x++) {
-            int i = (x + y * RESOLUTION);
+            int i = x + y * RESOLUTION;
             glm::vec2 percent = glm::vec2(x, y) / (RESOLUTION - 1.0f);
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
@@ -48,6 +41,7 @@ CubeFace::CubeFace(glm::vec3 localUp, std::vector<double> &heightmap) {
             vertices[i * 2] = pointOnUnitSphere;
 
             if (x != RESOLUTION - 1 && y != RESOLUTION - 1) {
+                //OpenGL uses stride provided by vertex attributes -> does not need to be multiplied by 2 for normal
                 indices[triangleIndex] = i;
                 indices[triangleIndex + 1] = i + RESOLUTION + 1;
                 indices[triangleIndex + 2] = i + RESOLUTION;
@@ -62,16 +56,20 @@ CubeFace::CubeFace(glm::vec3 localUp, std::vector<double> &heightmap) {
 
     //compute normals, TODO: consider vertices on the edge of other faces
     for (int j = 0; j < NUM_INDICES; j += 6) {
-        Triangle triangle1{vertices[indices[j + 1] * 2] - vertices[indices[j] * 2], vertices[indices[j + 2] * 2] - vertices[indices[j] * 2]};
-        Triangle triangle2{vertices[indices[j + 4] * 2] - vertices[indices[j] * 2], vertices[indices[j + 5] * 2] - vertices[indices[j] * 2]};
+        //compute triangle edges
+        glm::vec3 edgeA1 = vertices[indices[j + 1] * 2] - vertices[indices[j] * 2];
+        glm::vec3 edgeB1 = vertices[indices[j + 2] * 2] - vertices[indices[j] * 2];
 
-        glm::vec3 normal1 = triangle1.computeNormal();
+        glm::vec3 edgeA2 = vertices[indices[j + 4] * 2] - vertices[indices[j] * 2];
+        glm::vec3 edgeB2 = vertices[indices[j + 5] * 2] - vertices[indices[j] * 2];
+
+        glm::vec3 normal1 = computeNormal(edgeA1, edgeB1);
         for (int k = 0; k < 3; ++k) {
             int normalIndex = indices[j + k] * 2 + 1;
             vertices[normalIndex] += normal1;
         }
 
-        glm::vec3 normal2 = triangle1.computeNormal();
+        glm::vec3 normal2 = computeNormal(edgeA2, edgeB2);
         for (int k = 3; k < 6; ++k) {
             int normalIndex = indices[j + k] * 2 + 1;
             vertices[normalIndex] += normal2;
