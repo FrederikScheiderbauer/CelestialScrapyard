@@ -95,10 +95,9 @@ int main(void)
     window = glfwCreateWindow(WIDTH, WIDTH, "Hello World", NULL, NULL);
     glm::vec3 first_camera_Position = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 first_camera_Target = glm::vec3(0.0,0.0,0.0);
-    glm::vec3 first_up = glm::vec3(0.0,1.0,0.0);
     float speed = 0.3f;
 
-    Camera camera = Camera(first_camera_Position,first_camera_Target,first_up,speed);
+    Camera camera = Camera(first_camera_Position,first_camera_Target,speed);
 
     if (!window)
     {
@@ -158,7 +157,7 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
 
-        sphere.draw(&camera);
+        sphere.draw();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
         gui_Object.imgui_Debug_Window(&is_Wireframe);
 

@@ -18,16 +18,21 @@ void Camera::set_As_Active_Camera()
 	active_camera = this;
 }
 
-Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target,glm::vec3 first_up, float speed)
+Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target, float speed)
 {
     cameraPos = first_camera_Position;
     cameraTarget = first_camera_Target;
-    up = first_up;
     camera_Speed = speed;
     theta = std::acos((glm::normalize(first_camera_Position - first_camera_Target)).y);
     phi = std::atan((glm::normalize(first_camera_Position - first_camera_Target)).z /(glm::normalize(first_camera_Position - first_camera_Target)).x);
     active_camera = this;
+    viewMatrix = glm::mat4(0.0f);
+    update_Camera_State();
+}
 
+void Camera::update_Camera_State()
+{
+    viewMatrix = glm::lookAt(cameraPos,cameraTarget,get_Camera_Up());
 }
 
 glm::vec3 Camera::get_Camera_Position()
@@ -66,12 +71,12 @@ float Camera::get_Phi()
     return phi;
 }
 
-/*
-glm::vec3 Camera::get_View_Matrix()
-{
 
+glm::mat4 Camera::get_View_Matrix()
+{
+    return viewMatrix;
 }
-*/
+
 
 
 void Camera::set_Camera_Position(glm::vec3 new_Camera_Position)
