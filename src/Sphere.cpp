@@ -42,12 +42,12 @@ void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
     glUniformMatrix4fv(glGetUniformLocation(sphereProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Sphere::draw() {
+void Sphere::draw(int width, int height) {
     Camera* camera = Camera::get_Active_Camera();
 
     sphereProgram->use();
     //generating Projection,Model and view matrixes for Shader.
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)512/(float)512, 0.1f, 100.0f);
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
     setUniformMatrix(proj,"projection");
 
     glm::mat4 model = glm::mat4(1.0f);

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <GLFW/glfw3.h>
 
 Camera* Camera::active_camera = nullptr;
 
@@ -90,4 +91,31 @@ void Camera::set_Theta(float new_Theta)
 void Camera::set_Phi(float new_Phi)
 {
     phi = new_Phi;
+}
+
+
+bool Camera::handle_key_event(int key)
+{
+    bool handled = false;
+    if( key == GLFW_KEY_UP || key == GLFW_KEY_W)
+    {
+        theta -= camera_Speed * 0.1f;
+        handled = true;
+    }
+    if( key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
+    {
+        theta += camera_Speed * 0.1f;
+        handled = true;
+    }
+    if( key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
+    {
+        phi -= camera_Speed * 0.1f;
+        handled = true;
+    }
+    if( key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+    {
+        phi += camera_Speed * 0.1f;
+        handled = true;
+    }
+    return handled;
 }

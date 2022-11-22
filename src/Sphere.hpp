@@ -19,7 +19,7 @@ private:
 
 public:
     Sphere();
-    void draw();
+    void draw(int width, int height);
 };
 
 #endif

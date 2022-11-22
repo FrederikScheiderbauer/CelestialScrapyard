@@ -36,6 +36,7 @@ class Camera
         void set_Theta(float new_Theta);
         void set_Phi(float new_Phi);
         void set_As_Active_Camera();
+        bool handle_key_event(int key);
 };
 
 class LockedCamera : public Camera
