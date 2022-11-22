@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "definitions.hpp"
 #include <vector>
+#include "PerlinNoise/PerlinNoise.hpp"
 
 #define RESOLUTION 30
 #define NUM_VERTICES RESOLUTION * RESOLUTION
@@ -19,7 +20,7 @@ private:
     glm::vec3 axisB;
 
 public:
-    CubeFace(glm::vec3 localUp, std::vector<double> &heightmap);
+    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin);
     void draw();
 };
 #endif
