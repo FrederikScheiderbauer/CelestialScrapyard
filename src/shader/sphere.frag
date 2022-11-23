@@ -6,7 +6,7 @@ out vec4 fragColor;
 uniform vec3 cameraPos;
 
 const vec3 k_d = vec3(0.455, 0.478, 0.259);
-const vec3 k_s = vec3(0.5f);
+const vec3 k_s = vec3(0.1f);
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
 

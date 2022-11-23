@@ -7,8 +7,9 @@
 #include <vector>
 #include "PerlinNoise/PerlinNoise.hpp"
 
-#define RESOLUTION 30
-#define NUM_VERTICES RESOLUTION * RESOLUTION
+#define RESOLUTION 200
+//vertex position stored interleaved with vertex normal -> two vec3
+#define NUM_VERTICES RESOLUTION * RESOLUTION * 2
 #define NUM_INDICES (RESOLUTION - 1) * (RESOLUTION - 1) * 6
 
 class CubeFace

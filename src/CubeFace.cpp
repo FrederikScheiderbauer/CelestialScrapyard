@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <glm/glm.hpp>
+#include <iostream>
 
 glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
     return glm::cross(a,b);
@@ -12,9 +13,8 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
-    //vertex position stored interleaved with vertex normal
-    glm::vec3 vertices[NUM_VERTICES * 2] = {};
-    int indices[NUM_INDICES];
+    glm::vec3 *vertices = new glm::vec3[NUM_VERTICES] {};
+    int *indices = new int[NUM_INDICES];
     int triangleIndex = 0;
 
     //compute vertices
@@ -77,16 +77,19 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, NUM_VERTICES * sizeof(glm::vec3), vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, NUM_INDICES * sizeof(int), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    delete[] vertices;
+    delete[] indices;
 }
 
 void CubeFace::draw() {
