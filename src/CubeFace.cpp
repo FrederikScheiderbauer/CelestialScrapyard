@@ -2,7 +2,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <glm/glm.hpp>
-#include <iostream>
 
 glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
     return glm::cross(a,b);
