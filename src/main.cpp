@@ -10,7 +10,7 @@
 #include <iostream>
 #include <chrono>
 
-
+#include "skybox.hpp"
 #include "gui.hpp"
 #include "Sphere.hpp"
 #include "camera.hpp"
@@ -130,6 +130,7 @@ int main(void)
     gui_Object.imgui_Init(window);
 
     Sphere sphere = Sphere();
+    Skybox skybox = Skybox();
 
     //get time
     auto last_Time = std::chrono::system_clock::now();
@@ -160,6 +161,7 @@ int main(void)
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
         sphere.draw(current_width, current_height);
+        skybox.draw(current_width, current_height);
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
         gui_Object.imgui_Debug_Window(&is_Wireframe);
 
