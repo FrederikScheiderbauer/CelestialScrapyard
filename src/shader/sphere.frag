@@ -12,17 +12,13 @@ const vec3 light_intensity = vec3(20.0f);
 
 void main()
 {
-    //on the unit sphere, position and normal are equivalent
-    vec3 worldPosition = worldNormal;
     vec3 N = normalize(worldNormal);
     vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));
 
     vec3 L = normalize(cameraPos - worldPosition);
 
-    fragColor = vec4(worldNormal, 1.0f);
-
-    //vec3 k_d = worldNormal;
+    //vec3 k_d = N;
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     vec3 sum = diffuse + specular;
