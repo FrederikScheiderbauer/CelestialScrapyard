@@ -146,7 +146,7 @@ int main(void)
     {
         current_Time = std::chrono::system_clock::now();
         elapsed_Time = current_Time - last_Time;
-        std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
+        //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
         processInput(window);
