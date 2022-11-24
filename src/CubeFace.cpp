@@ -7,6 +7,15 @@ glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
     return glm::cross(a,b);
 }
 
+//http://mathproofs.blogspot.com/2005/07/mapping-cube-to-sphere.html
+glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
+    glm::vec3 squared = glm::pow(pointOnCube, glm::vec3(2.f));
+    float x = pointOnCube.x * glm::sqrt(1.f - squared.y/2.f - squared.z/2.f + (squared.y * squared.z)/3.f);
+    float y = pointOnCube.y * glm::sqrt(1.f - squared.z/2.f - squared.x/2.f + (squared.z * squared.x)/3.f);
+    float z = pointOnCube.z * glm::sqrt(1.f - squared.x/2.f - squared.y/2.f + (squared.x * squared.y)/3.f);
+    return glm::vec3(x,y,z);
+}
+
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
 CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
@@ -22,7 +31,7 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
             int i = x + y * RESOLUTION;
             glm::vec2 percent = glm::vec2(x, y) / (RESOLUTION - 1.0f);
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
-            glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
+            glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
             float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
             //map from [0,1] to [0.6, 1.4]
