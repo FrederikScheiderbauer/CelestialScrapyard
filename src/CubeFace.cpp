@@ -24,7 +24,7 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
 
-            float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 4);
+            float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
             //map from [0,1] to [0.6, 1.4]
             displacement = (0.8f * displacement) + 0.6;
             pointOnUnitSphere = displacement * pointOnUnitSphere;
