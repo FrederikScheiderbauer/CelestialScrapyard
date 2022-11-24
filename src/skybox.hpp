@@ -8,6 +8,7 @@ class Skybox
 {
     public:
         Skybox();
+        void shutdown();
         void draw(int width, int height);
 
     private:

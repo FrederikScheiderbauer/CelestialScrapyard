@@ -13,8 +13,8 @@ std::vector<std::string> skyboxPaths = {
     (std::string)Project_SOURCE_DIR +"/src/assets/skybox/left.png",
     (std::string)Project_SOURCE_DIR +"/src/assets/skybox/top.png",
     (std::string)Project_SOURCE_DIR +"/src/assets/skybox/bot.png",
-    (std::string)Project_SOURCE_DIR +"/src/assets/skybox/back.png",
     (std::string)Project_SOURCE_DIR +"/src/assets/skybox/front.png",
+    (std::string)Project_SOURCE_DIR +"/src/assets/skybox/back.png",
 };
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/skybox.vert", (std::string)Project_SOURCE_DIR + "/src/shader/skybox.frag"};
 
@@ -107,4 +107,9 @@ void Skybox::draw(int width, int height)
     glBindVertexArray(0);
     glDepthFunc(GL_LESS);
 
+}
+
+void Skybox::shutdown()
+{
+    glDeleteVertexArrays(1, &skyboxVAO);
 }

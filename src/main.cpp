@@ -10,6 +10,7 @@
 #include <iostream>
 #include <chrono>
 
+#include <tinyobjloader/tiny_obj_loader.h>
 #include "skybox.hpp"
 #include "gui.hpp"
 #include "Sphere.hpp"
@@ -145,7 +146,7 @@ int main(void)
     {
         current_Time = std::chrono::system_clock::now();
         elapsed_Time = current_Time - last_Time;
-        //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
+        std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
         processInput(window);
@@ -160,8 +161,11 @@ int main(void)
 
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
+
         sphere.draw(current_width, current_height);
-        skybox.draw(current_width, current_height);
+
+        skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
+
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
         gui_Object.imgui_Debug_Window(&is_Wireframe);
 
@@ -177,7 +181,7 @@ int main(void)
     }
 
     gui_Object.imgui_Shutdown();
-
+    skybox.shutdown();
     glfwTerminate();
     return 0;
 }
