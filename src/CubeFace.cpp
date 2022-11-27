@@ -7,6 +7,27 @@ glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
     return glm::cross(a,b);
 }
 
+float cavityShape(float x) {
+    return x * x - 1;
+}
+
+float rimShape(float x, float rimWidth, float rimSteepness) {
+    x = std::abs(x) - 1 - rimWidth;
+    return rimSteepness * x * x;
+}
+
+float smoothMin(float a, float b, float k) {
+    float h = glm::clamp((b - a + k) / (2 * k), 0.f, 1.f);
+    return a * h + b * (1 - h) - k * h * (1 - h);
+}
+
+float computeCraterShape(float x) {
+    float rimWidth = 0.7;
+    float rimSteepness = 0.42;
+    float floorHeight = -1.f;
+    return smoothMin(smoothMin(cavityShape(x), rimShape(x, rimWidth, rimSteepness), 3), floorHeight, -3);
+}
+
 //http://mathproofs.blogspot.com/2005/07/mapping-cube-to-sphere.html
 glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
     glm::vec3 squared = glm::pow(pointOnCube, glm::vec3(2.f));
@@ -36,7 +57,15 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
             float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
             //map from [0,1] to [0.6, 1.4]
             displacement = (0.8f * displacement) + 0.6;
+
             pointOnUnitSphere = displacement * pointOnUnitSphere;
+
+            glm::vec3 craterCenter = localUp;
+            float craterRadius = 0.2;
+            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
+            float craterHeight = craterShape * craterRadius;
+
+            //pointOnUnitSphere = pointOnUnitSphere * craterHeight;
 
             vertices[i * 2] = pointOnUnitSphere;
 
