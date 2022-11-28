@@ -38,7 +38,8 @@ glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
 }
 
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
-CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
+CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,std::vector<GLuint> _textureIDs) {
+    textureIDs = _textureIDs;
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
@@ -131,6 +132,8 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin) {
 
 void CubeFace::draw() {
     glBindVertexArray(VAO);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D,textureIDs[0]); // just one texture ID for now, make dynamically select later TODO
     glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

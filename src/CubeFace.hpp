@@ -15,13 +15,14 @@
 class CubeFace
 {
 private:
+    std::vector<GLuint> textureIDs;
     GLuint VAO;
     glm::vec3 localUp;
     glm::vec3 axisA;
     glm::vec3 axisB;
 
 public:
-    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin);
+    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,std::vector<GLuint> textureIDs);
     void draw();
 };
 #endif
