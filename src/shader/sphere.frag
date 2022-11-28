@@ -28,6 +28,9 @@ void main()
 /* leave out for now, gets too bright when close to the sphere*/
 //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
 //     vec3 intensity = light_intensity / distance;
-
+    if(length(worldPosition) > 1.0f) {
     fragColor = texture(texture1,TexCoord);//vec4(sum /** intensity*/, 1.0);
+    } else {
+        fragColor = vec4(sum /** intensity*/, 1.0);
+    }
 }
