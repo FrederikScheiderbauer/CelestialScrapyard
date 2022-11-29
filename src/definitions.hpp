@@ -1,3 +1,4 @@
+#pragma once
 #define CUBE_NUM_FACES 6
 #define HEIGHTMAP_WIDTH 100
 #define HEIGHTMAP_HEIGHT 100
@@ -5,3 +6,4 @@
 
 
 #define TINYOBJLOADER_IMPLEMENTATION
+#define _USE_MATH_DEFINES

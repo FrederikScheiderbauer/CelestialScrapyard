@@ -8,4 +8,5 @@ class TextureLoader
     public:
         static unsigned int generate_texture(std::string texturepath);
         static unsigned int generate_cubemap(std::vector<std::string> cubemap_texturePaths);
+        static unsigned int generate_Texture_Array(std::vector<std::string> array_texturePaths);
 };

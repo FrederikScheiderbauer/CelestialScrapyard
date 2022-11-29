@@ -1,11 +1,12 @@
 #version 460 core
 in vec3 worldNormal;
 in vec3 worldPosition;
-in vec2 TexCoord;
+in vec3 TexCoord;
 out vec4 fragColor;
 
 uniform vec3 cameraPos;
 uniform sampler2D texture1;
+uniform sampler2DArray textureArray;
 
 const vec3 k_d = vec3(0.455, 0.478, 0.259);
 const vec3 k_s = vec3(0.1f);
@@ -29,7 +30,7 @@ void main()
 //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
 //     vec3 intensity = light_intensity / distance;
     if(length(worldPosition) > 1.0f) {
-    fragColor = texture(texture1,TexCoord);//vec4(sum /** intensity*/, 1.0);
+    fragColor = texture(textureArray,TexCoord, 0);//vec4(sum /** intensity*/, 1.0);
     } else {
         fragColor = vec4(sum /** intensity*/, 1.0);
     }

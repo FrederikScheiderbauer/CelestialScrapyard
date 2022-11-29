@@ -23,18 +23,22 @@ Sphere::Sphere() {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
     //generate planet Textures
-    std::string texture_path = (std::string)Project_SOURCE_DIR +"/src/assets/skybox/right.png";
+    std::string texture_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
     textureID = TextureLoader::generate_texture(texture_path);
+    std::vector<std::string> paths = {texture_path};
+    GLuint texture_arrays = TextureLoader::generate_Texture_Array(paths);
+
     sphereProgram->use(); // don't forget to activate the shader before setting uniforms! 
     glUniform1i(glGetUniformLocation(sphereProgram->name, "texture1"), 1); // set it manually
-    
-    std::vector<GLuint> textureVector = {textureID};
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "textureArray"), 2);
+
+
     const siv::PerlinNoise::seed_type seed = 123456u;
     siv::PerlinNoise perlin{seed};
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, textureVector);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays);
     }
 
 
