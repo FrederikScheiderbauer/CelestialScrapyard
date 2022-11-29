@@ -41,7 +41,7 @@ unsigned int TextureLoader::generate_Texture_Array(std::vector<std::string> arra
 
     int width, height, nrChannels;
     GLsizei mipLevelCount = 1;
-    GLsizei layerCount = 1;
+    GLsizei layerCount = array_texturePaths.size();
     unsigned char *data = stbi_load(array_texturePaths[0].c_str(), &width, &height, &nrChannels, 0);
     // Allocate the storage.
     glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, GL_RGBA8, width, height, layerCount);

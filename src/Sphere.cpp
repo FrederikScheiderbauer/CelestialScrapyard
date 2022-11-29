@@ -13,9 +13,7 @@
 #include "PerlinNoise/PerlinNoise.hpp"
 #include "texture_loader.hpp"
 
-std::string source_Directory = Project_SOURCE_DIR;
-
-const std::vector<std::string> SHADER_PATHS = {source_Directory +"/src/shader/sphere.vert", source_Directory + "/src/shader/sphere.frag"};
+const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/sphere.vert", (std::string)Project_SOURCE_DIR + "/src/shader/sphere.frag"};
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
@@ -23,14 +21,12 @@ Sphere::Sphere() {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
     //generate planet Textures
-    std::string texture_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
-    textureID = TextureLoader::generate_texture(texture_path);
-    std::vector<std::string> paths = {texture_path};
+    std::vector<std::string> paths = {(std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png",(std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png"};
     GLuint texture_arrays = TextureLoader::generate_Texture_Array(paths);
 
     sphereProgram->use(); // don't forget to activate the shader before setting uniforms! 
-    glUniform1i(glGetUniformLocation(sphereProgram->name, "texture1"), 1); // set it manually
     glUniform1i(glGetUniformLocation(sphereProgram->name, "textureArray"), 2);
+
 
 
     const siv::PerlinNoise::seed_type seed = 123456u;
