@@ -378,9 +378,10 @@ namespace siv
             for (std::int32_t i = 0; i < octaves; ++i)
             {
                 result += (noise.noise3D(x, y, z) * amplitude);
-                x *= 2;
-                y *= 2;
-                z *= 2;
+                //Lacunarity
+                x *= 3.f;
+                y *= 3.f;
+                z *= 3.f;
                 amplitude *= persistence;
             }
 
