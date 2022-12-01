@@ -7,20 +7,34 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-Camera* Camera::active_camera = nullptr;
+LockedCamera* LockedCamera::active_camera = nullptr;
 
-Camera* Camera::get_Active_Camera()
+//Camera Class Implementation
+
+
+
+
+
+
+//
+
+
+
+
+
+LockedCamera* LockedCamera::get_Active_Camera()
 {
 	return active_camera;
 }
 
-void Camera::set_As_Active_Camera()
+void LockedCamera::set_As_Active_Camera()
 {
 	active_camera = this;
 }
 
-Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target, float speed)
+LockedCamera::LockedCamera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target, float speed)
 {
+
     cameraPos = first_camera_Position;
     cameraTarget = first_camera_Target;
     camera_Speed = speed;
@@ -31,70 +45,70 @@ Camera::Camera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target, fl
     update_Camera_State();
 }
 
-void Camera::update_Camera_State()
+void LockedCamera::update_Camera_State()
 {
     viewMatrix = glm::lookAt(cameraPos,cameraTarget,get_Camera_Up());
 }
 
-glm::vec3 Camera::get_Camera_Position()
+glm::vec3 LockedCamera::get_Camera_Position()
 {
     return cameraPos;
 }
-glm::vec3 Camera::get_Camera_Target()
+glm::vec3 LockedCamera::get_Camera_Target()
 {
     return cameraTarget;
 }
-glm::vec3 Camera::get_Camera_Up()
+glm::vec3 LockedCamera::get_Camera_Up()
 {
     glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
     glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
     return glm::cross(cameraDirection, cameraRight);
 }
-glm::vec3 Camera::get_Up_Vektor()
+glm::vec3 LockedCamera::get_Up_Vektor()
 {
     return up;
 }
-glm::vec3 Camera::get_Camera_Front()
+glm::vec3 LockedCamera::get_Camera_Front()
 {
     return glm::normalize(cameraTarget - cameraPos);
 }
-float Camera::get_Camera_Speed()
+float LockedCamera::get_Camera_Speed()
 {
     return camera_Speed;
 }
-float Camera::get_Theta()
+float LockedCamera::get_Theta()
 {
 
     return theta;
 }
-float Camera::get_Phi()
+float LockedCamera::get_Phi()
 {
     return phi;
 }
 
 
-glm::mat4 Camera::get_View_Matrix()
+glm::mat4 LockedCamera::get_View_Matrix()
 {
     return viewMatrix;
 }
 
 
 
-void Camera::set_Camera_Position(glm::vec3 new_Camera_Position)
+void LockedCamera::set_Camera_Position(glm::vec3 new_Camera_Position)
 {
     cameraPos = new_Camera_Position;
 }
-void Camera::set_Theta(float new_Theta)
+void LockedCamera::set_Theta(float new_Theta)
 {
     theta = new_Theta;
 }
-void Camera::set_Phi(float new_Phi)
+void LockedCamera::set_Phi(float new_Phi)
 {
     phi = new_Phi;
 }
 
 
-bool Camera::handle_key_event(int key)
+bool LockedCamera::handle_key_event(int key)
 {
     bool handled = false;
     if( key == GLFW_KEY_UP || key == GLFW_KEY_W)
@@ -117,5 +131,19 @@ bool Camera::handle_key_event(int key)
         phi += camera_Speed * 0.1f;
         handled = true;
     }
+    if ( !handled){return false;}
+    update_Camera_Position();
     return handled;
+}
+
+bool LockedCamera::handle_scroll_event(float yoffset) {
+        cameraPos += camera_Speed  * yoffset * glm::normalize(cameraTarget - cameraPos);
+    return true;
+}
+
+void LockedCamera::update_Camera_Position(){
+        float new_x_vec = glm::length(cameraPos - cameraTarget) * std::sin(theta) * std::cos(phi);
+        float new_y_vec = glm::length(cameraPos - cameraTarget) * std::cos(theta);
+        float new_z_vec = glm::length(cameraPos - cameraTarget) * std::sin(theta) * std::sin(phi);
+        cameraPos = glm::vec3(new_x_vec,new_y_vec,new_z_vec);
 }

@@ -88,7 +88,7 @@ Skybox::Skybox()
 
 void Skybox::draw(int width, int height)
 {
-    Camera* camera = Camera::get_Active_Camera();
+    LockedCamera* camera = LockedCamera::get_Active_Camera();
     glDepthFunc(GL_LEQUAL);
     skyboxShader->use();
 

@@ -25,59 +25,32 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 //https://www.glfw.org/docs/3.3/input_guide.html
 void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    auto camera = Camera::get_Active_Camera();
-    camera->set_Camera_Position(camera->get_Camera_Position() + (camera->get_Camera_Speed() * ((float)yoffset/2.5f) * camera->get_Camera_Front()));
+    auto camera = LockedCamera::get_Active_Camera();
+    camera->handle_scroll_event((float)yoffset);
 
 }
 
 //https://learnopengl.com/Getting-started/Hello-Window
 void processInput(GLFWwindow *window)
 {
-    auto camera = Camera::get_Active_Camera();
-    glm::vec3 newPosition;
+    auto camera = LockedCamera::get_Active_Camera();
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        float new_Theta = camera->get_Theta() - (camera->get_Camera_Speed() * 0.1f);
-        //float new_Theta = camera->get_Theta() + (camera->get_Camera_Speed() * 0.1f);
-        camera->set_Theta(new_Theta);
-        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi());
-        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
-        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi());
-        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
+        camera->handle_key_event(GLFW_KEY_W);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        //float new_Theta = camera->get_Theta() - (camera->get_Camera_Speed() * 0.1f);
-        float new_Theta = camera->get_Theta() + (camera->get_Camera_Speed() * 0.1f);
-
-
-        camera->set_Theta(new_Theta);
-        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(camera->get_Phi());
-        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
-        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(camera->get_Phi());
-        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
+        camera->handle_key_event(GLFW_KEY_S);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        float new_phi = camera->get_Phi() + (camera->get_Camera_Speed() * 0.1f);
-        camera->set_Phi(new_phi);
-        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(new_phi);
-        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
-        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(new_phi);
-        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
-    
- //camera->set_Camera_Position(camera->get_Camera_Position() - (glm::normalize(glm::cross(camera->get_Camera_Front(), camera->get_Camera_Up())) * camera->get_Camera_Speed()));
+        camera->handle_key_event(GLFW_KEY_A);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        float new_phi = camera->get_Phi() - (camera->get_Camera_Speed() * 0.1f);
-        camera->set_Phi(new_phi);
-        float new_x_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::cos(new_phi);
-        float new_y_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::cos(camera->get_Theta());
-        float new_z_vec = glm::length(camera->get_Camera_Position() - camera->get_Camera_Target()) * std::sin(camera->get_Theta()) * std::sin(new_phi);
-        camera->set_Camera_Position(glm::vec3(new_x_vec,new_y_vec,new_z_vec));
+        camera->handle_key_event(GLFW_KEY_D);
     }
 }
 
@@ -98,7 +71,7 @@ int main(void)
     glm::vec3 first_camera_Target = glm::vec3(0.0,0.0,0.0);
     float speed = 0.3f;
 
-    Camera camera = Camera(first_camera_Position,first_camera_Target,speed);
+    LockedCamera camera = LockedCamera(first_camera_Position,first_camera_Target,speed);
 
     if (!window)
     {
