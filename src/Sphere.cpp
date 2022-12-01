@@ -66,7 +66,7 @@ void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
 }
 
 void Sphere::draw(int width, int height) {
-    LockedCamera* camera = LockedCamera::get_Active_Camera();
+    Camera* camera = Camera::get_Active_Camera();
 
     sphereProgram->use();
     //generating Projection,Model and view matrixes for Shader.
@@ -80,7 +80,7 @@ void Sphere::draw(int width, int height) {
     glm::mat4 view = glm::mat4(1.0f);
 
     glm::vec3 cameraPos = camera->get_Camera_Position();
-    view = glm::lookAt(cameraPos,camera->get_Camera_Target(),camera->get_Camera_Up());
+    view = camera->get_View_Matrix();
     //Camera* camera2 = Camera::get_Active_Camera();
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");

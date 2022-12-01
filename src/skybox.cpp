@@ -88,15 +88,14 @@ Skybox::Skybox()
 
 void Skybox::draw(int width, int height)
 {
-    LockedCamera* camera = LockedCamera::get_Active_Camera();
+    Camera* camera = Camera::get_Active_Camera();
     glDepthFunc(GL_LEQUAL);
     skyboxShader->use();
 
     glm::mat4 view = glm::mat4(1.0f);
-
-    glm::vec3 cameraPos = camera->get_Camera_Position();
-    view = glm::mat4(glm::mat3(glm::lookAt(cameraPos,camera->get_Camera_Target(),camera->get_Camera_Up())));
+    view = glm::mat4(glm::mat3(camera->get_View_Matrix()));
     glUniformMatrix4fv(glGetUniformLocation(skyboxShader->name, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
     glUniformMatrix4fv(glGetUniformLocation(skyboxShader->name, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
 
