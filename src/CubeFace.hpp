@@ -15,6 +15,7 @@
 class CubeFace
 {
 private:
+    std::vector<GLuint> texture_IDs;
     GLuint texture_Array_ID;
     GLuint VAO;
     glm::vec3 localUp;
@@ -22,7 +23,7 @@ private:
     glm::vec3 axisB;
 
 public:
-    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint texture_Array_ID);
+    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint texture_Array_ID,std::vector<GLuint> _texture_IDs);
     void draw();
 };
 #endif

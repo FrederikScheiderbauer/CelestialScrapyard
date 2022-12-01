@@ -21,11 +21,31 @@ Sphere::Sphere() {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
     //generate planet Textures
+        //generate grassland texture
+        std::string grassland_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
+        GLuint grassland_texture_ID = TextureLoader::generate_texture(grassland_path);
+
+        //generate Mountain texture
+        /*
+        std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/stone1.jpg";
+        GLuint mountain_texture_ID = TextureLoader::generate_texture(mountain_path);
+
+        //generate Snow texture
+        std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
+        GLuint snow_texture_ID = TextureLoader::generate_texture(snow_path);
+*/
+        //generate Water texture
+        std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
+        GLuint water_texture_ID = TextureLoader::generate_texture(water_path);
+
     std::vector<std::string> paths = {(std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png",(std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png"};
     GLuint texture_arrays = TextureLoader::generate_Texture_Array(paths);
 
     sphereProgram->use(); // don't forget to activate the shader before setting uniforms! 
-    glUniform1i(glGetUniformLocation(sphereProgram->name, "textureArray"), 2);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "textureArray"), 0);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "grassland"), 1);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
+    std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID};
 
 
 
@@ -34,7 +54,7 @@ Sphere::Sphere() {
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays, texture_IDs);
     }
 
 
