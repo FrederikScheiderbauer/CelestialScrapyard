@@ -48,7 +48,8 @@ Sphere::Sphere(unsigned long noiseSeed) {
     std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID};
 
     //const siv::PerlinNoise::seed_type seed = 123456u;
-    const siv::PerlinNoise::seed_type seed = (noiseSeed >> 32);
+    //take lowest 32 bits of seed
+    const siv::PerlinNoise::seed_type seed = noiseSeed;
     siv::PerlinNoise perlin{seed};
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
