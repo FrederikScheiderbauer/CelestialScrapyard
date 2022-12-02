@@ -54,11 +54,13 @@ Sphere::Sphere(unsigned long noiseSeed) {
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        std::vector<int> edgeVertexIndices;
-        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays, texture_IDs, edgeVertexIndices);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays, texture_IDs);
     }
 
-
+    for(int i = 0; i < CUBE_NUM_FACES; ++i) {
+        cubefaces[i]->addEdgeNormals(cubefaces);
+        cubefaces[i]->uploadToGPU();
+    }
 }
 
 void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
