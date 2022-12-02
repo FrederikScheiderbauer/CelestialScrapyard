@@ -23,7 +23,7 @@ private:
     glm::vec3 axisB;
 
 public:
-    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint texture_Array_ID,std::vector<GLuint> _texture_IDs);
+    CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint texture_Array_ID,std::vector<GLuint> _texture_IDs, std::vector<int> &edgeVertexIndices);
     void draw();
 };
 #endif

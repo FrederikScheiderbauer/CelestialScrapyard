@@ -12,6 +12,7 @@ CTestTestfile.cmake
 _deps
 build
 Include/config/config.h
+cmake-build-*/
 
 # ignore C++ generated files
 # Prerequisites
@@ -52,3 +53,5 @@ ggd
 *.swo
 *.swp
 .vscode/settings.json
+
+.idea/

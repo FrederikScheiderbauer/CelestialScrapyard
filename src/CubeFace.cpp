@@ -37,7 +37,7 @@ glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
 }
 
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
-CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint _texture_Array_ID,std::vector<GLuint> _texture_IDs) {
+CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint _texture_Array_ID,std::vector<GLuint> _texture_IDs, std::vector<int> &edgeVertexIndices) {
     texture_Array_ID = _texture_Array_ID;
     texture_IDs = _texture_IDs;
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
@@ -68,7 +68,11 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint _texture_A
 
             //pointOnUnitSphere = pointOnUnitSphere * craterHeight;
 
-            vertices[i * 2] = pointOnUnitSphere;
+            int vertexIndex = i * 2;
+            vertices[vertexIndex] = pointOnUnitSphere;
+            if (x == 0 || y == 0 || x == RESOLUTION - 1 || y == RESOLUTION - 1) {
+                edgeVertexIndices.push_back(i * 2);
+            }
 
             if (x != RESOLUTION - 1 && y != RESOLUTION - 1) {
                 //OpenGL uses stride provided by vertex attributes -> does not need to be multiplied by 2 for normal

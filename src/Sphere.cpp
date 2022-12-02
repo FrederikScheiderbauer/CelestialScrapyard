@@ -54,7 +54,8 @@ Sphere::Sphere(unsigned long noiseSeed) {
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays, texture_IDs);
+        std::vector<int> edgeVertexIndices;
+        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays, texture_IDs, edgeVertexIndices);
     }
 
 
