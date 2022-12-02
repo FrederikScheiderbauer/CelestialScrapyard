@@ -19,7 +19,7 @@ private:
     GLuint textureID;
 
 public:
-    Sphere();
+    Sphere(unsigned long noiseSeed);
     void draw(int width, int height);
 };
 

@@ -17,7 +17,7 @@ const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
-Sphere::Sphere() {
+Sphere::Sphere(unsigned long noiseSeed) {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
     //generate planet Textures
@@ -47,9 +47,8 @@ Sphere::Sphere() {
     glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
     std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID};
 
-
-
-    const siv::PerlinNoise::seed_type seed = 123456u;
+    //const siv::PerlinNoise::seed_type seed = 123456u;
+    const siv::PerlinNoise::seed_type seed = (noiseSeed >> 32);
     siv::PerlinNoise perlin{seed};
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {

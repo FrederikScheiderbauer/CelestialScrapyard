@@ -103,16 +103,17 @@ int main(void)
     Gui gui_Object;
     gui_Object.imgui_Init(window);
 
-    Sphere sphere = Sphere();
-    Skybox skybox = Skybox();
-
     //get time
     auto last_Time = std::chrono::system_clock::now();
     std::chrono::system_clock::time_point current_Time;
+    unsigned long seed = std::chrono::time_point_cast<std::chrono::nanoseconds>(last_Time).time_since_epoch().count() << 32;
     std::chrono::duration<double> elapsed_Time;
     bool is_Wireframe = false;
     glEnable(GL_DEPTH_TEST);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    Sphere sphere = Sphere(seed);
+    Skybox skybox = Skybox();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
