@@ -58,16 +58,16 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint _texture_A
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
-//            float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
-//            //map from [0,1] to [0.6, 1.4]
-//            displacement = (0.8f * displacement) + 0.6;
-//
-//            pointOnUnitSphere = displacement * pointOnUnitSphere;
-//
-//            glm::vec3 craterCenter = localUp;
-//            float craterRadius = 0.2;
-//            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
-//            float craterHeight = craterShape * craterRadius;
+            float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
+            //map from [0,1] to [0.6, 1.4]
+            displacement = (0.8f * displacement) + 0.6;
+
+            pointOnUnitSphere = displacement * pointOnUnitSphere;
+
+            glm::vec3 craterCenter = localUp;
+            float craterRadius = 0.2;
+            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
+            float craterHeight = craterShape * craterRadius;
 
             //pointOnUnitSphere = pointOnUnitSphere * craterHeight;
 
@@ -115,22 +115,21 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint _texture_A
 }
 
 void CubeFace::addEdgeNormals(std::array<std::unique_ptr<CubeFace>, 6> &cubefaces) {
-    for(int i : edgeVertexIndices) {
-        glm::vec3 vertex = vertices[edgeVertexIndices[i]];
-        glm::vec3 normal = vertices[edgeVertexIndices[i] + 1];
+    for(int edgeVertexIndex : edgeVertexIndices) {
+        glm::vec3 vertex = vertices[edgeVertexIndex];
+        glm::vec3 normal = vertices[edgeVertexIndex + 1];
         for (int numFaces = 0; numFaces < CUBE_NUM_FACES; ++numFaces) {
             normal += cubefaces[numFaces]->getNormalForVertex(vertex);
         }
-        vertices[edgeVertexIndices[i] + 1] = normal;
+        vertices[edgeVertexIndex + 1] = normal;
     }
 }
 
 glm::vec3 CubeFace::getNormalForVertex(glm::vec3 vertex) {
-    //std::cout << edgeVertexIndices.size() << std::endl;
-    for(int i : edgeVertexIndices) {
-        if (glm::all(glm::epsilonEqual(vertices[edgeVertexIndices[i]], vertex, 1E-5f))) {
+    for(int edgeVertexIndex : edgeVertexIndices) {
+        if (glm::all(glm::epsilonEqual(vertices[edgeVertexIndex], vertex, 1E-5f))) {
             //returns normal
-            return vertices[edgeVertexIndices[i] + 1];
+            return vertices[edgeVertexIndex + 1];
         }
     }
     return glm::vec3(0.f);
