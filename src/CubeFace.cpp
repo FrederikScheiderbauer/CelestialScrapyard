@@ -119,7 +119,7 @@ void CubeFace::addEdgeNormals(std::array<std::unique_ptr<CubeFace>, 6> &cubeface
         glm::vec3 vertex = vertices[edgeVertexIndices[i]];
         glm::vec3 normal = vertices[edgeVertexIndices[i] + 1];
         for (int numFaces = 0; numFaces < CUBE_NUM_FACES; ++numFaces) {
-            normal += cubefaces[i]->getNormalForVertex(vertex);
+            normal += cubefaces[numFaces]->getNormalForVertex(vertex);
         }
         vertices[edgeVertexIndices[i] + 1] = normal;
     }
@@ -128,9 +128,9 @@ void CubeFace::addEdgeNormals(std::array<std::unique_ptr<CubeFace>, 6> &cubeface
 glm::vec3 CubeFace::getNormalForVertex(glm::vec3 vertex) {
     //std::cout << edgeVertexIndices.size() << std::endl;
     for(int i : edgeVertexIndices) {
-        if (glm::all(glm::epsilonEqual(vertices[i], vertex, 1E-5f))) {
+        if (glm::all(glm::epsilonEqual(vertices[edgeVertexIndices[i]], vertex, 1E-5f))) {
             //returns normal
-            return vertices[i + 1];
+            return vertices[edgeVertexIndices[i] + 1];
         }
     }
     return glm::vec3(0.f);
