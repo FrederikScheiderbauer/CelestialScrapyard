@@ -58,16 +58,21 @@ CubeFace::CubeFace(glm::vec3 localUp, siv::PerlinNoise &perlin,GLuint _texture_A
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
-            float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
+            //float displacement = perlin.normalizedOctave3D_01(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.5f);
+            float displacement = 1.0f - glm::abs(perlin.normalizedOctave3D(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z, 8, 0.25f));
+            //make peaks more pronounced
+            displacement = glm::pow(displacement, 1.5f);
+            //strength
+            displacement *= 0.8f;
             //map from [0,1] to [0.6, 1.4]
-            displacement = (0.8f * displacement) + 0.6;
+            //displacement = (0.8f * displacement) + 0.6;
 
-            pointOnUnitSphere = displacement * pointOnUnitSphere;
+            pointOnUnitSphere = (1 + displacement) * pointOnUnitSphere;
 
-            glm::vec3 craterCenter = localUp;
-            float craterRadius = 0.2;
-            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
-            float craterHeight = craterShape * craterRadius;
+//            glm::vec3 craterCenter = localUp;
+//            float craterRadius = 0.2;
+//            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
+//            float craterHeight = craterShape * craterRadius;
 
             //pointOnUnitSphere = pointOnUnitSphere * craterHeight;
 
