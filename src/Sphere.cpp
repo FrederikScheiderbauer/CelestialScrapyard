@@ -47,14 +47,10 @@ Sphere::Sphere(unsigned long noiseSeed) {
     glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
     std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID};
 
-    //const siv::PerlinNoise::seed_type seed = 123456u;
-    //take lowest 32 bits of seed
-    const siv::PerlinNoise::seed_type seed = noiseSeed;
-    siv::PerlinNoise perlin{seed};
-
+    Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, perlin, texture_arrays, texture_IDs);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, noise, texture_arrays, texture_IDs);
     }
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
