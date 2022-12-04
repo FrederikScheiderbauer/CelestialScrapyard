@@ -21,6 +21,7 @@ private:
 public:
     Sphere(unsigned long noiseSeed);
     void draw(int width, int height);
+    void addCrater(glm::vec3 center);
 };
 
 #endif

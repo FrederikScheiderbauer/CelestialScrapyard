@@ -20,21 +20,25 @@ class CubeFace
 private:
     glm::vec3 *vertices;
     int *indices;
+    std::array<float, NUM_VERTICES / 2> displacements;
     std::array<int, NUM_EDGE_VERTICES> edgeVertexIndices;
 
     std::vector<GLuint> texture_IDs;
     GLuint texture_Array_ID;
     GLuint VAO;
+    GLuint VBO;
     glm::vec3 localUp;
     glm::vec3 axisA;
     glm::vec3 axisB;
 
     glm::vec3 getNormalForVertex(glm::vec3 vertex);
+    void computeNormals();
 public:
     CubeFace(glm::vec3 localUp, Noise &noise, GLuint texture_Array_ID,std::vector<GLuint> _texture_IDs);
     void uploadToGPU();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);
     void draw();
+    void addCrater(glm::vec3 center);
     ~ CubeFace();
 };
 #endif

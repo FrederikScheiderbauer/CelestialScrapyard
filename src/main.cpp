@@ -31,7 +31,7 @@ void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 //https://learnopengl.com/Getting-started/Hello-Window
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, Sphere &sphere)
 {
     auto camera = LockedCamera::get_Active_Camera();
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -51,6 +51,10 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         camera->handle_key_event(GLFW_KEY_D);
+    }
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
+        sphere.addCrater(intersectionOnUnitSphere);
     }
 }
 
@@ -123,7 +127,7 @@ int main(void)
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
-        processInput(window);
+        processInput(window, sphere);
 
 
         /*Update Game state*/

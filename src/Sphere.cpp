@@ -90,3 +90,9 @@ void Sphere::draw(int width, int height) {
         cubefaces[i]->draw();
     }
 }
+
+void Sphere::addCrater(glm::vec3 center) {
+    for (int i = 0; i < CUBE_NUM_FACES; ++i) {
+        cubefaces[i]->addCrater(center);
+    }
+}

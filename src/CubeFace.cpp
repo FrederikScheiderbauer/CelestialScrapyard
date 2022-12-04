@@ -25,7 +25,7 @@ float smoothMin(float a, float b, float k) {
 float computeCraterShape(float x) {
     float rimWidth = 0.7;
     float rimSteepness = 0.42;
-    float floorHeight = -1.f;
+    float floorHeight = -2.f;
     return smoothMin(smoothMin(cavityShape(x), rimShape(x, rimWidth, rimSteepness), 3), floorHeight, -3);
 }
 
@@ -59,17 +59,12 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, GLuint _texture_Array_ID,std
             glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
             float displacement = noise.getValue(pointOnUnitSphere);
+
             pointOnUnitSphere = (1 + displacement) * pointOnUnitSphere;
-
-//            glm::vec3 craterCenter = localUp;
-//            float craterRadius = 0.2;
-//            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
-//            float craterHeight = craterShape * craterRadius;
-
-            //pointOnUnitSphere = pointOnUnitSphere * craterHeight;
 
             int vertexIndex = i * 2;
             vertices[vertexIndex] = pointOnUnitSphere;
+            displacements[i] = displacement;
             if (x == 0 || y == 0 || x == RESOLUTION - 1 || y == RESOLUTION - 1) {
                 edgeVertexIndices[edgeVertexIndicesIndex] = vertexIndex;
                 ++edgeVertexIndicesIndex;
@@ -88,8 +83,16 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, GLuint _texture_Array_ID,std
             }
         }
     }
+    computeNormals();
+}
 
+void CubeFace::computeNormals() {
     for (int j = 0; j < NUM_INDICES; j += 6) {
+        //set normals to zero
+        for (int k = 0; k < 6; ++k) {
+            vertices[indices[j] * 2 + 1] = glm::vec3(0.f);
+        }
+
         //compute triangle edges
         glm::vec3 edgeA1 = vertices[indices[j + 1] * 2] - vertices[indices[j] * 2];
         glm::vec3 edgeB1 = vertices[indices[j + 2] * 2] - vertices[indices[j] * 2];
@@ -134,7 +137,7 @@ glm::vec3 CubeFace::getNormalForVertex(glm::vec3 vertex) {
 
 void CubeFace::uploadToGPU() {
     //https://learnopengl.com/Getting-started/Hello-Triangle
-    GLuint VBO, EBO;
+    GLuint EBO;
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &VAO);
@@ -171,4 +174,42 @@ void CubeFace::draw() {
 CubeFace::~CubeFace() {
     delete[] vertices;
     delete[] indices;
+}
+
+void CubeFace::addCrater(glm::vec3 center) {
+    float craterRadius = 0.2;
+//            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
+//            float craterHeight = craterShape * craterRadius;
+    //if all vertices are unchanged no update for the GPU is required
+    bool changed = false;
+    for (int y = 0; y < RESOLUTION; y++) {
+        for (int x = 0; x < RESOLUTION; x++) {
+            int i = x + y * RESOLUTION;
+            int vertexIndex = i * 2;
+
+            glm::vec3 pointOnUnitSphere = vertices[vertexIndex];
+            float displacement = displacements[i];
+
+            pointOnUnitSphere = pointOnUnitSphere / (1 + displacement);
+
+            float craterHeight = 0.f;
+            if (glm::length(pointOnUnitSphere - center) < craterRadius) {
+                craterHeight = -0.2f;
+                changed = true;
+            }
+
+            float newDisplacement = displacement + craterHeight;
+            pointOnUnitSphere = (1 + newDisplacement) * pointOnUnitSphere;
+            vertices[vertexIndex] = pointOnUnitSphere;
+            displacements[i] = displacement;
+        }
+    }
+
+    if(changed) {
+        //TODO: also recompute normals for edge vertices
+        computeNormals();
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, NUM_VERTICES * sizeof(glm::vec3), vertices);
+    }
 }
