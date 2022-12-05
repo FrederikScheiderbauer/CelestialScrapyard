@@ -166,6 +166,10 @@ void CubeFace::draw() {
     glBindTexture(GL_TEXTURE_2D,texture_IDs[0]);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D,texture_IDs[1]);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D,texture_IDs[2]);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D,texture_IDs[3]);
 
     glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

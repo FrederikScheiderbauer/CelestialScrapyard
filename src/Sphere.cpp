@@ -25,16 +25,12 @@ Sphere::Sphere(unsigned long noiseSeed) {
         std::string grassland_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
         GLuint grassland_texture_ID = TextureLoader::generate_texture(grassland_path);
 
-        //generate Mountain texture
-        /*
-        std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/stone1.jpg";
+        std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/mountain texture.png";
         GLuint mountain_texture_ID = TextureLoader::generate_texture(mountain_path);
 
-        //generate Snow texture
         std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
         GLuint snow_texture_ID = TextureLoader::generate_texture(snow_path);
-*/
-        //generate Water texture
+
         std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
         GLuint water_texture_ID = TextureLoader::generate_texture(water_path);
 
@@ -45,7 +41,9 @@ Sphere::Sphere(unsigned long noiseSeed) {
     glUniform1i(glGetUniformLocation(sphereProgram->name, "textureArray"), 0);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "grassland"), 1);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
-    std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID};
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "mountain"), 3);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "snow"), 4);
+    std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID,mountain_texture_ID, snow_texture_ID};
 
     Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
