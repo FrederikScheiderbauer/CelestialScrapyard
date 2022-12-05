@@ -24,7 +24,9 @@ void main()
     vec3 L = normalize(cameraPos - worldPosition);
 
     vec3 k_d;
-    //k_d = texture(textureArray,TexCoord,0).rgb;
+
+    //TODO interpolate texture at borderlines
+    //TODO calculate height at which texture should load dynamically
     if(length(worldPosition) > 1.5f) {
         k_d = texture(grassland,vec2(TexCoord)).rgb;
     } else {

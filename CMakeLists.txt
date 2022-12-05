@@ -24,7 +24,9 @@ set(GGD_SOURCE_FILES
   ${CMAKE_SOURCE_DIR}/src/image_loader_setup.cpp
   ${CMAKE_SOURCE_DIR}/src/texture_loader.cpp
   ${CMAKE_SOURCE_DIR}/src/skybox.cpp
-  ${CMAKE_SOURCE_DIR}/src/Noise.cpp)
+  ${CMAKE_SOURCE_DIR}/src/Noise.cpp
+  ${CMAKE_SOURCE_DIR}/src/treeloader.cpp)
+
 
 set(Project_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/Include/config/config.h.in ${CMAKE_SOURCE_DIR}/Include/config/config.h)
