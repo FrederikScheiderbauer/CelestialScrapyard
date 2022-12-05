@@ -63,6 +63,20 @@ void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
 }
 
 void Sphere::draw(int width, int height) {
+    //check if vertex data has been updated
+    if (vertexUpdateInProgress) {
+        std::chrono::milliseconds waitTime(0);
+        if (vertexUpdateFuture.wait_for(waitTime) == std::future_status::ready) {
+            auto changed = vertexUpdateFuture.get();
+            for(int i = 0; i < CUBE_NUM_FACES; ++i) {
+                if (changed[i]) {
+                    cubefaces[i]->updateGPUBuffer();
+                }
+            }
+            vertexUpdateInProgress = false;
+        }
+    }
+
     Camera* camera = Camera::get_Active_Camera();
 
     sphereProgram->use();
@@ -90,6 +104,13 @@ void Sphere::draw(int width, int height) {
 }
 
 void Sphere::addCrater(glm::vec3 center) {
+    vertexUpdateFuture = std::async(std::launch::async, [this, center](){
+        return this->recomputeVertexDataAsync(center);
+    });
+    vertexUpdateInProgress = true;
+}
+
+std::array<bool, CUBE_NUM_FACES> Sphere::recomputeVertexDataAsync(glm::vec3 center) {
     std::array<bool, CUBE_NUM_FACES> changed;
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         changed[i] = cubefaces[i]->addCrater(center);
@@ -97,7 +118,7 @@ void Sphere::addCrater(glm::vec3 center) {
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         if (changed[i]) {
             cubefaces[i]->addEdgeNormals(cubefaces);
-            cubefaces[i]->updateGPUBuffer();
         }
     }
+    return changed;
 }

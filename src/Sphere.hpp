@@ -7,6 +7,7 @@
 #include <memory>
 #include <array>
 #include <glm/glm.hpp>
+#include <future>
 #include "camera.hpp"
 
 class Sphere
@@ -17,11 +18,13 @@ private:
     const std::array<glm::vec3, CUBE_NUM_FACES> directions = {glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0)};
     void setUniformMatrix(glm::mat4 matrix, std::string type);
     GLuint textureID;
-
+    std::future<std::array<bool, CUBE_NUM_FACES>> vertexUpdateFuture;
+    bool vertexUpdateInProgress = false;
 public:
     Sphere(unsigned long noiseSeed);
     void draw(int width, int height);
     void addCrater(glm::vec3 center);
+    std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
 };
 
 #endif
