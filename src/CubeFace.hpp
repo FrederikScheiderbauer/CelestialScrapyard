@@ -36,9 +36,10 @@ private:
 public:
     CubeFace(glm::vec3 localUp, Noise &noise, GLuint texture_Array_ID,std::vector<GLuint> _texture_IDs);
     void uploadToGPU();
+    void updateGPUBuffer();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);
     void draw();
-    void addCrater(glm::vec3 center);
+    bool addCrater(glm::vec3 center);
     ~ CubeFace();
 };
 #endif

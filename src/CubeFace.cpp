@@ -157,6 +157,8 @@ void CubeFace::uploadToGPU() {
     glEnableVertexAttribArray(1);
 }
 
+
+
 void CubeFace::draw() {
     glBindVertexArray(VAO);
 
@@ -176,7 +178,7 @@ CubeFace::~CubeFace() {
     delete[] indices;
 }
 
-void CubeFace::addCrater(glm::vec3 center) {
+bool CubeFace::addCrater(glm::vec3 center) {
     float craterRadius = 0.2f;
     float craterDepth = 0.4f;
 //            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
@@ -208,10 +210,12 @@ void CubeFace::addCrater(glm::vec3 center) {
     }
 
     if(changed) {
-        //TODO: also recompute normals for edge vertices
         computeNormals();
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, NUM_VERTICES * sizeof(glm::vec3), vertices);
     }
+    return changed;
+}
+
+void CubeFace::updateGPUBuffer() {
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, NUM_VERTICES * sizeof(glm::vec3), vertices);
 }

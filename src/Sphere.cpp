@@ -92,7 +92,14 @@ void Sphere::draw(int width, int height) {
 }
 
 void Sphere::addCrater(glm::vec3 center) {
+    std::array<bool, CUBE_NUM_FACES> changed;
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
-        cubefaces[i]->addCrater(center);
+        changed[i] = cubefaces[i]->addCrater(center);
+    }
+    for(int i = 0; i < CUBE_NUM_FACES; ++i) {
+        if (changed[i]) {
+            cubefaces[i]->addEdgeNormals(cubefaces);
+            cubefaces[i]->updateGPUBuffer();
+        }
     }
 }
