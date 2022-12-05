@@ -26,29 +26,30 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     auto camera = LockedCamera::get_Active_Camera();
-    camera->handle_scroll_event((float)yoffset);
+    camera->handle_scroll_event((float)xoffset,(float)yoffset);
 
 }
 
 //https://learnopengl.com/Getting-started/Hello-Window
 void processInput(GLFWwindow *window, Sphere &sphere)
 {
+    
     auto camera = LockedCamera::get_Active_Camera();
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         camera->handle_key_event(GLFW_KEY_W);
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         camera->handle_key_event(GLFW_KEY_S);
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         camera->handle_key_event(GLFW_KEY_A);
     }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
         camera->handle_key_event(GLFW_KEY_D);
     }
