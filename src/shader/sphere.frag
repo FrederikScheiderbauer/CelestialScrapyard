@@ -30,6 +30,12 @@ void main()
     } else {
         k_d = texture(water,vec2(TexCoord)).rgb;
     }
+    if(length(worldPosition) > 1.7f) {
+        k_d = texture(mountain,vec2(TexCoord)).rgb;
+    }
+        if(length(worldPosition) > 1.78f) {
+        k_d = texture(snow,vec2(TexCoord)).rgb;
+    }
 
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
