@@ -30,8 +30,19 @@ void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    {
+        auto *sphere = (Sphere*) glfwGetWindowUserPointer(window);
+        auto camera = LockedCamera::get_Active_Camera();
+        glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
+        sphere->addCrater(intersectionOnUnitSphere);
+    }
+}
+
 //https://learnopengl.com/Getting-started/Hello-Window
-void processInput(GLFWwindow *window, Sphere &sphere)
+void processInput(GLFWwindow *window)
 {
     
     auto camera = LockedCamera::get_Active_Camera();
@@ -52,10 +63,6 @@ void processInput(GLFWwindow *window, Sphere &sphere)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
         camera->handle_key_event(GLFW_KEY_D);
-    }
-    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
-        sphere.addCrater(intersectionOnUnitSphere);
     }
 }
 
@@ -92,6 +99,7 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
 
     //https://stackoverflow.com/questions/58053885/having-an-issue-with-gladloadgl-im-getting-an-error-saying-it-does-not-take
     int version = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
@@ -104,6 +112,7 @@ int main(void)
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window,mouse_scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     Gui gui_Object;
     gui_Object.imgui_Init(window);
@@ -118,6 +127,8 @@ int main(void)
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     Sphere sphere = Sphere(seed);
+    //hacky way to make sphere available in callback, TODO: change this
+    glfwSetWindowUserPointer(window, &sphere);
     Skybox skybox = Skybox();
 
     /* Loop until the user closes the window */
@@ -128,7 +139,7 @@ int main(void)
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
-        processInput(window, sphere);
+        processInput(window);
 
 
         /*Update Game state*/

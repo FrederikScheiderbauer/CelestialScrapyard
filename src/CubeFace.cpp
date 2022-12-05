@@ -177,7 +177,8 @@ CubeFace::~CubeFace() {
 }
 
 void CubeFace::addCrater(glm::vec3 center) {
-    float craterRadius = 0.2;
+    float craterRadius = 0.2f;
+    float craterDepth = 0.4f;
 //            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
 //            float craterHeight = craterShape * craterRadius;
     //if all vertices are unchanged no update for the GPU is required
@@ -193,8 +194,9 @@ void CubeFace::addCrater(glm::vec3 center) {
             pointOnUnitSphere = pointOnUnitSphere / (1 + displacement);
 
             float craterHeight = 0.f;
-            if (glm::length(pointOnUnitSphere - center) < craterRadius) {
-                craterHeight = -0.2f;
+            float distanceFromCenter = glm::length(pointOnUnitSphere - center);
+            if (distanceFromCenter < craterRadius) {
+                craterHeight = craterDepth * glm::pow((distanceFromCenter * (1/craterRadius)), 2) - craterDepth;
                 changed = true;
             }
 
