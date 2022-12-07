@@ -4,6 +4,7 @@ layout (location = 1) in vec3 normal;
 out vec3 worldNormal;
 out vec3 worldPosition;
 out vec3 TexCoord;
+flat out int inCrater;
 
 uniform mat4 projection;
 uniform mat4 model;
@@ -11,6 +12,8 @@ uniform mat4 view;
 
 void main()
 {
+    inCrater = floatBitsToInt(position.x) & 1;
+
     float texture_U = asin(normal[0])/2 +0.5;
     float texture_V = asin(normal[1])/2 +0.5;
     gl_Position = projection * view * model * vec4(position, 1.0);

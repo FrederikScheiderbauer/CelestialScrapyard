@@ -2,6 +2,7 @@
 in vec3 worldNormal;
 in vec3 worldPosition;
 in vec3 TexCoord;
+flat in int inCrater;
 out vec4 fragColor;
 
 uniform vec3 cameraPos;
@@ -26,16 +27,20 @@ void main()
 
     //TODO interpolate texture at borderlines
     //TODO calculate height at which texture should load dynamically
-    if(length(worldPosition) > 1.5f) {
-        k_d = texture(grassland,vec2(TexCoord)).rgb;
+    if(inCrater == 1) {
+        k_d = vec3(0.5, 0.0, 0.0);
     } else {
-        k_d = texture(water,vec2(TexCoord)).rgb;
-    }
-    if(length(worldPosition) > 1.7f) {
-        k_d = texture(mountain,vec2(TexCoord)).rgb;
-    }
+        if(length(worldPosition) > 1.5f) {
+            k_d = texture(grassland,vec2(TexCoord)).rgb;
+        } else {
+            k_d = texture(water,vec2(TexCoord)).rgb;
+        }
+        if(length(worldPosition) > 1.7f) {
+            k_d = texture(mountain,vec2(TexCoord)).rgb;
+        }
         if(length(worldPosition) > 1.78f) {
-        k_d = texture(snow,vec2(TexCoord)).rgb;
+            k_d = texture(snow,vec2(TexCoord)).rgb;
+        }
     }
 
     vec3 diffuse = k_d * max(0.0, dot(L, N));

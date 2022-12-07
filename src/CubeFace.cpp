@@ -3,6 +3,7 @@
 #include <math.h>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <cstring>
 
 glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
     return glm::cross(a,b);
@@ -60,6 +61,12 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise,std::vector<GLuint> _texture_
             float displacement = noise.getValue(pointOnUnitSphere);
 
             pointOnUnitSphere = (1 + displacement) * pointOnUnitSphere;
+
+            //set least significant bit of pointOnUnitSphere.x to zero to encode that this vertex is not within a crater
+            uint32_t t;
+            std::memcpy(&t, &pointOnUnitSphere.x, sizeof(i));
+            t &= 0xFFFFFFFE;
+            std::memcpy(&pointOnUnitSphere.x, &t, sizeof(i));
 
             int vertexIndex = i * 2;
             vertices[vertexIndex] = pointOnUnitSphere;
@@ -199,17 +206,24 @@ bool CubeFace::addCrater(glm::vec3 center) {
 
             pointOnUnitSphere = pointOnUnitSphere / (1 + displacement);
 
-            float craterHeight = 0.f;
             float distanceFromCenter = glm::length(pointOnUnitSphere - center);
             if (distanceFromCenter < craterRadius) {
-                craterHeight = craterDepth * glm::pow((distanceFromCenter * (1/craterRadius)), 2) - craterDepth;
+                float craterHeight = craterDepth * glm::pow((distanceFromCenter * (1/craterRadius)), 2) - craterDepth;
+
+                float newDisplacement = displacement + craterHeight;
+                pointOnUnitSphere = (1 + newDisplacement) * pointOnUnitSphere;
+
+                //set least significant bit of pointOnUnitSphere.x to one to encode that this vertex is within a crater
+                uint32_t t;
+                std::memcpy(&t, &pointOnUnitSphere.x, sizeof(i));
+                t |= 1u;
+                std::memcpy(&pointOnUnitSphere.x, &t, sizeof(i));
+
+                vertices[vertexIndex] = pointOnUnitSphere;
+                displacements[i] = displacement;
+
                 changed = true;
             }
-
-            float newDisplacement = displacement + craterHeight;
-            pointOnUnitSphere = (1 + newDisplacement) * pointOnUnitSphere;
-            vertices[vertexIndex] = pointOnUnitSphere;
-            displacements[i] = displacement;
         }
     }
 
