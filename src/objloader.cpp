@@ -1,9 +1,10 @@
+#include "objloader.hpp"
 #include "tinyobjloader/tiny_obj_loader.h"
 #include "config/config.h"
 #include <string>
 #include <iostream>
 
-void load_tree_obj_files() {
+void load_basic_obj_files() {
 
 std::string inputfile = (std::string)Project_SOURCE_DIR + "assets/Pine Tree/Pine_1.obj";
 tinyobj::ObjReaderConfig reader_config;
@@ -65,4 +66,9 @@ for (size_t s = 0; s < shapes.size(); s++) {
     shapes[s].mesh.material_ids[f];
   }
 }
+}
+
+
+void load_object(){
+  tinyobj::attrib_t attrib;
 }

@@ -24,7 +24,6 @@ private:
     std::array<int, NUM_EDGE_VERTICES> edgeVertexIndices;
 
     std::vector<GLuint> texture_IDs;
-    GLuint texture_Array_ID;
     GLuint VAO;
     GLuint VBO;
     glm::vec3 localUp;
@@ -33,8 +32,9 @@ private:
 
     glm::vec3 getNormalForVertex(glm::vec3 vertex);
     void computeNormals();
+    void activate_textures();
 public:
-    CubeFace(glm::vec3 localUp, Noise &noise, GLuint texture_Array_ID,std::vector<GLuint> _texture_IDs);
+    CubeFace(glm::vec3 localUp, Noise &noise,std::vector<GLuint> _texture_IDs);
     void uploadToGPU();
     void updateGPUBuffer();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);

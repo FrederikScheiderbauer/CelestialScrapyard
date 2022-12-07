@@ -1,0 +1,4 @@
+#pragma once
+
+#define TINYOBJLOADER_IMPLEMENTATION
+
