@@ -52,6 +52,14 @@ Sphere::Sphere(unsigned long noiseSeed) {
         cubefaces[i]->addEdgeNormals(cubefaces);
         cubefaces[i]->uploadToGPU();
     }
+
+    particle.ColorBegin = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
+    particle.ColorEnd = { 98 / 255.0f, 87 / 255.0f, 60 / 255.0f, 1.0f };
+    particle.SizeBegin = 0.02f, particle.SizeVariation = 0.3f, particle.SizeEnd = 0.0f;
+    particle.LifeTime = 100;
+    particle.Velocity = { 0.0f, 0.0f, 0.0f};
+    //particle.VelocityVariation = { 3.0f, 1.0f };
+    particle.Position = { 0.0f, 0.0f, 0.0f };
 }
 
 void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
@@ -59,9 +67,30 @@ void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
     glUniformMatrix4fv(glGetUniformLocation(sphereProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Sphere::drawParticles(int width, int height) {
+    for (int i = 0; i < 100; ++i) {
+        //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::normal_distribution<float> d;
+        float x = d(gen);
+        float y = d(gen);
+        float z = d(gen);
+        //https://stackoverflow.com/questions/686353/random-float-number-generation
+        float r = 0.9 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.1-0.9)));
+        //point on sphere: https://math.stackexchange.com/questions/87230/picking-random-points-in-the-volume-of-sphere-with-uniform-probability
+        particle.Position = r * (2.f * currentCraterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
+
+        particleSystem.emit(particle);
+    }
+    particleSystem.draw(width, height);
+}
+
 void Sphere::draw(int width, int height) {
     //check if vertex data has been updated
     if (vertexUpdateInProgress) {
+        drawParticles(width, height);
+
         std::chrono::milliseconds waitTime(0);
         if (vertexUpdateFuture.wait_for(waitTime) == std::future_status::ready) {
             auto changed = vertexUpdateFuture.get();
@@ -71,6 +100,7 @@ void Sphere::draw(int width, int height) {
                 }
             }
             vertexUpdateInProgress = false;
+            particleSystem.setAllInactive();
         }
     }
 
@@ -105,6 +135,7 @@ void Sphere::addCrater(glm::vec3 center) {
         return this->recomputeVertexDataAsync(center);
     });
     vertexUpdateInProgress = true;
+    currentCraterCenter = center;
 }
 
 std::array<bool, CUBE_NUM_FACES> Sphere::recomputeVertexDataAsync(glm::vec3 center) {

@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <future>
 #include "camera.hpp"
+#include "ParticleSystem.hpp"
 
 class Sphere
 {
@@ -20,11 +21,17 @@ private:
     GLuint textureID;
     std::future<std::array<bool, CUBE_NUM_FACES>> vertexUpdateFuture;
     bool vertexUpdateInProgress = false;
+    glm::vec3 currentCraterCenter;
+
+    ParticleProps particle;
+    ParticleSystem particleSystem;
 public:
     Sphere(unsigned long noiseSeed);
     void draw(int width, int height);
     void addCrater(glm::vec3 center);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
+
+    void drawParticles(int width, int height);
 };
 
 #endif
