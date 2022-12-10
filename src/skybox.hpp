@@ -3,6 +3,7 @@
 #include <memory>
 #include <array>
 #include "camera.hpp"
+#include "texture.hpp"
 
 class Skybox
 {
@@ -14,5 +15,5 @@ class Skybox
     private:
         std::unique_ptr<ShaderProgram> skyboxShader;
         GLuint skyboxVAO;
-        GLuint skyboxTexture;
+        Texture skyboxTexture;
 };

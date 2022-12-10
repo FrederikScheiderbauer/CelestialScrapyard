@@ -40,8 +40,8 @@ glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
 }
 
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
-CubeFace::CubeFace(glm::vec3 localUp, Noise &noise,std::vector<GLuint> _texture_IDs) {
-    texture_IDs = _texture_IDs;
+CubeFace::CubeFace(glm::vec3 localUp, Noise &noise,std::vector<Texture> _textures) {
+    textures = _textures;
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
@@ -165,13 +165,13 @@ void CubeFace::uploadToGPU() {
 
 void CubeFace::activate_textures(){
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,texture_IDs[0]);
+    glBindTexture(GL_TEXTURE_2D,textures[0].id);
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D,texture_IDs[1]);
+    glBindTexture(GL_TEXTURE_2D,textures[1].id);
     glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D,texture_IDs[2]);
+    glBindTexture(GL_TEXTURE_2D,textures[2].id);
     glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D,texture_IDs[3]);
+    glBindTexture(GL_TEXTURE_2D,textures[3].id);
 }
 
 

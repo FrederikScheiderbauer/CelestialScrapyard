@@ -2,11 +2,11 @@
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "texture.hpp"
 
 class TextureLoader
 {
     public:
-        static unsigned int generate_texture(std::string texturepath);
-        static unsigned int generate_cubemap(std::vector<std::string> cubemap_texturePaths);
-        static unsigned int generate_Texture_Array(std::vector<std::string> array_texturePaths);
+        static Texture generate_texture(std::string texturepath);
+        static Texture generate_cubemap(std::vector<std::string> cubemap_texturePaths);
 };

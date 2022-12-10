@@ -43,7 +43,7 @@ void main()
         if(distance_To_Planet_Center > water_Level) {
             distance_To_Biome_Edge = distance_To_Planet_Center - water_Level;
             interpolation_degree = distance_To_Biome_Edge / ocean_interpolation_width;
-            if(interpolation_degree <= 0.8f) {
+            if(interpolation_degree <= 0.7f) {
                 k_d = mix(texture(water,TexCoord).rgb,texture(grassland,TexCoord).rgb, interpolation_degree);
             } else {
             k_d = texture(grassland,TexCoord).rgb;
@@ -54,7 +54,7 @@ void main()
         if(distance_To_Planet_Center > mountain_Height) {
             distance_To_Biome_Edge = distance_To_Planet_Center - mountain_Height;
             interpolation_degree = distance_To_Biome_Edge / mountain_interpolation_width;
-            if(interpolation_degree <= 1.0f) {
+            if(interpolation_degree <= 0.9f) {
                 k_d = mix(texture(grassland,TexCoord).rgb,texture(mountain,TexCoord).rgb, interpolation_degree);
             } else {
             k_d = texture(mountain,TexCoord).rgb;

@@ -12,6 +12,7 @@
 #include "config/config.h"
 #include "PerlinNoise/PerlinNoise.hpp"
 #include "texture_loader.hpp"
+#include "texture.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/sphere.vert", (std::string)Project_SOURCE_DIR + "/src/shader/sphere.frag"};
 
@@ -23,29 +24,32 @@ Sphere::Sphere(unsigned long noiseSeed) {
     //generate planet Textures
         //generate grassland texture
         std::string grassland_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
-        GLuint grassland_texture_ID = TextureLoader::generate_texture(grassland_path);
+        //GLuint grassland_texture_ID = TextureLoader::generate_texture(grassland_path);
+        Texture grassland_texture = TextureLoader::generate_texture(grassland_path);
 
         std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/mountain texture.png";
-        GLuint mountain_texture_ID = TextureLoader::generate_texture(mountain_path);
+        //GLuint mountain_texture_ID = TextureLoader::generate_texture(mountain_path);
+        Texture mountain_texture = TextureLoader::generate_texture(mountain_path);
 
         std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
-        GLuint snow_texture_ID = TextureLoader::generate_texture(snow_path);
+        //GLuint snow_texture_ID = TextureLoader::generate_texture(snow_path);
+        Texture snow_texture = TextureLoader::generate_texture(snow_path);
 
         std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
-        GLuint water_texture_ID = TextureLoader::generate_texture(water_path);
-
+        //GLuint water_texture_ID = TextureLoader::generate_texture(water_path);
+        Texture water_texture = TextureLoader::generate_texture(water_path);
 
     sphereProgram->use(); // don't forget to activate the shader before setting uniforms! 
     glUniform1i(glGetUniformLocation(sphereProgram->name, "grassland"), 1);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "mountain"), 3);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "snow"), 4);
-    std::vector<GLuint> texture_IDs = {grassland_texture_ID,water_texture_ID,mountain_texture_ID, snow_texture_ID};
+    std::vector<Texture> textures = {grassland_texture,water_texture,mountain_texture, snow_texture};
 
     Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, noise, texture_IDs);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, noise, textures);
     }
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
