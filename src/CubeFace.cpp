@@ -9,27 +9,6 @@ glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b) {
     return glm::cross(a,b);
 }
 
-float cavityShape(float x) {
-    return x * x - 1;
-}
-
-float rimShape(float x, float rimWidth, float rimSteepness) {
-    x = std::abs(x) - 1 - rimWidth;
-    return rimSteepness * x * x;
-}
-
-float smoothMin(float a, float b, float k) {
-    float h = glm::clamp((b - a + k) / (2 * k), 0.f, 1.f);
-    return a * h + b * (1 - h) - k * h * (1 - h);
-}
-
-float computeCraterShape(float x) {
-    float rimWidth = 0.7;
-    float rimSteepness = 0.42;
-    float floorHeight = -2.f;
-    return smoothMin(smoothMin(cavityShape(x), rimShape(x, rimWidth, rimSteepness), 3), floorHeight, -3);
-}
-
 //http://mathproofs.blogspot.com/2005/07/mapping-cube-to-sphere.html
 glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
     glm::vec3 squared = glm::pow(pointOnCube, glm::vec3(2.f));
@@ -59,7 +38,6 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise,std::vector<Texture> _texture
             glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
             float displacement = noise.getValue(pointOnUnitSphere);
-
             pointOnUnitSphere = (1 + displacement) * pointOnUnitSphere;
 
             //set least significant bit of pointOnUnitSphere.x to zero to encode that this vertex is not within a crater
@@ -192,8 +170,6 @@ CubeFace::~CubeFace() {
 bool CubeFace::addCrater(glm::vec3 center) {
     float craterRadius = 0.2f;
     float craterDepth = 0.4f;
-//            float craterShape = computeCraterShape(glm::length(pointOnUnitSphere - craterCenter) / craterRadius);
-//            float craterHeight = craterShape * craterRadius;
     //if all vertices are unchanged no update for the GPU is required
     bool changed = false;
     for (int y = 0; y < RESOLUTION; y++) {
