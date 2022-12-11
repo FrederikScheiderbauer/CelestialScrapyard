@@ -23,59 +23,43 @@ const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 Skybox::Skybox()
 {
     skyboxShader = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    
     float skyboxVertices[] = {
         // positions          
         -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
         1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
         1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
         -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
         -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        1.0f, -1.0f, -1.0f,
         1.0f, -1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f
+        1.0f,  1.0f,  1.0f
+    };
+    unsigned int skyboxIndices[] = {
+        0,1,2,
+        2,3,0,
+        4,1,0,
+        0,5,4,
+        2,6,7,
+        7,3,2,
+        4,5,7,
+        7,6,4,
+        0,3,7,
+        7,5,0,
+        1,4,2,
+        2,4,6
     };
 
 
-    unsigned int skyboxVBO;
+    unsigned int skyboxVBO, EBO;
     glGenVertexArrays(1,&skyboxVAO);
     glGenBuffers(1,&skyboxVBO);
+    glGenBuffers(1,&EBO);
     glBindVertexArray(skyboxVAO);
     glBindBuffer(GL_ARRAY_BUFFER,skyboxVBO);
-    glBufferData(GL_ARRAY_BUFFER,sizeof(skyboxVertices),&skyboxVertices,GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(skyboxVertices),skyboxVertices,GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), skyboxIndices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
 
@@ -102,7 +86,7 @@ void Skybox::draw(int width, int height)
     glBindVertexArray(skyboxVAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP,skyboxTexture.id);
-    glDrawArrays(GL_TRIANGLES,0,36);
+    glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
     glDepthFunc(GL_LESS);
 

@@ -7,6 +7,6 @@
 class TextureLoader
 {
     public:
-        static Texture generate_texture(std::string texturepath);
+        static Texture generate_diffuse_texture(std::string texturepath);
         static Texture generate_cubemap(std::vector<std::string> cubemap_texturePaths);
 };

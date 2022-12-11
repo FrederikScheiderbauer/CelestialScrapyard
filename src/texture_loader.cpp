@@ -8,7 +8,7 @@
 #include "texture_loader.hpp"
 
 //https://learnopengl.com/Getting-started/Textures
-Texture TextureLoader::generate_texture(std::string texturePath)
+Texture TextureLoader::generate_diffuse_texture(std::string texturePath)
 {
     Texture texture;
     glGenTextures(1,&texture.id);
@@ -31,8 +31,8 @@ Texture TextureLoader::generate_texture(std::string texturePath)
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //Texture texture;

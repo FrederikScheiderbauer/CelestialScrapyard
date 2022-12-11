@@ -37,6 +37,8 @@ void main()
     float distance_To_Planet_Center = length(worldPosition);
     float distance_To_Biome_Edge;
     float interpolation_degree;
+
+
     if(inCrater == 1) {
         k_d = vec3(0.5, 0.0, 0.0);
     } else {

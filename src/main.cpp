@@ -1,8 +1,8 @@
+#include <glad/glad.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,6 +15,9 @@
 #include "gui.hpp"
 #include "Sphere.hpp"
 #include "camera.hpp"
+#include "objloader.hpp"
+#include <config/config.h>
+#include "model.hpp"
 
 using namespace std;
 
@@ -131,6 +134,11 @@ int main(void)
     glfwSetWindowUserPointer(window, &sphere);
     Skybox skybox = Skybox();
 
+    string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
+    string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
+
+    Model tree_model = Model(obj_file,material_directory);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -152,6 +160,24 @@ int main(void)
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
+        //render 1 tree;
+        /*
+        glBegin(GL_TRIANGLES);
+        for (auto triangle = triangles.begin(); triangle != triangles.end(); ++triangle) {
+        glNormal3f(vertnormals[triangle->normals[0]].x, vertnormals[triangle->normals[0]].y, vertnormals[triangle->normals[0]].z);
+        glVertex3f(vertices[triangle->vertices[0]].x, vertices[triangle->vertices[0]].y, vertices[triangle->vertices[0]].z);
+
+        glNormal3f(vertnormals[triangle->normals[1]].x, vertnormals[triangle->normals[1]].y, vertnormals[triangle->normals[1]].z);
+        glVertex3f(vertices[triangle->vertices[1]].x, vertices[triangle->vertices[1]].y, vertices[triangle->vertices[1]].z);
+
+        glNormal3f(vertnormals[triangle->normals[2]].x, vertnormals[triangle->normals[2]].y, vertnormals[triangle->normals[2]].z);
+        glVertex3f(vertices[triangle->vertices[2]].x, vertices[triangle->vertices[2]].y, vertices[triangle->vertices[2]].z);
+        }
+        glEnd();
+        */
+        //
+
+        //tree_model.draw(current_width, current_height);
         sphere.draw(current_width, current_height);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
