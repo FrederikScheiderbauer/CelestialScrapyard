@@ -160,25 +160,8 @@ int main(void)
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
-        //render 1 tree;
-        /*
-        glBegin(GL_TRIANGLES);
-        for (auto triangle = triangles.begin(); triangle != triangles.end(); ++triangle) {
-        glNormal3f(vertnormals[triangle->normals[0]].x, vertnormals[triangle->normals[0]].y, vertnormals[triangle->normals[0]].z);
-        glVertex3f(vertices[triangle->vertices[0]].x, vertices[triangle->vertices[0]].y, vertices[triangle->vertices[0]].z);
-
-        glNormal3f(vertnormals[triangle->normals[1]].x, vertnormals[triangle->normals[1]].y, vertnormals[triangle->normals[1]].z);
-        glVertex3f(vertices[triangle->vertices[1]].x, vertices[triangle->vertices[1]].y, vertices[triangle->vertices[1]].z);
-
-        glNormal3f(vertnormals[triangle->normals[2]].x, vertnormals[triangle->normals[2]].y, vertnormals[triangle->normals[2]].z);
-        glVertex3f(vertices[triangle->vertices[2]].x, vertices[triangle->vertices[2]].y, vertices[triangle->vertices[2]].z);
-        }
-        glEnd();
-        */
-        //
-
-        //tree_model.draw(current_width, current_height);
-        sphere.draw(current_width, current_height);
+        tree_model.draw(current_width, current_height);
+        //sphere.draw(current_width, current_height);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 

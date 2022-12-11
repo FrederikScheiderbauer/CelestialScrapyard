@@ -13,6 +13,7 @@ Model::Model(std::string obj_file, std::string materials_directory){
     load_obj(obj_file,materials_directory,model_vertices,model_vertices_indices,model_normals,model_normals_indices);
     //indices = new int[NUM_INDICES];
 
+    float* a = &model_vertices[0];
     // ------------------------------------------------------------------
     //float vertices2[model_vertices.length()];
     float vertices[] = {
@@ -21,7 +22,17 @@ Model::Model(std::string obj_file, std::string materials_directory){
         -0.5f, -0.5f, 0.0f,  // bottom left
         -0.5f,  0.5f, 0.0f   // top left 
     };
+    std::vector<float> vertices2 = {
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left 
+    };
     unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
+    };
+    std::vector<unsigned int> indices2 = {  // note that we start from 0!
         0, 1, 3,  // first Triangle
         1, 2, 3   // second Triangle
     };
@@ -36,10 +47,10 @@ Model::Model(std::string obj_file, std::string materials_directory){
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * model_vertices.size(), &model_vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * model_vertices_indices.size(), &model_vertices_indices[0], GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -56,33 +67,13 @@ Model::Model(std::string obj_file, std::string materials_directory){
 
 }
 
-/*
-    GLuint EBO;
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    glGenVertexArrays(1, &VAO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, NUM_VERTICES * sizeof(glm::vec3), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, NUM_INDICES * sizeof(int), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    */
 void Model::setUniformMatrix(glm::mat4 matrix, std::string type)
 {
     glUniformMatrix4fv(glGetUniformLocation(treeShader->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void Model::draw(int width,int height) {
-    /*
+    
     Camera* camera = Camera::get_Active_Camera();
     treeShader->use();
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
@@ -99,11 +90,11 @@ void Model::draw(int width,int height) {
     //Camera* camera2 = Camera::get_Active_Camera();
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
-    */
+    
 treeShader->use();
 glBindVertexArray(VAO);
 //glDrawArrays(GL_TRIANGLES, 0, 3);
-glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+glDrawElements(GL_TRIANGLES, 486, GL_UNSIGNED_INT, 0);
 glBindVertexArray(0);
 
 }
