@@ -10,7 +10,7 @@
 
 struct ParticleProps
 {
-    glm::vec3 Position;
+    glm::vec3 Position, CraterNormal;
     glm::vec3 Velocity, VelocityVariation;
     glm::vec4 ColorBegin, ColorEnd;
     float SizeBegin, SizeEnd, SizeVariation;
@@ -28,9 +28,10 @@ public:
 private:
     struct Particle
     {
-        glm::vec3 Position;
+        glm::vec3 Position, RotationAxis;
         glm::vec3 Velocity;
         glm::vec4 ColorBegin, ColorEnd;
+        float Rotation;
         float SizeBegin, SizeEnd;
 
         int LifeTime;

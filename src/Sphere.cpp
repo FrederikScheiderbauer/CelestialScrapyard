@@ -80,6 +80,7 @@ void Sphere::drawParticles(int width, int height) {
         float r = 0.9 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.1-0.9)));
         //point on sphere: https://math.stackexchange.com/questions/87230/picking-random-points-in-the-volume-of-sphere-with-uniform-probability
         particle.Position = r * (2.f * currentCraterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
+        particle.CraterNormal = glm::normalize(currentCraterCenter);
 
         particleSystem.emit(particle);
     }
