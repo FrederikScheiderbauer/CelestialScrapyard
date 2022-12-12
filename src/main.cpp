@@ -53,7 +53,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    }   
+    }
 
 }
 /*
@@ -63,9 +63,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
         lastY = ypos;
         firstMouse = false;
     }
-  
+
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; 
+    float yoffset = lastY - ypos;
     lastX = xpos;
     lastY = ypos;
 }
@@ -73,7 +73,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 //https://learnopengl.com/Getting-started/Hello-Window
 void processInput(GLFWwindow *window)
 {
-    
+
     auto camera = LockedCamera::get_Active_Camera();
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
