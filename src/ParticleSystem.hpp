@@ -45,6 +45,8 @@ private:
     GLuint m_QuadVA = 0;
     std::unique_ptr<ShaderProgram> m_ParticleShader;
     GLint m_ParticleShaderColor;
+    GLint ParticleShaderPosition;
+    GLint ParticleShaderSize;
 
     void setUniformMatrix(glm::mat4 matrix, std::string type);
 };

@@ -160,8 +160,8 @@ int main(void)
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
-        tree_model.draw(current_width, current_height);
-        //sphere.draw(current_width, current_height);
+        //tree_model.draw(current_width, current_height);
+        sphere.draw(current_width, current_height);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
