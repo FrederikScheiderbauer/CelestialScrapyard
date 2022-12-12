@@ -8,6 +8,7 @@
 #include <memory>
 #include "PerlinNoise/PerlinNoise.hpp"
 #include "Noise.hpp"
+#include "texture.hpp"
 
 #define RESOLUTION 200
 //vertex position stored interleaved with vertex normal -> two vec3
@@ -23,7 +24,7 @@ private:
     std::array<float, NUM_VERTICES / 2> displacements;
     std::array<int, NUM_EDGE_VERTICES> edgeVertexIndices;
 
-    std::vector<GLuint> texture_IDs;
+    std::vector<Texture> textures;
     GLuint VAO;
     GLuint VBO;
     glm::vec3 localUp;
@@ -34,7 +35,7 @@ private:
     void computeNormals();
     void activate_textures();
 public:
-    CubeFace(glm::vec3 localUp, Noise &noise,std::vector<GLuint> _texture_IDs);
+    CubeFace(glm::vec3 localUp, Noise &noise,std::vector<Texture> _textures);
     void uploadToGPU();
     void updateGPUBuffer();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);

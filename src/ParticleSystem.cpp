@@ -87,7 +87,9 @@ void ParticleSystem::draw(int width, int height) {
         float size = glm::lerp(particle.SizeEnd, particle.SizeBegin, life);
 
         // Render
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), { particle.Position.x, particle.Position.y, particle.Position.z }) * glm::scale(glm::mat4(1.0f), { size, size, size });
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), { particle.Position.x, particle.Position.y, particle.Position.z })
+                * glm::rotate(glm::mat4(1.0f), particle.Rotation, particle.RotationAxis)
+                * glm::scale(glm::mat4(1.0f), { size, size, size });
         setUniformMatrix(model,"model");
 
         glUniform4fv(m_ParticleShaderColor, 1, glm::value_ptr(color));
@@ -101,6 +103,9 @@ void ParticleSystem::emit(const ParticleProps& particleProps)
     Particle& particle = m_ParticlePool[m_PoolIndex];
     particle.Active = true;
     particle.Position = particleProps.Position;
+    particle.RotationAxis = glm::vec3(particleProps.CraterNormal.y, particleProps.CraterNormal.x, particleProps.CraterNormal.z);
+    //https://stackoverflow.com/questions/686353/random-float-number-generation
+    particle.Rotation = static_cast<float> (rand()) / static_cast <float> (RAND_MAX) * 2.0f * glm::pi<float>();
 
     // Velocity
     particle.Velocity = particleProps.Velocity;

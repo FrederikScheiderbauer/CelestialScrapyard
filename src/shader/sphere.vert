@@ -21,5 +21,4 @@ void main()
     worldPosition = vec3(model * vec4(position, 1.0));
     TexCoord = vec2(position);
 
-    //TexCoord = vec3(vec2(position),0);
 }
