@@ -14,7 +14,7 @@ const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 ParticleSystem::ParticleSystem()
 {
-    m_ParticlePool.resize(1000);
+    m_ParticlePool.resize(10000);
 
     float vertices[] = {
             -0.5f, -0.5f, 0.0f,
