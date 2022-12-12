@@ -68,6 +68,9 @@ void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
 }
 
 void Sphere::drawParticles(int width, int height) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
     for (int i = 0; i < 100; ++i) {
         //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
         std::random_device rd;
@@ -85,6 +88,7 @@ void Sphere::drawParticles(int width, int height) {
         particleSystem.emit(particle);
     }
     particleSystem.draw(width, height);
+    glDisable(GL_BLEND);
 }
 
 void Sphere::draw(int width, int height) {
