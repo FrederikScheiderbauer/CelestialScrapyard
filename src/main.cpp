@@ -43,7 +43,33 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         sphere->addCrater(intersectionOnUnitSphere);
     }
 }
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        if (glfwRawMouseMotionSupported()) {
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        }
+    }
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }   
 
+}
+/*
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+  
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; 
+    lastX = xpos;
+    lastY = ypos;
+}
+*/
 //https://learnopengl.com/Getting-started/Hello-Window
 void processInput(GLFWwindow *window)
 {
@@ -67,6 +93,9 @@ void processInput(GLFWwindow *window)
     {
         camera->handle_key_event(GLFW_KEY_D);
     }
+    if (glfwRawMouseMotionSupported()) {
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    }
 }
 
 const int WIDTH = 512;
@@ -87,6 +116,8 @@ int main(void)
     float speed = 0.3f;
 
     LockedCamera camera = LockedCamera(first_camera_Position,first_camera_Target,speed);
+    FreeFlightCamera camera2 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed);
+    camera.set_As_Active_Camera();
 
     if (!window)
     {
@@ -113,9 +144,16 @@ int main(void)
 
     glViewport(0,0,WIDTH,HEIGHT);
 
+    bool firstMouse = true;
+    float lastX;
+    float lastY;
+
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window,mouse_scroll_callback);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    //glfwSetCursorPosCallback(window, mouse_callback);
 
     Gui gui_Object;
     gui_Object.imgui_Init(window);
@@ -138,6 +176,7 @@ int main(void)
     string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
 
     Model tree_model = Model(obj_file,material_directory);
+    glm::vec3 planet_info = glm::vec3(1.4f,1.7f,1.78f); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -160,13 +199,13 @@ int main(void)
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
-        tree_model.draw(current_width, current_height);
-        //sphere.draw(current_width, current_height);
+        //tree_model.draw(current_width, current_height);
+        sphere.draw(current_width, current_height,planet_info);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
-        gui_Object.imgui_Debug_Window(&is_Wireframe);
+        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info);
 
         gui_Object.imgui_Render();
 

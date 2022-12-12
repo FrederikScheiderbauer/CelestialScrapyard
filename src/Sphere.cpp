@@ -18,6 +18,13 @@ const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
+struct Planet_Info{
+    float water_Level;
+    float mountain_Height;
+    float snow_peak_Height;
+};
+
+
 Sphere::Sphere(unsigned long noiseSeed) {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
@@ -87,7 +94,7 @@ void Sphere::drawParticles(int width, int height) {
     particleSystem.draw(width, height);
 }
 
-void Sphere::draw(int width, int height) {
+void Sphere::draw(int width, int height, glm::vec3 &planet_info) {
     //check if vertex data has been updated
     if (vertexUpdateInProgress) {
         drawParticles(width, height);
@@ -125,6 +132,12 @@ void Sphere::draw(int width, int height) {
     setUniformMatrix(view,"view");
 
     glUniform3fv(glGetUniformLocation(sphereProgram->name, "cameraPos"), 1, &cameraPos[0]);
+
+
+    //
+    glUniform3fv(glGetUniformLocation(sphereProgram->name, "planet_info"), 1,&planet_info[0]);
+
+    //
 
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->draw();

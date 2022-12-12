@@ -93,6 +93,18 @@ void load_obj(std::string obj_file,std::string materials_directory,std::vector<f
     */
 }
 
+void load_materials(std::vector<tinyobj::material_t> objmaterials, std::vector<Material> materials) {
+  unsigned int index = 0;
+  for ( auto material : objmaterials) { 
+    std::array<float,3> ambient = {material.ambient[0],material.ambient[1],material.ambient[2]};
+    std::array<float,3> diffuse = {material.diffuse[0],material.diffuse[1],material.diffuse[2]};
+    std::array<float,3> specular = {material.specular[0],material.specular[1],material.specular[2]};
+    materials.push_back(Material(material.name,index,ambient,diffuse,specular));
+    index++;
+  }
+
+}
+
 void load_obj(std::string obj_file,std::string materials_directory,std::vector<float> &vertices, std::vector<unsigned int> &vertex_indices, std::vector<glm::vec3> & vertnormals,std::vector<unsigned int> &normals_indices){
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;
@@ -118,12 +130,23 @@ void load_obj(std::string obj_file,std::string materials_directory,std::vector<f
   }
   //
     //convert the vertices into our format
-    components_to_vector(attrib.vertices, vertices);
+  components_to_vector(attrib.vertices, vertices);
+
 
     //convert the vertex normals into our format
-    components_to_vec3s(attrib.normals, vertnormals);
+   components_to_vec3s(attrib.normals, vertnormals);
+
   indices_to_vector(shapes[0],vertex_indices,normals_indices);
 
+  std::vector<Material> object_materials;
+  unsigned int index = 0;
+  for ( auto material : objmaterials) { 
+    std::array<float,3> ambient = {material.ambient[0],material.ambient[1],material.ambient[2]};
+    std::array<float,3> diffuse = {material.diffuse[0],material.diffuse[1],material.diffuse[2]};
+    std::array<float,3> specular = {material.specular[0],material.specular[1],material.specular[2]};
+    object_materials.push_back(Material(material.name,index,ambient,diffuse,specular));
+    index++;
+  }
   /*
     for(auto shape = shapes.begin(); shape < shapes.end(); ++shape) {
       indices_to_vector(*shape,vertex_indices,normals_indices);

@@ -48,7 +48,7 @@ class LockedCamera : public Camera
         bool handle_key_event(int key) override;
         bool handle_scroll_event(float xoffset, float yoffset) override;
 };
-/*
+
 class FreeFlightCamera : public Camera {
     private:
         void update_Camera_State() override;
@@ -61,4 +61,3 @@ class FreeFlightCamera : public Camera {
         bool handle_key_event(int key) override;
         bool handle_scroll_event(float xoffset, float yoffset) override;
 };
-*/

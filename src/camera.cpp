@@ -138,26 +138,94 @@ bool LockedCamera::handle_mouse_motion_event(float xoffset, float yoffset) {
     return false;
 }
 //FreeFlight Camera Implementation
-/*
-FreeFlightCamera::FreeFlightCamera(glm::vec3 _cameraPos,glm::vec3 _camera_Front,float _speed) {
-    cameraPos = _cameraPos;
-    camera_Front = _camera_Front;
-    camera_Speed = _speed;
+
+FreeFlightCamera::FreeFlightCamera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target, float speed)
+{
+
+    cameraPos = first_camera_Position;
+    cameraTarget = first_camera_Target;
+    camera_Speed = speed;
+    active_camera = this;
+    pitch;
+    yaw;
+    camera_Front = glm::normalize(cameraTarget - cameraPos);
     viewMatrix = glm::lookAt(cameraPos,cameraPos + camera_Front,get_Camera_Up());
 }
 
-void FreeFlightCamera::update_Camera_State() {
-
+void FreeFlightCamera::update_Camera_State()
+{
+viewMatrix = glm::lookAt(cameraPos,cameraPos + camera_Front,get_Camera_Up());
 }
 
-bool FreeFlightCamera::handle_key_event(int key) {
+
+
+bool FreeFlightCamera::handle_key_event(int key)
+{
+    glm::vec3 cameraRight = glm::normalize(glm::cross(up, camera_Front));
+    bool handled = false;
+    if( key == GLFW_KEY_UP || key == GLFW_KEY_W)
+    {
+        cameraPos += camera_Speed  * 0.1f * camera_Front;
+        handled = true;
+    }
+    if( key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
+    {
+        cameraPos -= camera_Speed  * 0.1f * camera_Front;
+        handled = true;
+    }
+    if( key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
+    {
+        cameraPos += camera_Speed  * 0.1f * cameraRight;
+        handled = true;
+    }
+    if( key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+    {
+        cameraPos -= camera_Speed  * 0.1f * cameraRight;
+        handled = true;
+    }
+    if ( !handled){return false;}
+    update_Camera_State();
+    return handled;
+}
+
+bool FreeFlightCamera::handle_scroll_event(float xoffset, float yoffset) {
+
     return false;
 }
 
-bool handle_scroll_event(float xoffset, float yoffset) {
+
+
+bool FreeFlightCamera::handle_mouse_motion_event(float xoffset, float yoffset) {
+    /*
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+  
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; 
+    lastX = xpos;
+    lastY = ypos;
+    */
+   
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    camera_Front = glm::normalize(direction);
     return false;
 }
-bool handle_mouse_motion_event(float xoffset, float yoffset) {
-    return false;
-}
-*/

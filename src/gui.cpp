@@ -4,6 +4,7 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+
 void Gui::imgui_Frame_Setup() 
 {
         ImGui_ImplOpenGL3_NewFrame();
@@ -20,10 +21,17 @@ void Gui::imgui_Init(GLFWwindow* window)
     ImGui_ImplGlfw_InitForOpenGL(window,true);
     ImGui_ImplOpenGL3_Init("#version 460");
 }
-void Gui::imgui_Debug_Window(bool* is_Wireframe)
+void Gui::imgui_Debug_Window(bool* is_Wireframe, glm::vec3 &planet_info)
 {
+    float water_level = 0.5f;
+    float mountain_start = 0.5f;
+    float snow_peak_start = 0.5f;
     ImGui::Begin("Debug Window");
     if(ImGui::Checkbox("Wireframe Mode",is_Wireframe)) {}
+    ImGui::SliderFloat("Water level",&planet_info[0],1.0f,2.0f);
+    ImGui::SliderFloat("Mountain start",&planet_info[1],1.0f,2.0f);
+    ImGui::SliderFloat("Snow peaks",&planet_info[2],1.0f,2.0f);
+
     ImGui::End();
 }
 void Gui::imgui_Test_Window()
