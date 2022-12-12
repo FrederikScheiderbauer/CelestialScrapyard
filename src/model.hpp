@@ -11,18 +11,33 @@
 #include <memory>
 #include <array>
 
+
+
 class Model{
     public:
         Model(std::string obj_file, std::string materials_directory);
-        void draw(int width,int heigh);
+        void draw(int width,int height);
+        void draw_at_coordinates(float x, float y, float z, int width, int height);
 
     private:
         unsigned int VAO;
-        std::unique_ptr<ShaderProgram> treeShader;
-        std::vector<float> model_vertices;
+        std::unique_ptr<ShaderProgram> modelShader;
         std::vector<unsigned int> model_vertices_indices;
         std::vector<glm::vec3> model_normals;
         std::vector<unsigned int> model_normals_indices;
         std::vector<Triangle> model_triangles;
         void setUniformMatrix(glm::mat4 matrix, std::string type);
+};
+
+class Tree : public Model {
+    private:
+        //Mesh
+        //materials;
+        //Textures & Colors;
+        glm::vec3 position;//position
+    public:
+        //void draw(int width, int height) override;
+
+
+
 };

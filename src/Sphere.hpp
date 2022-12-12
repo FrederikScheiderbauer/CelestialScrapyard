@@ -27,7 +27,7 @@ private:
     ParticleSystem particleSystem;
 public:
     Sphere(unsigned long noiseSeed);
-    void draw(int width, int height);
+    void draw(int width, int height, glm::vec3 &planet_info);
     void addCrater(glm::vec3 center);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
 

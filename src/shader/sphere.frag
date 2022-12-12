@@ -15,9 +15,12 @@ const vec3 k_s = vec3(0.1f);
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
 
-const float water_Level = 1.4f;
-const float mountain_Height = 1.7f;
-const float snow_peak_Height = 1.78f;
+
+uniform vec3 planet_info;
+
+const float water_Level = planet_info[0];
+const float mountain_Height = planet_info[1];
+const float snow_peak_Height = planet_info[2];
 const float ocean_interpolation_width = 0.1f;
 const float mountain_interpolation_width = 0.03f;
 const float snow_interpolation_width = 0.01f;

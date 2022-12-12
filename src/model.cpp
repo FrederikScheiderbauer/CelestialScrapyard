@@ -8,34 +8,12 @@ const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 Model::Model(std::string obj_file, std::string materials_directory){
-    std::vector<float> model_vertices2;
-    treeShader = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    load_obj(obj_file,materials_directory,model_vertices,model_vertices_indices,model_normals,model_normals_indices);
-    //indices = new int[NUM_INDICES];
 
-    float* a = &model_vertices[0];
-    // ------------------------------------------------------------------
-    //float vertices2[model_vertices.length()];
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
-    std::vector<float> vertices2 = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
-    std::vector<unsigned int> indices2 = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
+    std::vector<float> model_vertices;
+    modelShader = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+
+    load_obj(obj_file,materials_directory,model_vertices,model_vertices_indices,model_normals,model_normals_indices);
+
 
 
     unsigned int VBO,EBO;
@@ -69,32 +47,33 @@ Model::Model(std::string obj_file, std::string materials_directory){
 
 void Model::setUniformMatrix(glm::mat4 matrix, std::string type)
 {
-    glUniformMatrix4fv(glGetUniformLocation(treeShader->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+    glUniformMatrix4fv(glGetUniformLocation(modelShader->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
+
+void Model::draw_at_coordinates(float x, float y, float z, int width, int height) {
+
+}
+
 
 void Model::draw(int width,int height) {
     
     Camera* camera = Camera::get_Active_Camera();
-    treeShader->use();
+    modelShader->use();
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
     setUniformMatrix(proj,"projection");
 
     glm::mat4 model = glm::mat4(1.0f);
-    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f)); 
     setUniformMatrix(model,"model");
 
     glm::mat4 view = glm::mat4(1.0f);
 
-    //glm::vec3 cameraPos = camera->get_Camera_Position();
     view = camera->get_View_Matrix();
-    //Camera* camera2 = Camera::get_Active_Camera();
-    //view = camera2->get_View_Matrix();
+
     setUniformMatrix(view,"view");
     
-treeShader->use();
-glBindVertexArray(VAO);
-//glDrawArrays(GL_TRIANGLES, 0, 3);
-glDrawElements(GL_TRIANGLES, 486, GL_UNSIGNED_INT, 0);
-glBindVertexArray(0);
+    modelShader->use();
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, model_vertices_indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 
 }

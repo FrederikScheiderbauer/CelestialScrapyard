@@ -2,6 +2,9 @@
 
 #include "GLFW/glfw3.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Gui 
 {
@@ -14,5 +17,5 @@ class Gui
         void imgui_Camera_Control_Window(bool* is_Locked_Camera,bool* is_Free_Camera, float* current_speed);
         void imgui_Close_Game_Button();
         void imgui_FPS_Counter();
-        void imgui_Debug_Window(bool* is_Wireframe);
+        void imgui_Debug_Window(bool* is_Wireframe, glm::vec3 &planet_info);
 };
