@@ -15,17 +15,16 @@ Noise::Noise(unsigned long seed, Noise::Parameters parameters) {
 float Noise::getValue(glm::vec3 point) {
     switch (this->parameters.type) {
         case SIMPLE: {
-            float value = perlin.normalizedOctave3D_01(point.x, point.y, point.z, 8, 0.5f);
+            float value = perlin.normalizedOctave3D_01(point.x, point.y, point.z, 8, parameters.persistence);
             //map from [0,1] to [0.6, 1.4]
             value = (0.8f * value) + 0.6;
             return value;
         }
         case AMPLIFIED: {
-            float value = 1.0f - glm::abs(perlin.normalizedOctave3D(point.x, point.y, point.z, 8, 0.25f));
+            float value = 1.0f - glm::abs(perlin.normalizedOctave3D(point.x, point.y, point.z, 8, parameters.persistence));
             //make peaks more pronounced
-            value = glm::pow(value, 1.5f);
-            //value *= 0.8f;
-            value *= this->parameters.strength;
+            value = glm::pow(value, parameters.amplification);
+            value *= parameters.strength;
             return value;
         }
     }
