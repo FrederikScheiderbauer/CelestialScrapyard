@@ -21,6 +21,12 @@
 
 using namespace std;
 
+
+//mouse configuration; TODO package nicer
+bool firstMouse = true;
+float lastX = 300.0f;
+float lastY = 200.0f;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -54,47 +60,52 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
-
 }
-/*
+
+
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    if (firstMouse) {
+    if(glfwGetInputMode(window, GLFW_CURSOR) ==GLFW_CURSOR_DISABLED) {
+    if (glfwRawMouseMotionSupported()) {;
+        Camera *camera = Camera::get_Active_Camera();
+        if (firstMouse) {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos;
         lastX = xpos;
         lastY = ypos;
-        firstMouse = false;
+        camera->handle_mouse_motion_event(xoffset,yoffset);
+    } else {
+        std::cout << "hello" << std::endl;
     }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
+    }
 }
-*/
+
 //https://learnopengl.com/Getting-started/Hello-Window
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, float deltaTime)
 {
 
-    auto camera = LockedCamera::get_Active_Camera();
+    auto camera = Camera::get_Active_Camera();
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        camera->handle_key_event(GLFW_KEY_W);
+        camera->handle_key_event(GLFW_KEY_W, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        camera->handle_key_event(GLFW_KEY_S);
+        camera->handle_key_event(GLFW_KEY_S, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        camera->handle_key_event(GLFW_KEY_A);
+        camera->handle_key_event(GLFW_KEY_A, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        camera->handle_key_event(GLFW_KEY_D);
-    }
-    if (glfwRawMouseMotionSupported()) {
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        camera->handle_key_event(GLFW_KEY_D, deltaTime);
     }
 }
 
@@ -113,11 +124,11 @@ int main(void)
     window = glfwCreateWindow(WIDTH, WIDTH, "Hello World", NULL, NULL);
     glm::vec3 first_camera_Position = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 first_camera_Target = glm::vec3(0.0,0.0,0.0);
-    float speed = 0.3f;
+    float speed = 1.0f;
 
     LockedCamera camera = LockedCamera(first_camera_Position,first_camera_Target,speed);
     FreeFlightCamera camera2 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed);
-    camera.set_As_Active_Camera();
+    //camera.set_As_Active_Camera();
 
     if (!window)
     {
@@ -144,16 +155,13 @@ int main(void)
 
     glViewport(0,0,WIDTH,HEIGHT);
 
-    bool firstMouse = true;
-    float lastX;
-    float lastY;
 
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window,mouse_scroll_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
-    //glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
 
     Gui gui_Object;
     gui_Object.imgui_Init(window);
@@ -177,7 +185,6 @@ int main(void)
 
     Model tree_model = Model(obj_file,material_directory);
     glm::vec3 planet_info = glm::vec3(1.4f,1.7f,1.78f); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
-
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -186,7 +193,7 @@ int main(void)
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/
-        processInput(window);
+        processInput(window, (float)elapsed_Time.count());
 
 
         /*Update Game state*/

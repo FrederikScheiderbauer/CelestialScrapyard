@@ -10,7 +10,7 @@
 #include "Noise.hpp"
 #include "texture.hpp"
 
-#define RESOLUTION 200
+#define RESOLUTION 1000
 //vertex position stored interleaved with vertex normal -> two vec3
 #define NUM_VERTICES RESOLUTION * RESOLUTION * 2
 #define NUM_INDICES (RESOLUTION - 1) * (RESOLUTION - 1) * 6

@@ -8,7 +8,7 @@
 class Camera {
     public:
         Camera() {};
-        virtual bool handle_key_event(int key) = 0;
+        virtual bool handle_key_event(int key, float deltaTime) = 0;
         virtual bool handle_mouse_motion_event(float xoffset, float yoffset) = 0;
         virtual bool handle_scroll_event(float xoffset, float yoffset) = 0;
         glm::mat4 get_View_Matrix();
@@ -45,7 +45,7 @@ class LockedCamera : public Camera
     public:
         LockedCamera(glm::vec3 cameraPos,glm::vec3 cameraTarget,float speed); 
         bool handle_mouse_motion_event(float xoffset, float yoffset) override;
-        bool handle_key_event(int key) override;
+        bool handle_key_event(int key,float deltaTime) override;
         bool handle_scroll_event(float xoffset, float yoffset) override;
 };
 
@@ -58,6 +58,6 @@ class FreeFlightCamera : public Camera {
     public:
         FreeFlightCamera(glm::vec3 cameraPos,glm::vec3 camera_Front,float speed);
         bool handle_mouse_motion_event(float xoffset, float yoffset) override;
-        bool handle_key_event(int key) override;
+        bool handle_key_event(int key, float deltaTime) override;
         bool handle_scroll_event(float xoffset, float yoffset) override;
 };

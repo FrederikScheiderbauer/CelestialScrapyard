@@ -98,27 +98,27 @@ void LockedCamera::update_Camera_State()
 
 
 
-bool LockedCamera::handle_key_event(int key)
+bool LockedCamera::handle_key_event(int key, float deltaTime)
 {
     bool handled = false;
     if( key == GLFW_KEY_UP || key == GLFW_KEY_W)
     {
-        theta -= camera_Speed * 0.1f;
+        theta -= camera_Speed * deltaTime;
         handled = true;
     }
     if( key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
     {
-        theta += camera_Speed * 0.1f;
+        theta += camera_Speed * deltaTime;
         handled = true;
     }
     if( key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
     {
-        phi -= camera_Speed * 0.1f;
+        phi -= camera_Speed * deltaTime;
         handled = true;
     }
     if( key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
     {
-        phi += camera_Speed * 0.1f;
+        phi += camera_Speed * deltaTime;
         handled = true;
     }
     if ( !handled){return false;}
@@ -146,8 +146,8 @@ FreeFlightCamera::FreeFlightCamera(glm::vec3 first_camera_Position,glm::vec3 fir
     cameraTarget = first_camera_Target;
     camera_Speed = speed;
     active_camera = this;
-    pitch;
-    yaw;
+    pitch = -90.0f;
+    yaw = 0.0f;
     camera_Front = glm::normalize(cameraTarget - cameraPos);
     viewMatrix = glm::lookAt(cameraPos,cameraPos + camera_Front,get_Camera_Up());
 }
@@ -159,28 +159,28 @@ viewMatrix = glm::lookAt(cameraPos,cameraPos + camera_Front,get_Camera_Up());
 
 
 
-bool FreeFlightCamera::handle_key_event(int key)
+bool FreeFlightCamera::handle_key_event(int key, float deltaTime)
 {
     glm::vec3 cameraRight = glm::normalize(glm::cross(up, camera_Front));
     bool handled = false;
     if( key == GLFW_KEY_UP || key == GLFW_KEY_W)
     {
-        cameraPos += camera_Speed  * 0.1f * camera_Front;
+        cameraPos += camera_Speed  * deltaTime * camera_Front;
         handled = true;
     }
     if( key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
     {
-        cameraPos -= camera_Speed  * 0.1f * camera_Front;
+        cameraPos -= camera_Speed  *deltaTime * camera_Front;
         handled = true;
     }
     if( key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
     {
-        cameraPos += camera_Speed  * 0.1f * cameraRight;
+        cameraPos -= camera_Speed  * deltaTime * cameraRight;
         handled = true;
     }
     if( key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
     {
-        cameraPos -= camera_Speed  * 0.1f * cameraRight;
+        cameraPos += camera_Speed  * deltaTime * cameraRight;
         handled = true;
     }
     if ( !handled){return false;}
@@ -196,19 +196,6 @@ bool FreeFlightCamera::handle_scroll_event(float xoffset, float yoffset) {
 
 
 bool FreeFlightCamera::handle_mouse_motion_event(float xoffset, float yoffset) {
-    /*
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-  
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; 
-    lastX = xpos;
-    lastY = ypos;
-    */
    
     float sensitivity = 0.1f;
     xoffset *= sensitivity;
@@ -227,5 +214,6 @@ bool FreeFlightCamera::handle_mouse_motion_event(float xoffset, float yoffset) {
     direction.y = sin(glm::radians(pitch));
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     camera_Front = glm::normalize(direction);
-    return false;
+    update_Camera_State();
+    return true;
 }

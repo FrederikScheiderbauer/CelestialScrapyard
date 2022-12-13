@@ -11,6 +11,12 @@
 #include "camera.hpp"
 #include "ParticleSystem.hpp"
 
+
+struct Planet_Config{
+float water_level;
+float mountain_range_start;
+float snow_peak_start;
+};
 class Sphere
 {
 private:
