@@ -21,6 +21,7 @@ float Noise::getValue(glm::vec3 point) {
             return value;
         }
         case AMPLIFIED: {
+            //based on: https://www.youtube.com/watch?v=H4g-TC__cvg
             float value = 1.0f - glm::abs(perlin.normalizedOctave3D(point.x, point.y, point.z, 8, parameters.persistence));
             //make peaks more pronounced
             value = glm::pow(value, parameters.amplification);

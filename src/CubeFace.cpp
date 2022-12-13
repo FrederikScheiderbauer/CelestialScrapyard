@@ -37,6 +37,7 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise,std::vector<Texture> _texture
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
+            //elevation as in https://www.youtube.com/watch?v=uY9PAcNMu8s
             float displacement = noise.getValue(pointOnUnitSphere);
             pointOnUnitSphere = (1 + displacement) * pointOnUnitSphere;
 
