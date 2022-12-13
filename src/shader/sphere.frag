@@ -10,6 +10,7 @@ uniform sampler2D grassland;
 uniform sampler2D snow;
 uniform sampler2D mountain;
 uniform sampler2D water;
+uniform sampler2D crater;
 
 const vec3 k_s = vec3(0.1f);
 const float n = 100.0f;
@@ -43,7 +44,7 @@ void main()
 
 
     if(inCrater == 1) {
-        k_d = vec3(0.5, 0.0, 0.0);
+        k_d =  texture(crater,TexCoord).rgb;
     } else {
         if(distance_To_Planet_Center > water_Level) {
             distance_To_Biome_Edge = distance_To_Planet_Center - water_Level;

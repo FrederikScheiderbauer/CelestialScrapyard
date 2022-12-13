@@ -41,13 +41,16 @@ Sphere::Sphere(unsigned long noiseSeed) {
 
         std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
         Texture water_texture = TextureLoader::generate_diffuse_texture(water_path);
+        std::string crater_path = (std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png";
+        Texture crater_texture = TextureLoader::generate_diffuse_texture(crater_path);
 
     sphereProgram->use(); // don't forget to activate the shader before setting uniforms! 
     glUniform1i(glGetUniformLocation(sphereProgram->name, "grassland"), 1);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "mountain"), 3);
     glUniform1i(glGetUniformLocation(sphereProgram->name, "snow"), 4);
-    std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture};
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "crater"), 5);
+    std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture, crater_texture};
 
     Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {

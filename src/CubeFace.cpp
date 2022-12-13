@@ -150,6 +150,8 @@ void CubeFace::activate_textures(){
     glBindTexture(GL_TEXTURE_2D,textures[2].id);
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D,textures[3].id);
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D,textures[4].id);
 }
 
 

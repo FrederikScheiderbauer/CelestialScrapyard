@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include "camera.hpp"
 
 
 void Gui::imgui_Frame_Setup() 
@@ -41,6 +42,14 @@ void Gui::imgui_Test_Window()
     ImGui::Text("Test");
     ImGui::End();
 }
+void Gui::swap_to_LockedCamera(){
+    auto camera = Camera::get_Active_Camera();
+    LockedCamera new_camera = LockedCamera(camera->get_Camera_Position(),glm::vec3(0.0f,0.0f,0.0f),camera->get_Camera_Speed());
+}
+void Gui::swap_to_FreeFlightCamera(){
+    auto camera = Camera::get_Active_Camera();
+    FreeFlightCamera new_camera = FreeFlightCamera(camera->get_Camera_Position(),glm::vec3(0.0f,0.0f,0.0f),camera->get_Camera_Speed());
+}
 /*
 Display Window that shows Options the Control of the Camera:
 -Camera Speed -> Slider
@@ -51,11 +60,12 @@ Display Window that shows Options the Control of the Camera:
 void Gui::imgui_Camera_Control_Window(bool* is_Locked_Camera,bool* is_Free_Camera, float* current_Speed)
 {
     ImGui::Begin("Camera Controls");
-        if(ImGui::Checkbox("Locked Camera",is_Locked_Camera)) { *is_Free_Camera = !(*is_Locked_Camera);}
+        if(ImGui::Checkbox("Locked Camera",is_Locked_Camera)) {*is_Free_Camera = !(*is_Locked_Camera);}
         if(ImGui::Checkbox("Freeflight Camera",is_Free_Camera)) {*is_Locked_Camera = !(*is_Free_Camera);}
         ImGui::SliderFloat("Camera Speed",current_Speed,0.0f,1.0f);
     ImGui::End();
 }
+
 
 void Gui::imgui_Render()
 {

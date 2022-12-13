@@ -18,4 +18,6 @@ class Gui
         void imgui_Close_Game_Button();
         void imgui_FPS_Counter();
         void imgui_Debug_Window(bool* is_Wireframe, glm::vec3 &planet_info);
+        void swap_to_LockedCamera();
+        void swap_to_FreeFlightCamera();
 };

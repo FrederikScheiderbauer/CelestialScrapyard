@@ -113,6 +113,7 @@ void processInput(GLFWwindow *window, float deltaTime)
 const int WIDTH = 512;
 const int HEIGHT = 512;
 
+
 int main(void)
 {
     GLFWwindow* window;
@@ -130,8 +131,9 @@ int main(void)
     float speed = 1.0f;
 
     LockedCamera camera = LockedCamera(first_camera_Position,first_camera_Target,speed);
-    FreeFlightCamera camera2 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed);
-    //camera.set_As_Active_Camera();
+    //FreeFlightCamera camera2 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed);
+    //FreeFlightCamera camera3 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed*2.0f);
+    //camera2.set_As_Active_Camera();
 
     if (!window)
     {
