@@ -24,8 +24,8 @@ using namespace std;
 
 //mouse configuration; TODO package nicer
 bool firstMouse = true;
-float lastX = 300.0f;
-float lastY = 200.0f;
+float lastX;
+float lastY;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -59,6 +59,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        firstMouse = true;
     }
 }
 
@@ -122,6 +123,8 @@ int main(void)
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(WIDTH, WIDTH, "Hello World", NULL, NULL);
+    float lastX =  (float)WIDTH/2;
+    float lastY = (float)HEIGHT/2;
     glm::vec3 first_camera_Position = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 first_camera_Target = glm::vec3(0.0,0.0,0.0);
     float speed = 1.0f;
