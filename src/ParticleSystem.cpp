@@ -128,8 +128,10 @@ void ParticleSystem::emit(const ParticleProps& particleProps)
     m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
 }
 
-void ParticleSystem::setAllInactive() {
+void ParticleSystem::setInactiveForCenter(glm::vec3 center) {
     for (auto &particle : m_ParticlePool) {
-        particle.Active = false;
+        if (glm::all(glm::epsilonEqual(particle.Position, center, 1E-5f))) {
+            particle.Active = false;
+        }
     }
 }

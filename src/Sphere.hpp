@@ -8,15 +8,17 @@
 #include <array>
 #include <glm/glm.hpp>
 #include <future>
+#include <queue>
 #include "camera.hpp"
 #include "ParticleSystem.hpp"
 
 
-struct Planet_Config{
-float water_level;
-float mountain_range_start;
-float snow_peak_start;
+struct Planet_Config {
+    float water_level;
+    float mountain_range_start;
+    float snow_peak_start;
 };
+
 class Sphere
 {
 private:
@@ -25,13 +27,14 @@ private:
     const std::array<glm::vec3, CUBE_NUM_FACES> directions = {glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0)};
     void setUniformMatrix(glm::mat4 matrix, std::string type);
     GLuint textureID;
-    std::future<std::array<bool, CUBE_NUM_FACES>> vertexUpdateFuture;
+    std::deque<glm::vec3> vertexUpdateQueue;
+    std::future<std::array<bool, CUBE_NUM_FACES>> currentVertexUpdate;
     bool vertexUpdateInProgress = false;
-    glm::vec3 currentCraterCenter;
 
     ParticleProps particle;
     ParticleSystem particleSystem;
     void drawParticles(int width, int height);
+    void dispatchVertexUpdate();
 public:
     Sphere(unsigned long noiseSeed);
     void draw(int width, int height, glm::vec3 &planet_info);

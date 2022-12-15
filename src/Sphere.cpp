@@ -83,19 +83,21 @@ void Sphere::drawParticles(int width, int height) {
     glBlendEquation(GL_FUNC_ADD);
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
-    for (int i = 0; i < 100; ++i) {
-        //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::normal_distribution<float> d;
-        float x = d(gen);
-        float y = d(gen);
-        float z = d(gen);
-        //https://stackoverflow.com/questions/686353/random-float-number-generation
-        float r = 0.9 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.1-0.9)));
-        particle.Position = r * (2.f * currentCraterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
-        particle.CraterNormal = glm::normalize(currentCraterCenter);
-        particleSystem.emit(particle);
+    for (auto &craterCenter : vertexUpdateQueue) {
+        for (int i = 0; i < 50; ++i) {
+            //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::normal_distribution<float> d;
+            float x = d(gen);
+            float y = d(gen);
+            float z = d(gen);
+            //https://stackoverflow.com/questions/686353/random-float-number-generation
+            float r = 0.9f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.1-0.9)));
+            particle.Position = r * (2.f * craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
+            particle.CraterNormal = glm::normalize(craterCenter);
+            particleSystem.emit(particle);
+        }
     }
     particleSystem.draw(width, height);
     glDisable(GL_BLEND);
@@ -105,17 +107,20 @@ void Sphere::draw(int width, int height, glm::vec3 &planet_info) {
     //check if vertex data has been updated
     if (vertexUpdateInProgress) {
         drawParticles(width, height);
-
         std::chrono::milliseconds waitTime(0);
-        if (vertexUpdateFuture.wait_for(waitTime) == std::future_status::ready) {
-            auto changed = vertexUpdateFuture.get();
+        if (currentVertexUpdate.wait_for(waitTime) == std::future_status::ready) {
+            auto changed = currentVertexUpdate.get();
             for(int i = 0; i < CUBE_NUM_FACES; ++i) {
                 if (changed[i]) {
                     cubefaces[i]->updateGPUBuffer();
                 }
             }
+            glm::vec3 center = vertexUpdateQueue.front();
+            particleSystem.setInactiveForCenter(center);
+            vertexUpdateQueue.pop_front();
+
             vertexUpdateInProgress = false;
-            particleSystem.setAllInactive();
+            dispatchVertexUpdate();
         }
     }
 
@@ -152,11 +157,18 @@ void Sphere::draw(int width, int height, glm::vec3 &planet_info) {
 }
 
 void Sphere::addCrater(glm::vec3 center) {
-    vertexUpdateFuture = std::async(std::launch::async, [this, center](){
+    vertexUpdateQueue.push_back(center);
+    dispatchVertexUpdate();
+}
+
+void Sphere::dispatchVertexUpdate() {
+    if (vertexUpdateInProgress || vertexUpdateQueue.empty())
+        return;
+    glm::vec3 center = vertexUpdateQueue.front();
+    currentVertexUpdate = std::async(std::launch::async, [this, center](){
         return this->recomputeVertexDataAsync(center);
     });
     vertexUpdateInProgress = true;
-    currentCraterCenter = center;
 }
 
 std::array<bool, CUBE_NUM_FACES> Sphere::recomputeVertexDataAsync(glm::vec3 center) {
