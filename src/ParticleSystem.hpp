@@ -25,6 +25,7 @@ public:
     void draw(int width, int height);
     void emit(const ParticleProps& particleProps);
     void setInactiveForCenter(glm::vec3 center);
+    ~ParticleSystem();
 private:
     struct Particle
     {
@@ -40,14 +41,19 @@ private:
         bool Active = false;
     };
     std::vector<Particle> m_ParticlePool;
-    uint32_t m_PoolIndex = 9999;
+    const int numParticles = 10000;
+    int m_PoolIndex = numParticles - 1;
 
     GLuint m_QuadVA = 0;
-    std::unique_ptr<ShaderProgram> m_ParticleShader;
-    GLint m_ParticleShaderColor;
-    GLint ParticleShaderPosition;
-    GLint ParticleShaderSize;
+    //particle infos required for rendering
+    GLuint particleInfoBuffer;
+    struct ParticleInfo {
+        glm::vec4 positionAndSize;
+        glm::vec4 color;
+    };
+    ParticleInfo *particleInfos;
 
+    std::unique_ptr<ShaderProgram> m_ParticleShader;
     void setUniformMatrix(glm::mat4 matrix, std::string type);
 };
 

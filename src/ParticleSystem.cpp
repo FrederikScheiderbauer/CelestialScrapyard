@@ -14,7 +14,7 @@ const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 ParticleSystem::ParticleSystem()
 {
-    m_ParticlePool.resize(10000);
+    m_ParticlePool.resize(numParticles);
 
     float vertices[] = {
             -0.5f, -0.5f, 0.0f,
@@ -42,10 +42,13 @@ ParticleSystem::ParticleSystem()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadIB);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+    particleInfos = new ParticleInfo[numParticles];
+    glGenBuffers(1, &particleInfoBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, particleInfoBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(ParticleInfo) * numParticles, nullptr, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
     m_ParticleShader = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    m_ParticleShaderColor = glGetUniformLocation(m_ParticleShader->name, "u_Color");
-    ParticleShaderPosition = glGetUniformLocation(m_ParticleShader->name, "position");
-    ParticleShaderSize = glGetUniformLocation(m_ParticleShader->name, "size");
 }
 
 void ParticleSystem::setUniformMatrix(glm::mat4 matrix, std::string type)
@@ -67,6 +70,7 @@ void ParticleSystem::draw(int width, int height) {
     view = camera->get_View_Matrix();
     setUniformMatrix(view,"view");
 
+    int index = 0;
     for (auto& particle : m_ParticlePool)
     {
         if (!particle.Active)
@@ -88,18 +92,18 @@ void ParticleSystem::draw(int width, int height) {
 
         float size = glm::lerp(particle.SizeEnd, particle.SizeBegin, life);
 
-        // Render
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), { particle.Position.x, particle.Position.y, particle.Position.z })
-                //* glm::rotate(glm::mat4(1.0f), particle.Rotation, particle.RotationAxis)
-                * glm::scale(glm::mat4(1.0f), { size, size, size });
-        setUniformMatrix(model,"model");
-
-        glUniform4fv(m_ParticleShaderColor, 1, glm::value_ptr(color));
-        glUniform3fv(ParticleShaderPosition, 1, glm::value_ptr(particle.Position));
-        glUniform1f(ParticleShaderSize, size);
-        glBindVertexArray(m_QuadVA);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        ParticleInfo particleInfo = {glm::vec4(particle.Position, size), color};
+        particleInfos[index] = particleInfo;
+        ++index;
     }
+
+    //Render
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, particleInfoBuffer);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(ParticleInfo) * index, particleInfos);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, particleInfoBuffer);
+
+    glBindVertexArray(m_QuadVA);
+    glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, index);
 }
 
 void ParticleSystem::emit(const ParticleProps& particleProps)
@@ -134,4 +138,8 @@ void ParticleSystem::setInactiveForCenter(glm::vec3 center) {
             particle.Active = false;
         }
     }
+}
+
+ParticleSystem::~ParticleSystem() {
+    delete[] particleInfos;
 }

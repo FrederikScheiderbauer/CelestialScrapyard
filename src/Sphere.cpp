@@ -84,7 +84,7 @@ void Sphere::drawParticles(int width, int height) {
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
     for (auto &craterCenter : vertexUpdateQueue) {
-        for (int i = 0; i < 50; ++i) {
+        for (int i = 0; i < 100; ++i) {
             //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
             std::random_device rd;
             std::mt19937 gen(rd());
