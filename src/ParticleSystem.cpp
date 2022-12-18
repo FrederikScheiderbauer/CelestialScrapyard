@@ -111,9 +111,7 @@ void ParticleSystem::emit(const ParticleProps& particleProps)
     Particle& particle = m_ParticlePool[m_PoolIndex];
     particle.Active = true;
     particle.Position = particleProps.Position;
-    particle.RotationAxis = glm::vec3(particleProps.CraterNormal.y, particleProps.CraterNormal.x, particleProps.CraterNormal.z);
-    //https://stackoverflow.com/questions/686353/random-float-number-generation
-    particle.Rotation = static_cast<float> (rand()) / static_cast <float> (RAND_MAX) * 2.0f * glm::pi<float>();
+    particle.CraterCenter = particleProps.CraterCenter;
 
     // Velocity
     particle.Velocity = particleProps.Velocity;
@@ -134,7 +132,7 @@ void ParticleSystem::emit(const ParticleProps& particleProps)
 
 void ParticleSystem::setInactiveForCenter(glm::vec3 center) {
     for (auto &particle : m_ParticlePool) {
-        if (glm::all(glm::epsilonEqual(particle.Position, center, 1E-5f))) {
+        if (glm::all(glm::epsilonEqual(particle.CraterCenter, center, 1E-5f))) {
             particle.Active = false;
         }
     }

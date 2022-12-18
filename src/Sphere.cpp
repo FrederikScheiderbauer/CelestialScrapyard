@@ -95,7 +95,7 @@ void Sphere::drawParticles(int width, int height) {
             //https://stackoverflow.com/questions/686353/random-float-number-generation
             float r = 0.9f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.1-0.9)));
             particle.Position = r * (2.f * craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
-            particle.CraterNormal = glm::normalize(craterCenter);
+            particle.CraterCenter = craterCenter;
             particleSystem.emit(particle);
         }
     }
