@@ -52,10 +52,22 @@ Sphere::Sphere(unsigned long noiseSeed) {
     glUniform1i(glGetUniformLocation(sphereProgram->name, "crater"), 5);
     std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture, crater_texture};
 
+    // just one texture ID for now, make dynamically select later TODO
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D,planet_textures[0].id);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D,planet_textures[1].id);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D,planet_textures[2].id);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D,planet_textures[3].id);
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D,planet_textures[4].id);
+
     Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, noise, planet_textures);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, noise);
     }
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
