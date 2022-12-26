@@ -13,7 +13,7 @@
 #include <tinyobjloader/tiny_obj_loader.h>
 #include "skybox.hpp"
 #include "gui.hpp"
-#include "Sphere.hpp"
+#include "Planet.hpp"
 #include "camera.hpp"
 #include "objloader.hpp"
 #include <config/config.h>
@@ -43,10 +43,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
-        auto *sphere = (Sphere*) glfwGetWindowUserPointer(window);
+        auto *planet = (Planet*) glfwGetWindowUserPointer(window);
         auto camera = LockedCamera::get_Active_Camera();
         glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
-        sphere->addCrater(intersectionOnUnitSphere);
+        planet->addCrater(intersectionOnUnitSphere);
     }
 }
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
@@ -180,9 +180,9 @@ int main(void)
     glEnable(GL_DEPTH_TEST);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Sphere sphere = Sphere(seed);
-    //hacky way to make sphere available in callback, TODO: change this
-    glfwSetWindowUserPointer(window, &sphere);
+    Planet planet = Planet(seed);
+    //hacky way to make planet available in callback, TODO: change this
+    glfwSetWindowUserPointer(window, &planet);
     Skybox skybox = Skybox();
 
     string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
@@ -212,7 +212,7 @@ int main(void)
         glfwGetWindowSize(window, &current_width, &current_height);
 
         //tree_model.draw(current_width, current_height);
-        sphere.draw(current_width, current_height,planet_info);
+        planet.draw(current_width, current_height,planet_info);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 

@@ -19,7 +19,7 @@ struct Planet_Config {
     float snow_peak_start;
 };
 
-class Sphere
+class Planet
 {
 private:
     std::unique_ptr<ShaderProgram> sphereProgram;
@@ -36,7 +36,7 @@ private:
     void drawParticles(int width, int height);
     void dispatchVertexUpdate();
 public:
-    Sphere(unsigned long noiseSeed);
+    Planet(unsigned long noiseSeed);
     void draw(int width, int height, glm::vec3 &planet_info);
     void addCrater(glm::vec3 center);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
