@@ -24,7 +24,6 @@ public:
 
     void draw(int width, int height);
     void emit(const ParticleProps& particleProps);
-    void setInactiveForCenter(glm::vec3 center);
     ~ParticleSystem();
 private:
     struct Particle
