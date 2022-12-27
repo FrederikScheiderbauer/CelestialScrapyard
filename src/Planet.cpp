@@ -15,9 +15,8 @@
 #include "texture.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
-const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
-const int PLANET_RESOLUTION = 200;
+const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 struct Planet_Info{
     float water_Level;
@@ -68,7 +67,7 @@ Planet::Planet(unsigned long noiseSeed) {
     Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, noise, PLANET_RESOLUTION);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, noise);
     }
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {

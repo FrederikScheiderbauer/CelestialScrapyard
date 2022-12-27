@@ -10,23 +10,19 @@
 #include "Noise.hpp"
 #include "texture.hpp"
 
+#define RESOLUTION 200
+//vertex position stored interleaved with vertex normal -> two vec3
+#define NUM_VERTICES RESOLUTION * RESOLUTION * 2
+#define NUM_INDICES (RESOLUTION - 1) * (RESOLUTION - 1) * 6
+#define NUM_EDGE_VERTICES 4 * RESOLUTION - 4
+
 class CubeFace
 {
 private:
-    const int RESOLUTION;
-    //vertex position stored interleaved with vertex normal -> two vec3
-    const int NUM_VERTICES;
-    const int NUM_INDICES;
-    const int NUM_EDGE_VERTICES;
-
-    int computeNumVertices();
-    int computeNumIndices();
-    int computeNumEdgeVertices();
-
     glm::vec3 *vertices;
     int *indices;
-    std::vector<float> displacements;
-    std::vector<int> edgeVertexIndices;
+    std::array<float, NUM_VERTICES / 2> displacements;
+    std::array<int, NUM_EDGE_VERTICES> edgeVertexIndices;
 
     GLuint VAO;
     GLuint VBO;
@@ -37,7 +33,7 @@ private:
     glm::vec3 getNormalForVertex(glm::vec3 vertex);
     void computeNormals();
 public:
-    CubeFace(glm::vec3 localUp, Noise &noise, int resolution);
+    CubeFace(glm::vec3 localUp, Noise &noise);
     void uploadToGPU();
     void updateGPUBuffer();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);
