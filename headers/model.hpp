@@ -15,6 +15,7 @@
 
 class Model{
     public:
+        Model();
         Model(std::string obj_file, std::string materials_directory);
         void draw(int width,int height);
         void draw_at_coordinates(float x, float y, float z, int width, int height);

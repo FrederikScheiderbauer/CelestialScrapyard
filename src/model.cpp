@@ -7,6 +7,10 @@ const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
+
+Model::Model() {
+    
+}
 Model::Model(std::string obj_file, std::string materials_directory){
 
     std::vector<float> model_vertices;

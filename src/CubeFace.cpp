@@ -38,8 +38,8 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, int resolution)
 
     vertices = new glm::vec3[NUM_VERTICES] {};
     indices = new int[NUM_INDICES];
-    displacements.reserve(NUM_VERTICES / 2);
-    edgeVertexIndices.reserve(NUM_EDGE_VERTICES);
+    displacements = std::vector<float> (NUM_VERTICES / 2);
+    edgeVertexIndices = std::vector<int> (NUM_EDGE_VERTICES);
     int triangleIndex = 0;
     int edgeVertexIndicesIndex = 0;
 
