@@ -18,7 +18,6 @@
 #include "objloader.hpp"
 #include <config/config.h>
 #include "model.hpp"
-#include "AsteroidBelt.hpp"
 
 using namespace std;
 
@@ -182,7 +181,6 @@ int main(void)
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     Planet planet = Planet(seed);
-    AsteroidBelt asteroidBelt = AsteroidBelt(seed);
     //hacky way to make planet available in callback, TODO: change this
     glfwSetWindowUserPointer(window, &planet);
     Skybox skybox = Skybox();
@@ -215,7 +213,6 @@ int main(void)
 
         //tree_model.draw(current_width, current_height);
         planet.draw(current_width, current_height,planet_info);
-        asteroidBelt.draw(current_width, current_height);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 

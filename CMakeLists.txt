@@ -28,7 +28,7 @@ set(GGD_SOURCE_FILES
   ${CMAKE_SOURCE_DIR}/src/objloader.cpp
   ${CMAKE_SOURCE_DIR}/src/ParticleSystem.cpp
   ${CMAKE_SOURCE_DIR}/src/model.cpp
-  ${CMAKE_SOURCE_DIR}/src/AsteroidBelt.cpp)
+  )
 
 
 set(Project_SOURCE_DIR ${CMAKE_SOURCE_DIR})

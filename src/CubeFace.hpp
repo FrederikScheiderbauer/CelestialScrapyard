@@ -42,7 +42,6 @@ public:
     void updateGPUBuffer();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);
     void draw();
-    void drawInstanced(int instanceCount);
     bool addCrater(glm::vec3 center);
     ~ CubeFace();
 };
