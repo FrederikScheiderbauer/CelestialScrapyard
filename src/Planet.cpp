@@ -17,8 +17,6 @@
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
-const int PLANET_RESOLUTION = 200;
-
 struct Planet_Info{
     float water_Level;
     float mountain_Height;
