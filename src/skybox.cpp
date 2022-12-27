@@ -1,9 +1,9 @@
-#include "skybox.hpp"
+#include "../headers/skybox.hpp"
 #include <vector>
 #include <string>
 #include <config/config.h>
 #include <GLFW/glfw3.h>
-#include "texture_loader.hpp"
+#include "../headers/texture_loader.hpp"
 #include <iostream>
 
 

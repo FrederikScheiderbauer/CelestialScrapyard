@@ -1,9 +1,9 @@
-#include "gui.hpp"
+#include "../headers/gui.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-#include "camera.hpp"
+#include "../headers/camera.hpp"
 
 
 void Gui::imgui_Frame_Setup() 

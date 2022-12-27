@@ -7,7 +7,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "ShaderProgram/ShaderProgram.hpp"
+#include "ShaderProgram.hpp"
 #include <memory>
 #include <array>
 

@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "ShaderProgram/ShaderProgram.hpp"
+#include "ShaderProgram.hpp"
 #include "CubeFace.hpp"
 #include <glad/glad.h>
 #include <memory>

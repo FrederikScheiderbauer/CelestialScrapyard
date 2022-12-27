@@ -6,7 +6,7 @@
 #include <memory>
 #include "glm/glm.hpp"
 #include "glad/glad.h"
-#include "ShaderProgram/ShaderProgram.hpp"
+#include "ShaderProgram.hpp"
 
 struct ParticleProps
 {

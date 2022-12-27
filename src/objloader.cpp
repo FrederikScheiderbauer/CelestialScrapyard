@@ -1,4 +1,4 @@
-#include "objloader.hpp"
+#include "../headers/objloader.hpp"
 #include "tinyobjloader/tiny_obj_loader.h"
 #include "config/config.h"
 #include <string>

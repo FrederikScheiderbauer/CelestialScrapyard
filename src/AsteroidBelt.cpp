@@ -1,6 +1,6 @@
-#include "AsteroidBelt.hpp"
+#include "../headers/AsteroidBelt.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "camera.hpp"
+#include "../headers/camera.hpp"
 #include "config/config.h"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};

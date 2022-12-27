@@ -5,7 +5,7 @@
 #include <iostream>
 #include <ImageLoader/stb_image.h>
 
-#include "texture_loader.hpp"
+#include "../headers/texture_loader.hpp"
 
 //https://learnopengl.com/Getting-started/Textures
 Texture TextureLoader::generate_diffuse_texture(std::string texturePath)

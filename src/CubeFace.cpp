@@ -1,4 +1,4 @@
-#include "CubeFace.hpp"
+#include "../headers/CubeFace.hpp"
 #include "glm/gtc/epsilon.hpp"
 #include <math.h>
 #include <glm/glm.hpp>

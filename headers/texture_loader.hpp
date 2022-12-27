@@ -2,7 +2,7 @@
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "texture.hpp"
+#include "../headers/texture.hpp"
 
 class TextureLoader
 {

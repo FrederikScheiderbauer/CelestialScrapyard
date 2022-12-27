@@ -3,7 +3,7 @@
 
 
 #include <memory>
-#include "ShaderProgram/ShaderProgram.hpp"
+#include "ShaderProgram.hpp"
 #include "CubeFace.hpp"
 
 class AsteroidBelt {

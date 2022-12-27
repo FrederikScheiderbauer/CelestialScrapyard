@@ -1,4 +1,4 @@
-#include "ShaderProgram.hpp"
+#include "../headers/ShaderProgram.hpp"
 #include <iostream>
 #include <cassert>
 #include <fstream>

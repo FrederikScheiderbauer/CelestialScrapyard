@@ -1,7 +1,7 @@
-#include "model.hpp"
+#include "../headers/model.hpp"
 #include <GLFW/glfw3.h>
 #include <config/config.h>
-#include "camera.hpp"
+#include "../headers/camera.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/tree.vert", (std::string)Project_SOURCE_DIR + "/src/shader/tree.frag"};
 

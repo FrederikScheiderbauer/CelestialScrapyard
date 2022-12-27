@@ -8,7 +8,7 @@
 #include <memory>
 #include "PerlinNoise/PerlinNoise.hpp"
 #include "Noise.hpp"
-#include "texture.hpp"
+#include "../headers/texture.hpp"
 
 class CubeFace
 {

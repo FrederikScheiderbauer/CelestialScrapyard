@@ -11,14 +11,14 @@
 #include <chrono>
 
 #include <tinyobjloader/tiny_obj_loader.h>
-#include "skybox.hpp"
-#include "gui.hpp"
-#include "Planet.hpp"
-#include "camera.hpp"
-#include "objloader.hpp"
+#include "../headers/skybox.hpp"
+#include "../headers/gui.hpp"
+#include "../headers/Planet.hpp"
+#include "../headers/camera.hpp"
+#include "../headers/objloader.hpp"
 #include <config/config.h>
-#include "model.hpp"
-#include "AsteroidBelt.hpp"
+#include "../headers/model.hpp"
+#include "../headers/AsteroidBelt.hpp"
 
 using namespace std;
 

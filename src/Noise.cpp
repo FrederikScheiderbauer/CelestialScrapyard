@@ -1,4 +1,4 @@
-#include "Noise.hpp"
+#include "../headers/Noise.hpp"
 
 Noise::Noise(unsigned long seed, Noise::Parameters parameters) {
     siv::PerlinNoise::seed_type iseed;

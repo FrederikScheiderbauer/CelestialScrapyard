@@ -1,5 +1,5 @@
-#include "Planet.hpp"
-#include "definitions.hpp"
+#include "../headers/Planet.hpp"
+#include "../headers/definitions.hpp"
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -11,8 +11,8 @@
 #include <GLFW/glfw3.h>
 #include "config/config.h"
 #include "PerlinNoise/PerlinNoise.hpp"
-#include "texture_loader.hpp"
-#include "texture.hpp"
+#include "../headers/texture_loader.hpp"
+#include "../headers/texture.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};

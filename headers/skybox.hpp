@@ -1,9 +1,9 @@
 #pragma once
-#include "ShaderProgram/ShaderProgram.hpp"
+#include "ShaderProgram.hpp"
 #include <memory>
 #include <array>
 #include "camera.hpp"
-#include "texture.hpp"
+#include "../headers/texture.hpp"
 
 class Skybox
 {

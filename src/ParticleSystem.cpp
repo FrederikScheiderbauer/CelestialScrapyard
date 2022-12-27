@@ -1,8 +1,8 @@
 //based on: https://github.com/TheCherno/OneHourParticleSystem/blob/master/OpenGL-Sandbox/src/ParticleSystem.cpp
-#include "ParticleSystem.hpp"
+#include "../headers/ParticleSystem.hpp"
 
 #include "config/config.h"
-#include "camera.hpp"
+#include "../headers/camera.hpp"
 
 #include <glm/gtc/constants.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
