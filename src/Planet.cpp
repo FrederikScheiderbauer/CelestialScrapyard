@@ -27,7 +27,7 @@ struct Planet_Info{
 
 
 Planet::Planet(unsigned long noiseSeed) {
-    planetProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
     //generate planet Textures
         //generate grassland texture
@@ -45,12 +45,12 @@ Planet::Planet(unsigned long noiseSeed) {
         std::string crater_path = (std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png";
         Texture crater_texture = TextureLoader::generate_diffuse_texture(crater_path);
 
-    planetProgram->use(); // don't forget to activate the shader before setting uniforms!
-    glUniform1i(glGetUniformLocation(planetProgram->name, "grassland"), 1);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "water"), 2);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "mountain"), 3);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "snow"), 4);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "crater"), 5);
+    sphereProgram->use(); // don't forget to activate the shader before setting uniforms! 
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "grassland"), 1);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "water"), 2);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "mountain"), 3);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "snow"), 4);
+    glUniform1i(glGetUniformLocation(sphereProgram->name, "crater"), 5);
     std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture, crater_texture};
 
     // just one texture ID for now, make dynamically select later TODO
@@ -87,7 +87,7 @@ Planet::Planet(unsigned long noiseSeed) {
 
 void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
 {
-    glUniformMatrix4fv(glGetUniformLocation(planetProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+    glUniformMatrix4fv(glGetUniformLocation(sphereProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void Planet::drawParticles(int width, int height) {
@@ -136,7 +136,7 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
 
     Camera* camera = Camera::get_Active_Camera();
 
-    planetProgram->use();
+    sphereProgram->use();
     //generating Projection,Model and view matrixes for Shader.
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
     setUniformMatrix(proj,"projection");
@@ -153,11 +153,11 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
 
-    glUniform3fv(glGetUniformLocation(planetProgram->name, "cameraPos"), 1, &cameraPos[0]);
+    glUniform3fv(glGetUniformLocation(sphereProgram->name, "cameraPos"), 1, &cameraPos[0]);
 
 
     //
-    glUniform3fv(glGetUniformLocation(planetProgram->name, "planet_info"), 1, &planet_info[0]);
+    glUniform3fv(glGetUniformLocation(sphereProgram->name, "planet_info"), 1,&planet_info[0]);
 
     //
 
