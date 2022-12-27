@@ -19,6 +19,7 @@
 #include <config/config.h>
 #include "../headers/model.hpp"
 #include "../headers/AsteroidBelt.hpp"
+#include "../headers/Tree.hpp"
 
 using namespace std;
 
@@ -187,10 +188,11 @@ int main(void)
     glfwSetWindowUserPointer(window, &planet);
     Skybox skybox = Skybox();
 
-    string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
-    string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
+    //string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
+    //string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
 
-    Model tree_model = Model(obj_file,material_directory);
+    //Model tree_model = Model(obj_file,material_directory);
+    PineTree pinetree_model = PineTree();
     glm::vec3 planet_info = glm::vec3(1.4f,1.7f,1.78f); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -213,7 +215,7 @@ int main(void)
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
-        //tree_model.draw(current_width, current_height);
+        //pinetree_model.draw(current_width, current_height);
         planet.draw(current_width, current_height,planet_info);
         asteroidBelt.draw(current_width, current_height);
 
