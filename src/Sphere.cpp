@@ -1,4 +1,4 @@
-#include "Planet.hpp"
+#include "Sphere.hpp"
 #include "definitions.hpp"
 #include <string>
 #include <vector>
@@ -14,7 +14,7 @@
 #include "texture_loader.hpp"
 #include "texture.hpp"
 
-const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
+const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/sphere.vert", (std::string)Project_SOURCE_DIR + "/src/shader/sphere.frag"};
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
@@ -25,7 +25,7 @@ struct Planet_Info{
 };
 
 
-Planet::Planet(unsigned long noiseSeed) {
+Sphere::Sphere(unsigned long noiseSeed) {
     sphereProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
 
     //generate planet Textures
@@ -84,12 +84,12 @@ Planet::Planet(unsigned long noiseSeed) {
     particle.Position = { 0.0f, 0.0f, 0.0f };
 }
 
-void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
+void Sphere::setUniformMatrix(glm::mat4 matrix, std::string type)
 {
     glUniformMatrix4fv(glGetUniformLocation(sphereProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Planet::drawParticles(int width, int height) {
+void Sphere::drawParticles(int width, int height) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
@@ -115,7 +115,7 @@ void Planet::drawParticles(int width, int height) {
     glDisable(GL_BLEND);
 }
 
-void Planet::draw(int width, int height, glm::vec3 &planet_info) {
+void Sphere::draw(int width, int height, glm::vec3 &planet_info) {
     //check if vertex data has been updated
     if (vertexUpdateInProgress) {
         drawParticles(width, height);
@@ -168,12 +168,12 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     }
 }
 
-void Planet::addCrater(glm::vec3 center) {
+void Sphere::addCrater(glm::vec3 center) {
     vertexUpdateQueue.push_back(center);
     dispatchVertexUpdate();
 }
 
-void Planet::dispatchVertexUpdate() {
+void Sphere::dispatchVertexUpdate() {
     if (vertexUpdateInProgress || vertexUpdateQueue.empty())
         return;
     glm::vec3 center = vertexUpdateQueue.front();
@@ -183,7 +183,7 @@ void Planet::dispatchVertexUpdate() {
     vertexUpdateInProgress = true;
 }
 
-std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 center) {
+std::array<bool, CUBE_NUM_FACES> Sphere::recomputeVertexDataAsync(glm::vec3 center) {
     std::array<bool, CUBE_NUM_FACES> changed;
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         changed[i] = cubefaces[i]->addCrater(center);

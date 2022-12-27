@@ -17,7 +17,7 @@ set(IMGUI_SOURCE_FILES
 set(GGD_SOURCE_FILES 
   ${CMAKE_SOURCE_DIR}/src/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ShaderProgram/ShaderProgram.cpp 
-  ${CMAKE_SOURCE_DIR}/src/Planet.cpp
+  ${CMAKE_SOURCE_DIR}/src/Sphere.cpp
   ${CMAKE_SOURCE_DIR}/src/CubeFace.cpp
   ${CMAKE_SOURCE_DIR}/src/gui.cpp
   ${CMAKE_SOURCE_DIR}/src/camera.cpp
