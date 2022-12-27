@@ -97,7 +97,7 @@ void Planet::drawParticles(int width, int height) {
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
     for (auto &craterCenter : vertexUpdateQueue) {
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 100; ++i) {
             //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
             std::random_device rd;
             std::mt19937 gen(rd());
@@ -106,7 +106,7 @@ void Planet::drawParticles(int width, int height) {
             float y = d(gen);
             float z = d(gen);
             //https://stackoverflow.com/questions/686353/random-float-number-generation
-            float r = 0.8f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX)/(1.3f-0.8f));
+            float r = 0.9f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1.1-0.9)));
             particle.Position = r * (2.f * craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
             particle.CraterCenter = craterCenter;
             particleSystem.emit(particle);
@@ -117,9 +117,9 @@ void Planet::drawParticles(int width, int height) {
 }
 
 void Planet::draw(int width, int height, glm::vec3 &planet_info) {
-    drawParticles(width, height);
     //check if vertex data has been updated
     if (vertexUpdateInProgress) {
+        drawParticles(width, height);
         std::chrono::milliseconds waitTime(0);
         if (currentVertexUpdate.wait_for(waitTime) == std::future_status::ready) {
             auto changed = currentVertexUpdate.get();
@@ -128,7 +128,10 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
                     cubefaces[i]->updateGPUBuffer();
                 }
             }
+            glm::vec3 center = vertexUpdateQueue.front();
+            particleSystem.setInactiveForCenter(center);
             vertexUpdateQueue.pop_front();
+
             vertexUpdateInProgress = false;
             dispatchVertexUpdate();
         }
