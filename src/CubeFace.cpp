@@ -18,13 +18,28 @@ glm::vec3 computePointOnSphere(glm::vec3 pointOnCube) {
     return glm::vec3(x,y,z);
 }
 
+int CubeFace::computeNumVertices() {
+    return RESOLUTION * RESOLUTION * 2;
+}
+
+int CubeFace::computeNumIndices() {
+    return (RESOLUTION - 1) * (RESOLUTION - 1) * 6;
+}
+
+int CubeFace::computeNumEdgeVertices() {
+    return 4 * RESOLUTION - 4;
+}
+
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
-CubeFace::CubeFace(glm::vec3 localUp, Noise &noise) {
+CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, int resolution)
+    : RESOLUTION(resolution), NUM_VERTICES(computeNumVertices()), NUM_INDICES(computeNumIndices()), NUM_EDGE_VERTICES(computeNumEdgeVertices()) {
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
     vertices = new glm::vec3[NUM_VERTICES] {};
     indices = new int[NUM_INDICES];
+    displacements.reserve(NUM_VERTICES / 2);
+    edgeVertexIndices.reserve(NUM_EDGE_VERTICES);
     int triangleIndex = 0;
     int edgeVertexIndicesIndex = 0;
 
