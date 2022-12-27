@@ -214,3 +214,9 @@ void CubeFace::updateGPUBuffer() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, NUM_VERTICES * sizeof(glm::vec3), vertices);
 }
+
+void CubeFace::drawInstanced(int instanceCount) {
+    glBindVertexArray(VAO);
+    glDrawElementsInstanced(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, nullptr, instanceCount);
+    glBindVertexArray(0);
+}
