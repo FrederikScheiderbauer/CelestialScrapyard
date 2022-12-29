@@ -11,8 +11,6 @@
 #include <memory>
 #include <array>
 
-
-
 class Model{
     public:
         Model();
@@ -22,11 +20,12 @@ class Model{
 
     private:
         unsigned int VAO;
+        Mesh mesh;
+        std::vector<Material> object_materials;
         std::unique_ptr<ShaderProgram> modelShader;
         std::vector<unsigned int> model_vertices_indices;
         std::vector<glm::vec3> model_normals;
         std::vector<unsigned int> model_normals_indices;
-        std::vector<Triangle> model_triangles;
         void setUniformMatrix(glm::mat4 matrix, std::string type);
 };
 

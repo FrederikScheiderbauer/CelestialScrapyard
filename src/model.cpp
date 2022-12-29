@@ -7,17 +7,20 @@ const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +
 
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
-
 Model::Model() {
     
 }
 Model::Model(std::string obj_file, std::string materials_directory){
 
     std::vector<float> model_vertices;
+    std::vector<glm::vec3> model_vertices_2;
+    std::vector<glm::vec3> model_normals_2;
     modelShader = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-
+    std::vector<glm::vec2> vertuvs;
     load_obj(obj_file,materials_directory,model_vertices,model_vertices_indices,model_normals,model_normals_indices);
-
+    //void load_obj(std::string obj_file,std::string materials_directory,std::vector<glm::vec3> &vertices, std::vector<Triangle> &mesh,
+    // std::vector<glm::vec3> & vertnormals, std::vector<glm::vec2>& vertuvs, std::vector<Material>& materials)
+    load_obj(obj_file,materials_directory,model_vertices_2,mesh,model_normals_2,vertuvs,object_materials);
 
 
     unsigned int VBO,EBO;
@@ -29,10 +32,13 @@ Model::Model(std::string obj_file, std::string materials_directory){
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * model_vertices.size(), &model_vertices[0], GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * model_vertices.size(), &model_vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,3* sizeof(float) * model_vertices_2.size(), &model_vertices_2[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    auto indices = mesh.vertices_indices;
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * model_vertices_indices.size(), &model_vertices_indices[0], GL_STATIC_DRAW);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3* sizeof(int) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
