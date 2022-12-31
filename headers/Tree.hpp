@@ -5,11 +5,11 @@
 //std::string obj_file = (std::string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
 //std::string material_directory = (std::string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
 
-class PineTree{
+class PineTree: public Model{
     private:
-        Model pineTreeModel;
+        std::vector<float> setupVertices(std::vector<glm::vec3> model_vertices,std::vector<glm::vec3> model_normals);
 
     public:
         PineTree();
-        void draw(int width,int height);
+        void draw(int width, int height) override;
 };
