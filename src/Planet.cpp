@@ -13,6 +13,7 @@
 #include "PerlinNoise/PerlinNoise.hpp"
 #include "../headers/texture_loader.hpp"
 #include "../headers/texture.hpp"
+#include "../headers/Random.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -95,16 +96,11 @@ void Planet::drawParticles(int width, int height) {
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
     for (auto &craterCenter : vertexUpdateQueue) {
-        for (int i = 0; i < 1000; ++i) {
-            //https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::normal_distribution<float> d;
-            float x = d(gen);
-            float y = d(gen);
-            float z = d(gen);
-            //https://stackoverflow.com/questions/686353/random-float-number-generation
-            float r = 0.8f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX)/(1.3f-0.8f));
+        for (int i = 0; i < 100; ++i) {
+            float x = Random::getFromNormalDistribution();
+            float y = Random::getFromNormalDistribution();
+            float z = Random::getFromNormalDistribution();
+            float r = Random::getInRange(0.8f, 1.3f);
             particle.Position = r * (2.f * craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
             particle.CraterCenter = craterCenter;
             particleSystem.emit(particle);

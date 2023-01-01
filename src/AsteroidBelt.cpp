@@ -2,6 +2,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "../headers/camera.hpp"
 #include "config/config.h"
+#include "../headers/Random.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -22,9 +23,9 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
 
     offsets = new glm::vec4[NUM_ASTEROIDS];
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
-        float x_pos = -1.f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2.f)));
-        float y_pos = -0.05f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.1f)));
-        float z_pos = -1.f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2.f)));
+        float x_pos = Random::getInRange(-1.f, 1.f);
+        float y_pos = Random::getInRange(-0.05f, 0.05f);
+        float z_pos = Random::getInRange(-1.f, 1.f);
         offsets[i] = 4.f * glm::normalize(glm::vec4(x_pos, y_pos, z_pos, 0.f));
     }
 
