@@ -23,10 +23,25 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
 
     offsets = new glm::vec4[NUM_ASTEROIDS];
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
-        float x_pos = Random::getInRange(-1.f, 1.f);
-        float y_pos = Random::getInRange(-0.05f, 0.05f);
-        float z_pos = Random::getInRange(-1.f, 1.f);
-        offsets[i] = 4.f * glm::normalize(glm::vec4(x_pos, y_pos, z_pos, 0.f));
+        float x_pos, y_pos, z_pos;
+        glm::vec4 asteroidCenter;
+        float minDistance;
+        //check that asteroids aren't too close, TODO: might run indefinitely if there are to many asteroids
+        do {
+            minDistance = std::numeric_limits<float>::max();
+            x_pos = Random::getInRange(-1.f, 1.f);
+            y_pos = Random::getInRange(-0.05f, 0.05f);
+            z_pos = Random::getInRange(-1.f, 1.f);
+
+            asteroidCenter = 4.f * glm::normalize(glm::vec4(x_pos, y_pos, z_pos, 0.f));
+            for (int j = 0; j < i; ++j) {
+                float distance = glm::length(asteroidCenter - offsets[j]);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                }
+            }
+        } while (minDistance < 0.4f);
+        offsets[i] = asteroidCenter;
     }
 
     glGenBuffers(1, &offsetBuffer);
