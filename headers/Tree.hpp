@@ -8,8 +8,13 @@
 class PineTree: public Model{
     private:
         std::vector<float> setupVertices(std::vector<glm::vec3> model_vertices,std::vector<glm::vec3> model_normals);
+        void PineTree::calculate_TreeOffsets();
+        glm::vec2 translations[100];
+        std::vector<glm::vec3> tree_offsets;
+        
 
     public:
         PineTree();
         void draw(int width, int height) override;
+        void draw_instanced(int width,int height);
 };

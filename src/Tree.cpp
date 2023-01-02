@@ -53,9 +53,20 @@ std::vector<float> PineTree::setupVertices(std::vector<glm::vec3> model_vertices
     return result;
 }
 
-std::vector<int> setupIndices() {
-    std::vector<int> result;
-    return result;
+void PineTree::calculate_TreeOffsets() {
+    int index = 0;
+    float offset = 0.1f;
+    for(int y = -10; y < 10; y += 2)
+    {
+        for(int x = -10; x < 10; x += 2)
+        {
+            glm::vec3 translation;
+            translation.x = (float)x  + offset;
+            translation.y = (float)y  + offset;
+            translation.z = 0.0f;
+            tree_offsets.push_back(translation);
+        }
+    } 
 }
 
 PineTree::PineTree() {
@@ -68,6 +79,17 @@ PineTree::PineTree() {
     std::vector<float> vertices = setupVertices(model_vertices,model_normals);
     //setup VAO and bind vertices/normals/texcoords
     unsigned int VBO,EBO;
+
+
+    //calculate tree offsets
+    calculate_TreeOffsets();
+
+
+    unsigned int instanceVBO;
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * tree_offsets.size(), &tree_offsets[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
 
 
@@ -104,6 +126,11 @@ PineTree::PineTree() {
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,7* sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);	
+    glVertexAttribDivisor(3, 1);  
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
 }
@@ -128,3 +155,31 @@ void PineTree::draw(int width,int height) {
     glDrawElements(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+
+void PineTree::draw_instanced(int width,int height) {
+
+    Camera* camera = Camera::get_Active_Camera();
+    modelShader->use();
+    //remove later TODO
+
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+    setUniformMatrix(proj,"projection");
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model,glm::vec3(0.1f));
+    setUniformMatrix(model,"model");
+
+    glm::mat4 view = glm::mat4(1.0f);
+
+    view = camera->get_View_Matrix();
+
+    setUniformMatrix(view,"view");
+    
+    modelShader->use();
+    glBindVertexArray(VAO);
+    glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, tree_offsets.size());
+    glBindVertexArray(0);
+
+}
+
