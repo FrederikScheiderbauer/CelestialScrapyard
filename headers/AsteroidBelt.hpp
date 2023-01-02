@@ -16,7 +16,8 @@ private:
 
     GLuint offsetBuffer;
     glm::vec4 *offsets;
-    const int NUM_ASTEROIDS = 30;
+    const int NUM_ASTEROIDS = 150;
+    const float ASTEROID_RADIUS = 0.05f;
 public:
     AsteroidBelt(unsigned long noiseSeed);
     void draw(int width, int height);

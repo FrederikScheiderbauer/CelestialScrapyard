@@ -23,24 +23,23 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
 
     offsets = new glm::vec4[NUM_ASTEROIDS];
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
-        float x_pos, y_pos, z_pos;
         glm::vec4 asteroidCenter;
         float minDistance;
-        //check that asteroids aren't too close, TODO: might run indefinitely if there are to many asteroids
+        //check that asteroids aren't too close, TODO: might run indefinitely if there are too many asteroids
         do {
             minDistance = std::numeric_limits<float>::max();
-            x_pos = Random::getInRange(-1.f, 1.f);
-            y_pos = Random::getInRange(-0.05f, 0.05f);
-            z_pos = Random::getInRange(-1.f, 1.f);
+            float x_pos = Random::getInRange(-1.f, 1.f);
+            float z_pos = Random::getInRange(-1.f, 1.f);
+            float r = Random::getInRange(3.5f, 4.5f);
 
-            asteroidCenter = 4.f * glm::normalize(glm::vec4(x_pos, y_pos, z_pos, 0.f));
+            asteroidCenter = r * glm::normalize(glm::vec4(x_pos, 0.f, z_pos, 0.f));
             for (int j = 0; j < i; ++j) {
                 float distance = glm::length(asteroidCenter - offsets[j]);
                 if (distance < minDistance) {
                     minDistance = distance;
                 }
             }
-        } while (minDistance < 0.4f);
+        } while (minDistance < 4.f * ASTEROID_RADIUS);
         offsets[i] = asteroidCenter;
     }
 
@@ -62,7 +61,7 @@ void AsteroidBelt::draw(int width, int height) {
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
     setUniformMatrix(proj,"projection");
 
-    glm::mat4 model = glm::mat4(0.1f);
+    glm::mat4 model = glm::mat4(ASTEROID_RADIUS);
     //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     setUniformMatrix(model,"model");
 
