@@ -1,8 +1,10 @@
+#include <iostream>
 #include "../headers/AsteroidBelt.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "../headers/camera.hpp"
 #include "config/config.h"
 #include "../headers/Random.hpp"
+//#include "glm/gtx/polar_coordinates.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -53,6 +55,36 @@ void AsteroidBelt::setUniformMatrix(glm::mat4 matrix, std::string type) {
     glUniformMatrix4fv(glGetUniformLocation(asteroidBeltProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+
+glm::vec3 asteroidCenterToSpherical(glm::vec4 center) {
+    //https://mathworld.wolfram.com/SphericalCoordinates.html
+    float r = glm::length(glm::vec3(center));
+    float phi = glm::acos(center.z / r);
+    float theta = glm::atan(center.y, center.x);
+    return {r, phi, theta};
+}
+
+glm::vec4 sphericalToAsteroidCenter(glm::vec3 spherical) {
+    //https://mathworld.wolfram.com/SphericalCoordinates.html
+    float x = spherical.x * glm::cos(spherical.z) * glm::sin(spherical.y);
+    float y = spherical.x * glm::sin(spherical.z) * glm::sin(spherical.y);
+    float z = spherical.x * glm::cos(spherical.y);
+    return {x, y, z, 0.f};
+}
+
+
+void AsteroidBelt::move() {
+    for (int i = 0; i < NUM_ASTEROIDS; ++i) {
+        auto spherical = asteroidCenterToSpherical(offsets[i]);
+        spherical.y += ASTEROID_SPEED;
+        spherical.y = std::fmod(spherical.y, glm::pi<float>());
+        offsets[i] = sphericalToAsteroidCenter(spherical);
+    }
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec4) * NUM_ASTEROIDS, offsets);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
 void AsteroidBelt::draw(int width, int height) {
     Camera* camera = Camera::get_Active_Camera();
 
@@ -72,6 +104,8 @@ void AsteroidBelt::draw(int width, int height) {
     //Camera* camera2 = Camera::get_Active_Camera();
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
+
+    move();
 
     glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
