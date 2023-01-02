@@ -4,7 +4,6 @@
 #include "../headers/camera.hpp"
 #include "config/config.h"
 #include "../headers/Random.hpp"
-//#include "glm/gtx/polar_coordinates.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -76,8 +75,9 @@ glm::vec4 sphericalToAsteroidCenter(glm::vec3 spherical) {
 void AsteroidBelt::move() {
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
         auto spherical = asteroidCenterToSpherical(offsets[i]);
-        spherical.y += ASTEROID_SPEED;
-        spherical.y = std::fmod(spherical.y, glm::pi<float>());
+        float speed = ASTEROID_SPEED * (spherical.z < 0.f ? 1.f : -1.f);
+        spherical.y += speed;
+        //spherical.y = std::fmod(spherical.y, glm::pi<float>());
         offsets[i] = sphericalToAsteroidCenter(spherical);
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
@@ -109,10 +109,29 @@ void AsteroidBelt::draw(int width, int height) {
 
     glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);
 
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->drawInstanced(NUM_ASTEROIDS);
     }
+}
+
+void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {
+    picking = true;
+    glClear(GL_COLOR_BUFFER_BIT);
+    draw(width, height);
+
+    glMemoryBarrier(GL_PIXEL_BUFFER_BARRIER_BIT);
+
+    //http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/
+    glFlush();
+    glFinish();
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    unsigned char data[4];
+    glReadPixels((GLint) mousePosition.x, (GLint) mousePosition.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    int pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
+    std::cout << (int) data[0] << "," << (int) data[1] << "," << (int) data[2] << std::endl;
+    picking = false;
 }
 
 AsteroidBelt::~AsteroidBelt() {

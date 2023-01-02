@@ -21,9 +21,12 @@ private:
     const float ASTEROID_SPEED = 0.001f;
 
     void move();
+
+    bool picking = false;
 public:
     AsteroidBelt(unsigned long noiseSeed);
     void draw(int width, int height);
+    void pick(int width, int height, glm::vec2 mousePosition);
     ~AsteroidBelt();
 };
 

@@ -41,11 +41,16 @@ void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 }
 
+struct WindowPointerParameters {
+    Planet *planet;
+    AsteroidBelt *belt;
+};
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
-        auto *planet = (Planet*) glfwGetWindowUserPointer(window);
+        Planet *planet = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->planet;
         auto camera = LockedCamera::get_Active_Camera();
         glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
         planet->addCrater(intersectionOnUnitSphere);
@@ -62,6 +67,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         firstMouse = true;
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        AsteroidBelt *belt = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->belt;
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        int current_width, current_height;
+        glfwGetWindowSize(window, &current_width, &current_height);
+        belt->pick(current_width, current_height, glm::vec2(xpos, ypos));
     }
 }
 
@@ -184,8 +197,9 @@ int main(void)
 
     Planet planet = Planet(seed);
     AsteroidBelt asteroidBelt = AsteroidBelt(seed);
-    //hacky way to make planet available in callback, TODO: change this
-    glfwSetWindowUserPointer(window, &planet);
+    //hacky way to make object available in callback, TODO: change this
+    WindowPointerParameters param = {&planet, &asteroidBelt};
+    glfwSetWindowUserPointer(window, &param);
     Skybox skybox = Skybox();
 
     //string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
