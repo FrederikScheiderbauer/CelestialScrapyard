@@ -60,24 +60,23 @@ glm::vec3 asteroidCenterToSpherical(glm::vec4 center) {
     float r = glm::length(glm::vec3(center));
     float phi = glm::acos(center.z / r);
     float theta = glm::atan(center.y, center.x);
-    return {r, phi, theta};
+    return {r, 0.5f * glm::pi<float>() - phi, theta};
 }
 
 glm::vec4 sphericalToAsteroidCenter(glm::vec3 spherical) {
     //https://mathworld.wolfram.com/SphericalCoordinates.html
-    float x = spherical.x * glm::cos(spherical.z) * glm::sin(spherical.y);
-    float y = spherical.x * glm::sin(spherical.z) * glm::sin(spherical.y);
-    float z = spherical.x * glm::cos(spherical.y);
+    float x = spherical.x * glm::cos(spherical.z) * glm::cos(spherical.y);
+    float y = spherical.x * glm::sin(spherical.z) * glm::cos(spherical.y);
+    float z = spherical.x * glm::sin(spherical.y);
     return {x, y, z, 0.f};
 }
-
 
 void AsteroidBelt::move() {
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
         auto spherical = asteroidCenterToSpherical(offsets[i]);
-        float speed = ASTEROID_SPEED * (spherical.z < 0.f ? 1.f : -1.f);
+        float speed = ASTEROID_SPEED * (glm::abs(spherical.z) < 0.5f * glm::pi<float>() ? 1.f : -1.f);
         spherical.y += speed;
-        //spherical.y = std::fmod(spherical.y, glm::pi<float>());
+        spherical.y = std::fmod(spherical.y, glm::pi<float>());
         offsets[i] = sphericalToAsteroidCenter(spherical);
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
@@ -106,7 +105,7 @@ void AsteroidBelt::draw(int width, int height) {
     setUniformMatrix(view,"view");
 
     if (!picking) {
-        //move();
+        move();
     }
 
     glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
