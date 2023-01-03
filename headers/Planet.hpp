@@ -23,6 +23,7 @@ struct Planet_Config {
 class Planet
 {
 private:
+    //PineTree pineTreeModel;
     std::unique_ptr<ShaderProgram> planetProgram;
     std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> cubefaces;
     const int PLANET_RESOLUTION = 200;
@@ -34,9 +35,10 @@ private:
     bool vertexUpdateInProgress = false;
     std::vector<glm::vec3> treeOffsets;
     
-    PineTree pineTreeModel;
+    //PineTree pineTreeModel;
     ParticleProps particle;
     ParticleSystem particleSystem;
+    PineTree pineTreeModel;
     void drawParticles(int width, int height);
     void dispatchVertexUpdate();
     void set_Textures();

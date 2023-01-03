@@ -85,7 +85,7 @@ Planet::Planet(unsigned long noiseSeed) {
     //particle.VelocityVariation = { 3.0f, 1.0f };
     particle.Position = { 0.0f, 0.0f, 0.0f };
 
-    create_Forests();
+    //create_Forests();
 }
 
 void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
@@ -164,7 +164,7 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     }
 
     //draw trees
-    //pineTreeModel.draw_instanced(width,height,treeOffsets);
+    pineTreeModel.draw_instanced(width,height,treeOffsets);
     
 }
 
