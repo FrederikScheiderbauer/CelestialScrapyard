@@ -17,7 +17,7 @@ class Model{
         virtual void draw(int width,int height) = 0;
 
     protected:
-        unsigned int VAO;
+        unsigned int VAO, instanceVBO;
         Mesh mesh;  
         std::vector<Material> object_materials;
         std::unique_ptr<ShaderProgram> modelShader;

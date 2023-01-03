@@ -11,6 +11,7 @@
 #include <queue>
 #include "camera.hpp"
 #include "ParticleSystem.hpp"
+#include "Tree.hpp"
 
 
 struct Planet_Config {
@@ -31,16 +32,20 @@ private:
     std::deque<glm::vec3> vertexUpdateQueue;
     std::future<std::array<bool, CUBE_NUM_FACES>> currentVertexUpdate;
     bool vertexUpdateInProgress = false;
-
+    std::vector<glm::vec3> treeOffsets;
+    
+    PineTree pineTreeModel;
     ParticleProps particle;
     ParticleSystem particleSystem;
     void drawParticles(int width, int height);
     void dispatchVertexUpdate();
+    void set_Textures();
 public:
     Planet(unsigned long noiseSeed);
     void draw(int width, int height, glm::vec3 &planet_info);
     void addCrater(glm::vec3 center);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
+    void create_Forests();
 };
 
 #endif

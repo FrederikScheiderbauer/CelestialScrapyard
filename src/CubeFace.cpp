@@ -219,3 +219,23 @@ void CubeFace::drawInstanced(int instanceCount) {
     glDrawElementsInstanced(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, nullptr, instanceCount);
     glBindVertexArray(0);
 }
+
+std::vector<glm::vec3> CubeFace::filter_vertices_from_map() {
+    std::vector<glm::vec3> results;
+    for(int i = 0;  i < NUM_INDICES;i++) {
+        
+        int NUM_VALUES_PER_VERTEX = 2;
+        int vertex_index = indices[i] * NUM_VALUES_PER_VERTEX;
+        glm::vec3 vertex = vertices[vertex_index];
+        float vertex_length = glm::length(vertex);
+        float vertex_height = vertex.y;
+        if(vertex_height > 1.0f) {
+            results.push_back(vertex);
+        }
+    
+    }
+    glm::vec3 test = glm::vec3(0.0f);
+    std::vector<glm::vec3> results_2;
+    results_2.push_back(test);
+    return results;
+}

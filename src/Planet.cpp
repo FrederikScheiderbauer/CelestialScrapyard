@@ -24,25 +24,21 @@ struct Planet_Info{
     float snow_peak_Height;
 };
 
+void Planet::set_Textures(){
+//generate planet Textures
+    std::string grassland_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
+    Texture grassland_texture = TextureLoader::generate_diffuse_texture(grassland_path);
 
-Planet::Planet(unsigned long noiseSeed) {
-    planetProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/mountain texture.png";
+    Texture mountain_texture = TextureLoader::generate_diffuse_texture(mountain_path);
 
-    //generate planet Textures
-        //generate grassland texture
-        std::string grassland_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
-        Texture grassland_texture = TextureLoader::generate_diffuse_texture(grassland_path);
+    std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
+    Texture snow_texture = TextureLoader::generate_diffuse_texture(snow_path);
 
-        std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/mountain texture.png";
-        Texture mountain_texture = TextureLoader::generate_diffuse_texture(mountain_path);
-
-        std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
-        Texture snow_texture = TextureLoader::generate_diffuse_texture(snow_path);
-
-        std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
-        Texture water_texture = TextureLoader::generate_diffuse_texture(water_path);
-        std::string crater_path = (std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png";
-        Texture crater_texture = TextureLoader::generate_diffuse_texture(crater_path);
+    std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
+    Texture water_texture = TextureLoader::generate_diffuse_texture(water_path);
+    std::string crater_path = (std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png";
+    Texture crater_texture = TextureLoader::generate_diffuse_texture(crater_path);
 
     planetProgram->use(); // don't forget to activate the shader before setting uniforms!
     glUniform1i(glGetUniformLocation(planetProgram->name, "grassland"), 1);
@@ -52,7 +48,6 @@ Planet::Planet(unsigned long noiseSeed) {
     glUniform1i(glGetUniformLocation(planetProgram->name, "crater"), 5);
     std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture, crater_texture};
 
-    // just one texture ID for now, make dynamically select later TODO
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,planet_textures[0].id);
     glActiveTexture(GL_TEXTURE2);
@@ -63,6 +58,13 @@ Planet::Planet(unsigned long noiseSeed) {
     glBindTexture(GL_TEXTURE_2D,planet_textures[3].id);
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D,planet_textures[4].id);
+}
+
+Planet::Planet(unsigned long noiseSeed) {
+    planetProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+
+    //generate planet Textures
+    set_Textures();
 
     Noise noise = Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
@@ -82,6 +84,8 @@ Planet::Planet(unsigned long noiseSeed) {
     particle.Velocity = { 0.0f, 0.0f, 0.0f};
     //particle.VelocityVariation = { 3.0f, 1.0f };
     particle.Position = { 0.0f, 0.0f, 0.0f };
+
+    create_Forests();
 }
 
 void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
@@ -158,6 +162,10 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->draw();
     }
+
+    //draw trees
+    //pineTreeModel.draw_instanced(width,height,treeOffsets);
+    
 }
 
 void Planet::addCrater(glm::vec3 center) {
@@ -186,4 +194,34 @@ std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 cent
         }
     }
     return changed;
+}
+
+
+void Planet::create_Forests(){
+    
+    std::vector<glm::vec3> treeOffsets_2;
+    for ( int i = 0; i < CUBE_NUM_FACES; i++) {
+        std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_from_map();
+        if(offsets.size() >10) {
+            for ( int j = 0; j < 10; j++) {
+                treeOffsets.push_back(offsets[j]);
+            }
+        }
+    }
+    
+    /*
+    int index = 0;
+    float offset = 0.1f;
+    for(int y = -10; y < 10; y += 2)
+    {
+        for(int x = -10; x < 10; x += 2)
+        {
+            glm::vec3 translation;
+            translation.x = (float)x  + offset;
+            translation.y = (float)y  + offset;
+            translation.z = 0.0f;
+            treeOffsets.push_back(translation);
+        }
+    } 
+    */
 }
