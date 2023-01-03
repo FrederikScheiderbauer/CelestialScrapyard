@@ -7,7 +7,7 @@
 class Noise {
 public:
     enum Type {
-        SIMPLE, AMPLIFIED
+        SIMPLE, AMPLIFIED, MULTILAYER
     };
     struct Parameters {
         Type type;
@@ -17,6 +17,7 @@ public:
     };
     constexpr static Parameters asteroid = {SIMPLE, 2.f, 0.5f, 1.f};
     constexpr static Parameters mountainous = {AMPLIFIED, 0.8f, 0.25f, 1.5f};
+    constexpr static Parameters continental = {MULTILAYER, 0.8f, 0.25f, 1.5f};
     Noise(unsigned long seed, Noise::Parameters parameters);
     float getValue(glm::vec3 point);
 private:
