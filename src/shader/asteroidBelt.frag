@@ -6,6 +6,7 @@ out vec4 fragColor;
 
 uniform vec3 cameraPos;
 uniform bool picking;
+uniform int pickedID;
 
 const vec3 k_s = vec3(0.1f);
 const float n = 100.0f;
@@ -30,7 +31,12 @@ void main()
 
         vec3 L = normalize(cameraPos - worldPosition);
 
-        vec3 k_d = vec3(0.5);
+        vec3 k_d;
+        if (instanceId != pickedID) {
+            k_d = vec3(0.5);
+        } else {
+            k_d = vec3(0.8, 0.0, 0.0);
+        }
 
         vec3 diffuse = k_d * max(0.0, dot(L, N));
         vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);

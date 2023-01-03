@@ -43,7 +43,8 @@ void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 struct WindowPointerParameters {
     Planet *planet;
-    AsteroidBelt *belt;
+    bool mouseClicked;
+    glm::vec2 mousePosition;
 };
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -69,12 +70,11 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         firstMouse = true;
     }
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        AsteroidBelt *belt = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->belt;
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
-        int current_width, current_height;
-        glfwGetWindowSize(window, &current_width, &current_height);
-        belt->pick(current_width, current_height, glm::vec2(xpos, ypos));
+        WindowPointerParameters *param = (WindowPointerParameters*) glfwGetWindowUserPointer(window);
+        param->mousePosition = glm::vec2(xpos, ypos);
+        param->mouseClicked = true;
     }
 }
 
@@ -175,8 +175,6 @@ int main(void)
 
     glViewport(0,0,WIDTH,HEIGHT);
 
-
-
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window,mouse_scroll_callback);
     glfwSetKeyCallback(window, key_callback);
@@ -198,7 +196,7 @@ int main(void)
     Planet planet = Planet(seed);
     AsteroidBelt asteroidBelt = AsteroidBelt(seed);
     //hacky way to make object available in callback, TODO: change this
-    WindowPointerParameters param = {&planet, &asteroidBelt};
+    WindowPointerParameters param = {&planet, false, glm::vec2(0.f)};
     glfwSetWindowUserPointer(window, &param);
     Skybox skybox = Skybox();
 
@@ -218,19 +216,25 @@ int main(void)
         /*Input handling here*/
         processInput(window, (float)elapsed_Time.count());
 
-
         /*Update Game state*/
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        gui_Object.imgui_Frame_Setup();
-
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
-        pinetree_model.draw_instanced(current_width, current_height);
-        //planet.draw(current_width, current_height,planet_info);
+        if(param.mouseClicked) {
+            asteroidBelt.pick(current_width, current_height, param.mousePosition);
+            param.mouseClicked = false;
+        }
+
+        glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+
+        gui_Object.imgui_Frame_Setup();
+
+        //pinetree_model.draw_instanced(current_width, current_height);
+        planet.draw(current_width, current_height,planet_info);
         asteroidBelt.draw(current_width, current_height);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.

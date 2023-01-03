@@ -23,6 +23,7 @@ private:
     void move();
 
     bool picking = false;
+    int pickedID = -1;
 public:
     AsteroidBelt(unsigned long noiseSeed);
     void draw(int width, int height);

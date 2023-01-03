@@ -105,11 +105,14 @@ void AsteroidBelt::draw(int width, int height) {
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
 
-    move();
+    if (!picking) {
+        //move();
+    }
 
     glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "pickedID"), pickedID);
 
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->drawInstanced(NUM_ASTEROIDS);
@@ -129,8 +132,8 @@ void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     unsigned char data[4];
     glReadPixels((GLint) mousePosition.x, (GLint) mousePosition.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    int pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
-    std::cout << (int) data[0] << "," << (int) data[1] << "," << (int) data[2] << std::endl;
+    pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
+    std::cout << pickedID << std::endl;
     picking = false;
 }
 
