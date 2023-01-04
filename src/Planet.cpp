@@ -85,7 +85,7 @@ Planet::Planet(unsigned long noiseSeed) {
     //particle.VelocityVariation = { 3.0f, 1.0f };
     particle.Position = { 0.0f, 0.0f, 0.0f };
 
-    //create_Forests();
+    create_Forests();
 }
 
 void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
@@ -208,11 +208,11 @@ void Planet::create_Forests(){
             }
         }
     }
-    
+    treeOffsets.push_back(glm::vec3(2.0f,2.0f,2.0f));
     /*
     int index = 0;
     float offset = 0.1f;
-    for(int y = -10; y < 10; y += 2)
+    for(int y = -10; y < 10; y += 2)a
     {
         for(int x = -10; x < 10; x += 2)
         {
@@ -224,4 +224,5 @@ void Planet::create_Forests(){
         }
     } 
     */
+    
 }

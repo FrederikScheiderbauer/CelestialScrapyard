@@ -229,13 +229,13 @@ std::vector<glm::vec3> CubeFace::filter_vertices_from_map() {
         glm::vec3 vertex = vertices[vertex_index];
         float vertex_length = glm::length(vertex);
         float vertex_height = vertex.y;
-        if(vertex_height > 1.0f) {
+        if(vertex_height > 1.3f) {
             results.push_back(vertex);
         }
     
     }
-    glm::vec3 test = glm::vec3(0.0f);
+    glm::vec3 test = glm::vec3(0.0f,2.0f,0.0f);
     std::vector<glm::vec3> results_2;
-    results_2.push_back(test);
+    results.push_back(test);
     return results;
 }

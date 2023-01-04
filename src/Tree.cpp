@@ -23,7 +23,6 @@ std::vector<float> PineTree::setupVertices(std::vector<glm::vec3> model_vertices
         int material_id = mesh.material_indices[i];
 
         result[vertex_index*7] = model_vertices[vertex_index].x;
-            
         result[vertex_index*7+1] = model_vertices[vertex_index].y;
         result[vertex_index*7+2] = model_vertices[vertex_index].z;
 
@@ -32,22 +31,6 @@ std::vector<float> PineTree::setupVertices(std::vector<glm::vec3> model_vertices
         result[vertex_index*7+5] = model_normals[normal_index].z;
 
         result[vertex_index*7+6] = (float) material_id;
-        /*
-        if(!result[vertex_index*7]) {
-            result[vertex_index*7] = model_vertices[vertex_index].x;
-            
-            result[vertex_index*7+1] = model_vertices[vertex_index].y;
-            result[vertex_index*7+2] = model_vertices[vertex_index].z;
-
-            result[vertex_index*7+3] = model_normals[normal_index].x;
-            result[vertex_index*7+4] = model_normals[normal_index].y;
-            result[vertex_index*7+5] = model_normals[normal_index].z;
-
-            result[vertex_index*7+6] = (float) material_id;
-            
-        }
-        */
-
     }
 
     return result;
@@ -68,11 +51,19 @@ void PineTree::calculate_TreeOffsets() {
         }
     } 
 }
-
-void PineTree::set_instance_buffer(std::vector<glm::vec3> offsets) {
+/*
+void CubeFace::updateGPUBuffer() {
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, NUM_VERTICES * sizeof(glm::vec3), vertices);
+}
+*/
+void PineTree::set_instance_buffer(std::vector<glm::vec3>& offsets) {
+    glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * tree_offsets.size(), &tree_offsets[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * offsets.size(), &offsets[0], GL_STATIC_DRAW);
+    //glBufferSubData(GL_ARRAY_BUFFER, 0, tree_offsets.size() * sizeof(glm::vec3), &tree_offsets[0]);
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(0);
 }
 
 PineTree::PineTree() {
@@ -105,7 +96,6 @@ PineTree::PineTree() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
     glBufferData(GL_ARRAY_BUFFER,7* sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
     //glBufferData(GL_ARRAY_BUFFER,6* sizeof(float) * model_vertices.size(), &model_vertices[0], GL_STATIC_DRAW);
@@ -113,28 +103,27 @@ PineTree::PineTree() {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int) * mesh.vertices_indices.size(), &mesh.vertices_indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int) * mesh.vertices_indices.size(), &mesh.vertices_indices[0], GL_STATIC_DRAW);
 
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.vertices_indices.size() + sizeof(unsigned int) * mesh.normals_indices.size(), &mesh.vertices_indices[0], GL_STATIC_DRAW);
     //glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int) * mesh.vertices_indices.size(),mesh.normals_indices.size(),&mesh.normals_indices[0]);
 
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,7* sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE,7 * sizeof(float), (void*)(6 * sizeof(float)));
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);	
     glVertexAttribDivisor(3, 1);  
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
 }
 
 void PineTree::draw(int width,int height) {
@@ -170,7 +159,7 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_
     setUniformMatrix(proj,"projection");
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model,glm::vec3(0.2f));
+    model = glm::scale(model,glm::vec3(0.01f));
     setUniformMatrix(model,"model");
 
     glm::mat4 view = glm::mat4(1.0f);
