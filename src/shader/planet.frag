@@ -1,16 +1,18 @@
 #version 460 core
 in vec3 worldNormal;
 in vec3 worldPosition;
-in vec2 TexCoord;
+in vec3 TexCoord;
 flat in int inCrater;
 out vec4 fragColor;
 
 uniform vec3 cameraPos;
-uniform sampler2D grassland;
-uniform sampler2D snow;
-uniform sampler2D mountain;
-uniform sampler2D water;
 uniform sampler2D crater;
+
+uniform samplerCube grassland_cube;
+uniform samplerCube snow_cube;
+uniform samplerCube mountain_cube;
+uniform samplerCube water_cube;
+uniform samplerCube crater_cube;
 
 const vec3 k_s = vec3(0.1f);
 const float n = 100.0f;
@@ -44,35 +46,35 @@ void main()
 
 
     if(inCrater == 1) {
-        k_d =  texture(crater,TexCoord).rgb;
+        k_d =  texture(crater,vec2(TexCoord)).rgb;
     } else {
         if(distance_To_Planet_Center > water_Level) {
             distance_To_Biome_Edge = distance_To_Planet_Center - water_Level;
             interpolation_degree = distance_To_Biome_Edge / ocean_interpolation_width;
             if(interpolation_degree <= 0.7f) {
-                k_d = mix(texture(water,TexCoord).rgb,texture(grassland,TexCoord).rgb, interpolation_degree);
+                k_d = mix(texture(water_cube,TexCoord).rgb,texture(grassland_cube,TexCoord).rgb, interpolation_degree);
             } else {
-            k_d = texture(grassland,TexCoord).rgb;
+            k_d = texture(grassland_cube,TexCoord).rgb;
             }
         } else {
-            k_d = texture(water,TexCoord).rgb;
+            k_d = texture(water_cube,TexCoord).rgb;
         }
         if(distance_To_Planet_Center > mountain_Height) {
             distance_To_Biome_Edge = distance_To_Planet_Center - mountain_Height;
             interpolation_degree = distance_To_Biome_Edge / mountain_interpolation_width;
             if(interpolation_degree <= 0.9f) {
-                k_d = mix(texture(grassland,TexCoord).rgb,texture(mountain,TexCoord).rgb, interpolation_degree);
+                k_d = mix(texture(grassland_cube,TexCoord).rgb,texture(mountain_cube,TexCoord).rgb, interpolation_degree);
             } else {
-            k_d = texture(mountain,TexCoord).rgb;
+            k_d = texture(mountain_cube,TexCoord).rgb;
             }
         }
         if(distance_To_Planet_Center > snow_peak_Height) {
             distance_To_Biome_Edge = distance_To_Planet_Center - snow_peak_Height;
             interpolation_degree = distance_To_Biome_Edge / snow_interpolation_width;
             if(interpolation_degree <= 1.0f) {
-                k_d = mix(texture(mountain,TexCoord).rgb,texture(snow,TexCoord).rgb, interpolation_degree);
+                k_d = mix(texture(mountain_cube,TexCoord).rgb,texture(snow_cube,TexCoord).rgb, interpolation_degree);
             } else {
-            k_d = texture(snow,TexCoord).rgb;
+            k_d = texture(snow_cube,TexCoord).rgb;
             }
         }
     }

@@ -27,37 +27,48 @@ struct Planet_Info{
 void Planet::set_Textures(){
 //generate planet Textures
     std::string grassland_path = (std::string)Project_SOURCE_DIR +"/src/assets/Grass 1.png";
-    Texture grassland_texture = TextureLoader::generate_diffuse_texture(grassland_path);
-
-    std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/mountain texture.png";
-    Texture mountain_texture = TextureLoader::generate_diffuse_texture(mountain_path);
-
-    std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
-    Texture snow_texture = TextureLoader::generate_diffuse_texture(snow_path);
-
-    std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
-    Texture water_texture = TextureLoader::generate_diffuse_texture(water_path);
     std::string crater_path = (std::string)Project_SOURCE_DIR +"/src/assets/burnt_sand.png";
+    std::string water_path = (std::string)Project_SOURCE_DIR +"/src/assets/00water-texture.png";
+    std::string snow_path = (std::string)Project_SOURCE_DIR +"/src/assets/snow1.jpg";
+    std::string mountain_path = (std::string)Project_SOURCE_DIR +"/src/assets/mountain texture.png";
+    
+    Texture grassland_texture = TextureLoader::generate_diffuse_texture(grassland_path);
+    Texture mountain_texture = TextureLoader::generate_diffuse_texture(mountain_path);
+    Texture snow_texture = TextureLoader::generate_diffuse_texture(snow_path);
+    Texture water_texture = TextureLoader::generate_diffuse_texture(water_path);
     Texture crater_texture = TextureLoader::generate_diffuse_texture(crater_path);
 
+    Texture grassland_texture_cube = TextureLoader::generate_One_Texture_As_cubemap(grassland_path);
+    Texture mountain_texture_cube = TextureLoader::generate_One_Texture_As_cubemap(mountain_path);
+    Texture snow_texture_cube = TextureLoader::generate_One_Texture_As_cubemap(snow_path);
+    Texture water_texture_cube = TextureLoader::generate_One_Texture_As_cubemap(water_path);
+    Texture crater_texture_cube = TextureLoader::generate_One_Texture_As_cubemap(crater_path);
+
     planetProgram->use(); // don't forget to activate the shader before setting uniforms!
-    glUniform1i(glGetUniformLocation(planetProgram->name, "grassland"), 1);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "water"), 2);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "mountain"), 3);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "snow"), 4);
     glUniform1i(glGetUniformLocation(planetProgram->name, "crater"), 5);
     std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture, crater_texture};
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,planet_textures[0].id);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D,planet_textures[1].id);
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D,planet_textures[2].id);
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D,planet_textures[3].id);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "grassland_cube"), 6);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "water_cube"), 7);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "mountain_cube"), 8);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "snow_cube"), 9);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "crater_cube"), 10);
+    std::vector<Texture> planet_textures_cube = {grassland_texture_cube,water_texture_cube,mountain_texture_cube, snow_texture_cube, crater_texture_cube};
+
+
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D,planet_textures[4].id);
+
+    glActiveTexture(GL_TEXTURE6);
+    glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[0].id);
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[1].id);
+    glActiveTexture(GL_TEXTURE8);
+    glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[2].id);
+    glActiveTexture(GL_TEXTURE9);
+    glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[3].id);
+    glActiveTexture(GL_TEXTURE10);
+    glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[4].id);
 }
 
 Planet::Planet(unsigned long noiseSeed) {
