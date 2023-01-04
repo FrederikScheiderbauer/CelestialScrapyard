@@ -17,7 +17,8 @@ float Noise::getValue(glm::vec3 point) {
         case SIMPLE: {
             float value = perlin.normalizedOctave3D_01(point.x, point.y, point.z, 8, parameters.persistence);
             //map from [0,1] to [0.6, 1.4]
-            value = (0.8f * value) + 0.6;
+            //value = (0.8f * value) + 0.6;
+            value = glm::pow(value, parameters.amplification);
             return value;
         }
         case AMPLIFIED: {
