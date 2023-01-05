@@ -222,6 +222,7 @@ void CubeFace::drawInstanced(int instanceCount) {
 
 std::vector<glm::vec3> CubeFace::filter_vertices_from_map() {
     std::vector<glm::vec3> results;
+    /*
     for(int i = 0;  i < NUM_INDICES;i++) {
         
         int NUM_VALUES_PER_VERTEX = 2;
@@ -234,8 +235,11 @@ std::vector<glm::vec3> CubeFace::filter_vertices_from_map() {
         }
     
     }
-    glm::vec3 test = glm::vec3(0.0f,2.0f,0.0f);
+    */
+    int middle = NUM_VERTICES/4;
+    //int index = indices[middle];
+    glm::vec3 middle_vertex = vertices[middle+50]*2.0f;// + displacements[middle/2];
     std::vector<glm::vec3> results_2;
-    results.push_back(test);
+    results.push_back(middle_vertex);
     return results;
 }

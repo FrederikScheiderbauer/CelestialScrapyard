@@ -6,6 +6,11 @@
 #include "../headers/Tree.hpp"
 #include "../headers/camera.hpp"
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp> 
+#include <glm/gtc/quaternion.hpp>
 
 
 std::string obj_file = (std::string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
@@ -66,6 +71,15 @@ void PineTree::set_instance_buffer(std::vector<glm::vec3>& offsets) {
     glBindVertexArray(0);
 }
 
+void PineTree::set_instance_matrix_buffer(std::vector<glm::mat4>& instanceMatrices) {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceMatrixVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * instanceMatrices.size(), &instanceMatrices[0], GL_STATIC_DRAW);
+    //glBufferSubData(GL_ARRAY_BUFFER, 0, tree_offsets.size() * sizeof(glm::vec3), &tree_offsets[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(0);
+}
+
 PineTree::PineTree() {
     std::vector<glm::vec3> model_vertices;
     std::vector<glm::vec3> model_normals;
@@ -82,6 +96,7 @@ PineTree::PineTree() {
     calculate_TreeOffsets();
 
     glGenBuffers(1, &instanceVBO);
+    //glGenBuffers(1, &instanceMatrixVBO);
     //set_instance_buffer(tree_offsets); 
 
 
@@ -122,8 +137,26 @@ PineTree::PineTree() {
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);	
     glVertexAttribDivisor(3, 1);  
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    /*
+     glEnableVertexAttribArray(3);
+        glBindBuffer(GL_ARRAY_BUFFER, instanceMatrixVBO);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(6);
+        glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+        glVertexAttribDivisor(3, 1);
+        glVertexAttribDivisor(4, 1);
+        glVertexAttribDivisor(5, 1);
+        glVertexAttribDivisor(6, 1);
+    
+    
+    
+    */
 }
 
 void PineTree::draw(int width,int height) {
@@ -170,8 +203,31 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_
     
     modelShader->use();
     glBindVertexArray(VAO);
-    glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, tree_offsets.size());
+    glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, tree_offsets_2.size());
     glBindVertexArray(0);
 
 }
 
+std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& offsets){
+    //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
+    std::vector<glm::mat4> model_matrices;
+    float tree_scaling = 0.01f;
+    for(int i = 0; i< offsets.size();i +=2) {
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::vec3 model_pos_offset = offsets[i];
+        glm::vec3 model_normal_offset = offsets[i+1];
+
+        model = glm::translate(model,model_pos_offset);
+
+        model = glm::scale(model,glm::vec3(tree_scaling));
+
+        glm::vec3 localUp = glm::vec3(0.0f,1.0f,0.0f);
+
+        glm::vec3 rotAxis = glm::normalize(glm::cross(localUp,model_normal_offset));
+        float rotAngle = glm::acos(glm::dot(localUp,model_normal_offset));
+
+        model = glm::rotate(model,rotAngle,rotAxis);
+        model_matrices.push_back(model);
+    }
+    return model_matrices;
+}
