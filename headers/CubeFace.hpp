@@ -45,6 +45,7 @@ public:
     void drawInstanced(int instanceCount);
     bool addCrater(glm::vec3 center);
     std::vector<glm::vec3> filter_vertices_from_map();
+    std::vector<glm::vec3> filter_vertices_and_normals_from_map();
     ~ CubeFace();
 };
 #endif

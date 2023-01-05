@@ -95,8 +95,8 @@ PineTree::PineTree() {
     //calculate tree offsets
     calculate_TreeOffsets();
 
-    glGenBuffers(1, &instanceVBO);
-    //glGenBuffers(1, &instanceMatrixVBO);
+    //glGenBuffers(1, &instanceVBO);
+    glGenBuffers(1, &instanceMatrixVBO);
     //set_instance_buffer(tree_offsets); 
 
 
@@ -131,14 +131,14 @@ PineTree::PineTree() {
 
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE,7 * sizeof(float), (void*)(6 * sizeof(float)));
-
+    /*
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);	
     glVertexAttribDivisor(3, 1);  
-
-    /*
+    */
+    
      glEnableVertexAttribArray(3);
         glBindBuffer(GL_ARRAY_BUFFER, instanceMatrixVBO);
         glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
@@ -156,7 +156,7 @@ PineTree::PineTree() {
     
     
     
-    */
+    
 }
 
 void PineTree::draw(int width,int height) {
@@ -180,38 +180,10 @@ void PineTree::draw(int width,int height) {
     glBindVertexArray(0);
 }
 
-
-void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2) {
-
-    set_instance_buffer(tree_offsets_2);
-    Camera* camera = Camera::get_Active_Camera();
-    modelShader->use();
-    //remove later TODO
-
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
-    setUniformMatrix(proj,"projection");
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model,glm::vec3(0.01f));
-    setUniformMatrix(model,"model");
-
-    glm::mat4 view = glm::mat4(1.0f);
-
-    view = camera->get_View_Matrix();
-
-    setUniformMatrix(view,"view");
-    
-    modelShader->use();
-    glBindVertexArray(VAO);
-    glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, tree_offsets_2.size());
-    glBindVertexArray(0);
-
-}
-
 std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& offsets){
     //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
     std::vector<glm::mat4> model_matrices;
-    float tree_scaling = 0.01f;
+    float tree_scaling = 0.003f;
     for(int i = 0; i< offsets.size();i +=2) {
         glm::mat4 model = glm::mat4(1.0f);
         glm::vec3 model_pos_offset = offsets[i];
@@ -231,3 +203,34 @@ std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& of
     }
     return model_matrices;
 }
+
+void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2) {
+    std::vector<glm::mat4> model_transformations = calculate_tree_transformations(tree_offsets_2);
+    set_instance_matrix_buffer(model_transformations);
+    //set_instance_buffer(tree_offsets_2);
+    Camera* camera = Camera::get_Active_Camera();
+    //int amount = tree_offsets_2.size();
+    int amount = model_transformations.size();
+    modelShader->use();
+    //remove later TODO
+
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+    setUniformMatrix(proj,"projection");
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model,glm::vec3(0.01f));
+    setUniformMatrix(model,"model");
+
+    glm::mat4 view = glm::mat4(1.0f);
+
+    view = camera->get_View_Matrix();
+
+    setUniformMatrix(view,"view");
+    
+    modelShader->use();
+    glBindVertexArray(VAO);
+    glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, amount);
+    glBindVertexArray(0);
+
+}
+

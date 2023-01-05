@@ -243,3 +243,14 @@ std::vector<glm::vec3> CubeFace::filter_vertices_from_map() {
     results.push_back(middle_vertex);
     return results;
 }
+
+std::vector<glm::vec3> CubeFace::filter_vertices_and_normals_from_map() {
+    std::vector<glm::vec3> results;
+    int middle = NUM_VERTICES/2;
+    //int index = indices[middle];
+    glm::vec3 middle_vertex = vertices[middle+50];// + displacements[middle/2];
+    glm::vec3 middle_normal = vertices[middle+51];
+    results.push_back(middle_vertex);
+    results.push_back(middle_normal);
+    return results;
+}

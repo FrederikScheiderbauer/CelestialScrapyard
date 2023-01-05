@@ -216,7 +216,8 @@ void Planet::create_Forests(){
     
     std::vector<glm::vec3> treeOffsets_2;
     for ( int i = 0; i < CUBE_NUM_FACES; i++) {
-        std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_from_map();
+        //std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_from_map();
+        std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_and_normals_from_map();
         sanity_check(offsets);
             for ( int j = 0; j < offsets.size(); j++) {
                 treeOffsets.push_back(offsets[j]);
