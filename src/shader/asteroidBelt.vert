@@ -46,7 +46,7 @@ void main()
         worldPosition = vec3(0.0);
         gl_Position = vec4(0.0);
         worldNormal = vec3(0.0);
-        instanceId = 0;
+        instanceId = gl_InstanceID;
     } else {
         float seed = float(gl_InstanceID);
         vec3 axis = normalize(vec3(hash11(seed), hash11(seed), hash11(seed)));
