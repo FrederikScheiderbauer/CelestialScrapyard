@@ -161,7 +161,7 @@ void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {
     glFinish();
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     unsigned char data[4];
-    glReadPixels((GLint) mousePosition.x, (GLint) mousePosition.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glReadPixels((GLint) mousePosition.x, height - (GLint) mousePosition.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
     pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
     std::cout << pickedID << std::endl;
     picking = false;
