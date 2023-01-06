@@ -7,6 +7,8 @@ out vec4 fragColor;
 uniform vec3 cameraPos;
 uniform bool picking;
 uniform int pickedID;
+//0: draw normal, 1: only draw picked asteroid with write to stencil buffer, 2: draw picked with asteroid with solid color
+uniform int outlining;
 
 const vec3 k_s = vec3(0.1f);
 const float n = 100.0f;
@@ -22,29 +24,37 @@ vec3 instanceIdToColor() {
 
 void main()
 {
+    if ((outlining > 0 && pickedID != instanceId) || (outlining == 0 && pickedID == instanceId)) {
+        discard;
+    }
+
     if (picking) {
         fragColor = vec4(instanceIdToColor(), 1.0f);
     } else {
-        vec3 N = normalize(worldNormal);
-        vec3 V = normalize(cameraPos - worldPosition);
-        vec3 R = normalize(reflect((-1)*V, N));
-
-        vec3 L = normalize(cameraPos - worldPosition);
-
-        vec3 k_d;
-        if (instanceId != pickedID) {
-            k_d = vec3(0.5);
+        if (outlining == 2) {
+            fragColor = vec4(0.8, 0.0, 0.0, 1.0);
         } else {
-            k_d = vec3(0.8, 0.0, 0.0);
+            vec3 N = normalize(worldNormal);
+            vec3 V = normalize(cameraPos - worldPosition);
+            vec3 R = normalize(reflect((-1)*V, N));
+
+            vec3 L = normalize(cameraPos - worldPosition);
+
+            vec3 k_d;
+            if (instanceId != pickedID) {
+                k_d = vec3(0.5);
+            } else {
+
+            }
+
+            vec3 diffuse = k_d * max(0.0, dot(L, N));
+            vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
+            vec3 sum = diffuse + specular;
+
+            /* leave out for now, gets too bright when close to the sphere*/
+            //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
+            //     vec3 intensity = light_intensity / distance;
+            fragColor = vec4(sum /** intensity*/, 1.0);
         }
-
-        vec3 diffuse = k_d * max(0.0, dot(L, N));
-        vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
-        vec3 sum = diffuse + specular;
-
-        /* leave out for now, gets too bright when close to the sphere*/
-        //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
-        //     vec3 intensity = light_intensity / distance;
-        fragColor = vec4(sum /** intensity*/, 1.0);
     }
 }

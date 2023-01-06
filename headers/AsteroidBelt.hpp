@@ -21,6 +21,8 @@ private:
     const float ASTEROID_SPEED = 0.001f;
 
     void move();
+    void prepareDraw(int width, int height, bool outlining);
+    void executeDraw();
 
     bool picking = false;
     int pickedID = -1;

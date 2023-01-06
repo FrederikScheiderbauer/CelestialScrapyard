@@ -54,7 +54,6 @@ void AsteroidBelt::setUniformMatrix(glm::mat4 matrix, std::string type) {
     glUniformMatrix4fv(glGetUniformLocation(asteroidBeltProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-
 glm::vec3 asteroidCenterToSpherical(glm::vec4 center) {
     //https://mathworld.wolfram.com/SphericalCoordinates.html
     float r = glm::length(glm::vec3(center));
@@ -84,7 +83,7 @@ void AsteroidBelt::move() {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void AsteroidBelt::draw(int width, int height) {
+void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
     Camera* camera = Camera::get_Active_Camera();
 
     asteroidBeltProgram->use();
@@ -92,7 +91,7 @@ void AsteroidBelt::draw(int width, int height) {
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
     setUniformMatrix(proj,"projection");
 
-    glm::mat4 model = glm::mat4(ASTEROID_RADIUS);
+    glm::mat4 model = glm::mat4(ASTEROID_RADIUS + (outlining ? 0.01f : 0.0f));
     //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     setUniformMatrix(model,"model");
 
@@ -103,19 +102,51 @@ void AsteroidBelt::draw(int width, int height) {
     //Camera* camera2 = Camera::get_Active_Camera();
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
+    glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
 
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "pickedID"), pickedID);
+}
+
+void AsteroidBelt::executeDraw() {
+    for (int i = 0; i < CUBE_NUM_FACES; ++i) {
+        cubefaces[i]->drawInstanced(NUM_ASTEROIDS);
+    }
+}
+
+void AsteroidBelt::draw(int width, int height) {
     if (!picking) {
         move();
     }
 
-    glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
-    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);
-    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "pickedID"), pickedID);
+    //outline rendering based on https://learnopengl.com/Advanced-OpenGL/Stencil-testing
+    glEnable(GL_STENCIL_TEST);
 
-    for (int i = 0; i < CUBE_NUM_FACES; ++i) {
-        cubefaces[i]->drawInstanced(NUM_ASTEROIDS);
+    //standard draw
+    prepareDraw(width, height, false);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "outlining"), 0);
+    executeDraw();
+
+    //draw picked asteroid again in stencil buffer and in solid color for outline rendering
+    if (pickedID == -1) {
+        return;
     }
+
+    prepareDraw(width, height, false);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "outlining"), 1);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilMask(0xFF);
+    executeDraw();
+
+    prepareDraw(width, height, true);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "outlining"), 2);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+    executeDraw();
+    glStencilMask(0xFF);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glDisable(GL_STENCIL_TEST);
 }
 
 void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {

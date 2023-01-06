@@ -8,6 +8,8 @@ flat out int instanceId;
 uniform mat4 projection;
 uniform mat4 model;
 uniform mat4 view;
+uniform int pickedID;
+uniform int outlining;
 
 layout(std430, binding = 0) buffer offsetBuffer {
     vec4 offsets[];
@@ -40,13 +42,20 @@ mat4 rotationMatrix(vec3 axis, float angle)
 
 void main()
 {
-    float seed = float(gl_InstanceID);
-    vec3 axis = normalize(vec3(hash11(seed), hash11(seed), hash11(seed)));
-    float angle = 2 * PI * hash11(seed);
-    mat4 rotation = rotationMatrix(axis, angle);
+    if (outlining > 0 && pickedID != gl_InstanceID) {
+        worldPosition = vec3(0.0);
+        gl_Position = vec4(0.0);
+        worldNormal = vec3(0.0);
+        instanceId = 0;
+    } else {
+        float seed = float(gl_InstanceID);
+        vec3 axis = normalize(vec3(hash11(seed), hash11(seed), hash11(seed)));
+        float angle = 2 * PI * hash11(seed);
+        mat4 rotation = rotationMatrix(axis, angle);
 
-    worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
-    gl_Position = projection * view * vec4(worldPosition, 1.0);
-    worldNormal = vec3(rotation * model * vec4(normal, 0.0));
-    instanceId = gl_InstanceID;
+        worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
+        gl_Position = projection * view * vec4(worldPosition, 1.0);
+        worldNormal = vec3(rotation * model * vec4(normal, 0.0));
+        instanceId = gl_InstanceID;
+    }
 }

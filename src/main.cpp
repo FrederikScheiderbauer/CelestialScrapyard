@@ -218,7 +218,8 @@ int main(void)
         /*Update Game state*/
 
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilMask(0x00);
 
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
@@ -228,15 +229,18 @@ int main(void)
             param.mouseClicked = false;
         }
 
-        glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilMask(0x00);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
         gui_Object.imgui_Frame_Setup();
 
         //pinetree_model.draw_instanced(current_width, current_height);
         planet.draw(current_width, current_height,planet_info);
-        asteroidBelt.draw(current_width, current_height);
 
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
+
+        asteroidBelt.draw(current_width, current_height);
 
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
         gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info);
