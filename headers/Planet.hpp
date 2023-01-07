@@ -26,28 +26,42 @@ private:
     //PineTree pineTreeModel;
     std::unique_ptr<ShaderProgram> planetProgram;
     std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> cubefaces;
+    Noise *noise;
     const int PLANET_RESOLUTION = 200;
     const std::array<glm::vec3, CUBE_NUM_FACES> directions = {glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0)};
     void setUniformMatrix(glm::mat4 matrix, std::string type);
     GLuint textureID;
-    std::deque<glm::vec3> vertexUpdateQueue;
+
+    struct VertexQueueItem {
+        glm::vec3 craterCenter;
+        int collisionCounter;
+    };
+    std::deque<VertexQueueItem> vertexUpdateQueue;
+    struct ParticleQueueItem {
+        glm::vec3 craterCenter;
+        int particleCounter;
+    };
+    std::vector<ParticleQueueItem> particleQueue;
     std::future<std::array<bool, CUBE_NUM_FACES>> currentVertexUpdate;
     bool vertexUpdateInProgress = false;
+    const int PARTICLE_DURATION = 80;
+    void handleCollisions();
+    void drawParticles(int width, int height);
+    void checkForVertexUpdate();
+    void dispatchVertexUpdate();
+
     std::vector<glm::vec3> treeOffsets;
-    
     //PineTree pineTreeModel;
     ParticleProps particle;
     ParticleSystem particleSystem;
     PineTree pineTreeModel;
-    void drawParticles(int width, int height);
-    void dispatchVertexUpdate();
     void set_Textures();
     void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets);
     std::vector<glm::mat4> tree_transformation_matrices;
 public:
     Planet(unsigned long noiseSeed);
     void draw(int width, int height, glm::vec3 &planet_info);
-    void addCrater(glm::vec3 center);
+    void addCrater(glm::vec3 throwDirection, float asteroidSpeed);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
     void create_Forests(unsigned long noiseSeed);
 };

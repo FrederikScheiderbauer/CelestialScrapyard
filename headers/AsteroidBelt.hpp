@@ -26,10 +26,16 @@ private:
 
     bool picking = false;
     int pickedID = -1;
+    bool throwInProgress = false;
+    glm::vec3 throwDirection;
+    float t;
+    const float THROW_SPEED = -0.008f;
 public:
     AsteroidBelt(unsigned long noiseSeed);
     void draw(int width, int height);
     void pick(int width, int height, glm::vec2 mousePosition);
+    glm::vec3 throwTowardsCenter();
+    float getThrowSpeed();
     ~AsteroidBelt();
 };
 

@@ -43,6 +43,7 @@ void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 struct WindowPointerParameters {
     Planet *planet;
+    AsteroidBelt *belt;
     bool mouseClicked;
     glm::vec2 mousePosition;
 };
@@ -52,9 +53,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
         Planet *planet = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->planet;
-        auto camera = LockedCamera::get_Active_Camera();
-        glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
-        planet->addCrater(intersectionOnUnitSphere);
+        AsteroidBelt *belt = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->belt;
+        //auto camera = LockedCamera::get_Active_Camera();
+        glm::vec3 throwDirection = belt->throwTowardsCenter();
+        if (throwDirection == glm::vec3(0.f)) {
+            return;
+        }
+        //glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
+        planet->addCrater(throwDirection, belt->getThrowSpeed());
     }
 }
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
@@ -196,7 +202,7 @@ int main(void)
     Planet planet = Planet(seed);
     AsteroidBelt asteroidBelt = AsteroidBelt(seed);
     //hacky way to make object available in callback, TODO: change this
-    WindowPointerParameters param = {&planet, false, glm::vec2(0.f)};
+    WindowPointerParameters param = {&planet, &asteroidBelt, false, glm::vec2(0.f)};
     glfwSetWindowUserPointer(window, &param);
     Skybox skybox = Skybox();
 

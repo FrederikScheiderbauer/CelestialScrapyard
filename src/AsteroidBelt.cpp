@@ -72,15 +72,36 @@ glm::vec4 sphericalToAsteroidCenter(glm::vec3 spherical) {
 
 void AsteroidBelt::move() {
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
-        auto spherical = asteroidCenterToSpherical(offsets[i]);
-        float speed = ASTEROID_SPEED * (glm::abs(spherical.z) < 0.5f * glm::pi<float>() ? 1.f : -1.f);
-        spherical.y += speed;
-        spherical.y = std::fmod(spherical.y, glm::pi<float>());
-        offsets[i] = sphericalToAsteroidCenter(spherical);
+        if (i == pickedID && throwInProgress) {
+            //keep asteroid at center of planet after throw
+            if (glm::all(glm::epsilonEqual(offsets[i], glm::vec4(0.f), 1E-1f))) {
+                throwInProgress = false;
+                pickedID = -1;
+            } else {
+                t += THROW_SPEED;
+                offsets[i] = glm::vec4{throwDirection * t, 0.f};
+            }
+        } else {
+            auto spherical = asteroidCenterToSpherical(offsets[i]);
+            float speed = ASTEROID_SPEED * (glm::abs(spherical.z) < 0.5f * glm::pi<float>() ? 1.f : -1.f);
+            spherical.y += speed;
+            spherical.y = std::fmod(spherical.y, glm::pi<float>());
+            offsets[i] = sphericalToAsteroidCenter(spherical);
+        }
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec4) * NUM_ASTEROIDS, offsets);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+
+glm::vec3 AsteroidBelt::throwTowardsCenter() {
+    if (pickedID == -1 || throwInProgress)
+        return glm::vec3(0.0f);
+    throwDirection = offsets[pickedID];
+    throwInProgress = true;
+    t = 1.f;
+    return throwDirection;
 }
 
 void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
@@ -169,4 +190,8 @@ void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {
 
 AsteroidBelt::~AsteroidBelt() {
     delete[] offsets;
+}
+
+float AsteroidBelt::getThrowSpeed() {
+    return THROW_SPEED;
 }
