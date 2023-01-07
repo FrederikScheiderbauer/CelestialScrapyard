@@ -104,10 +104,6 @@ glm::vec3 AsteroidBelt::throwTowardsCenter() {
     return throwDirection;
 }
 
-void AsteroidBelt::setCollisionPoint(glm::vec3 collisionPoint) {
-
-}
-
 void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
     Camera* camera = Camera::get_Active_Camera();
 

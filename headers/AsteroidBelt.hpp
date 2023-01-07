@@ -36,7 +36,6 @@ public:
     void pick(int width, int height, glm::vec2 mousePosition);
     glm::vec3 throwTowardsCenter();
     float getThrowSpeed();
-    void setCollisionPoint(glm::vec3 collisionPoint);
     ~AsteroidBelt();
 };
 
