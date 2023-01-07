@@ -42,12 +42,14 @@ private:
     void drawParticles(int width, int height);
     void dispatchVertexUpdate();
     void set_Textures();
+    void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets);
+    std::vector<glm::mat4> tree_transformation_matrices;
 public:
     Planet(unsigned long noiseSeed);
     void draw(int width, int height, glm::vec3 &planet_info);
     void addCrater(glm::vec3 center);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
-    void create_Forests();
+    void create_Forests(unsigned long noiseSeed);
 };
 
 #endif

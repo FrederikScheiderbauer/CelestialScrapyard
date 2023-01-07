@@ -96,7 +96,7 @@ Planet::Planet(unsigned long noiseSeed) {
     //particle.VelocityVariation = { 3.0f, 1.0f };
     particle.Position = { 0.0f, 0.0f, 0.0f };
 
-    create_Forests();
+    create_Forests(noiseSeed);
 }
 
 void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
@@ -175,7 +175,7 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     }
 
     //draw trees
-    pineTreeModel.draw_instanced(width,height,treeOffsets, planet_info);
+    pineTreeModel.draw_instanced(width,height,tree_transformation_matrices, planet_info);
     
 }
 
@@ -206,24 +206,64 @@ std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 cent
     }
     return changed;
 }
+//make sure there arent too many trees per side
+//make sure there each position vertex only appears once
+//make sure trees arent too close to each other
+std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
+    std::vector<glm::vec3> results;
+    results.push_back(vector[0]);
+    results.push_back(vector[1]);
 
-void sanity_check(std::vector<glm::vec3>& vector) {
-    if(vector.size() > 1000) {
-        vector.resize(1000);
-    }
-}
-void Planet::create_Forests(){
-    
-    for ( int i = 0; i < CUBE_NUM_FACES; i++) {
-        std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_and_normals_from_map();
-        sanity_check(offsets);
-            for ( int j = 0; j < offsets.size(); j++) {
-                treeOffsets.push_back(offsets[j]);
+    for (int i = 2; i < vector.size(); i+=2) {
+        glm::vec3 pos_vertex = vector[i];
+        bool to_be_added = true;
+        for (int j = 0; j < results.size();j+=2) {
+            if(glm::abs(glm::length(pos_vertex-results[j])) < 0.02f) {
+                to_be_added = false;
+                break;
             }
+        }
+        if(to_be_added) {
+            results.push_back(vector[i]);
+            results.push_back(vector[i+1]);
+        }
     }
-    
+    if(vector.size() > 10000) {
+        vector.resize(10000);
+    }
+    return results;
 }
+void Planet::create_Forests(unsigned long noiseSeed){
+    Noise noise = Noise(noiseSeed, Noise::forests);
+    for ( int i = 0; i < CUBE_NUM_FACES; i++) {
+        std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_and_normals_from_map(noise);
+        std::vector<glm::vec3> tree_positions = sanity_check(offsets);
+            for ( int j = 0; j < tree_positions.size(); j++) {
+                treeOffsets.push_back(tree_positions[j]);
+            }
+    } 
+    calculate_tree_transformations(treeOffsets);
+}
+void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets){
+    //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
+    float tree_scaling = 0.004f;
+    for(int i = 0; i< offsets.size();i +=2) {
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::vec3 model_pos_offset = offsets[i];
+        glm::vec3 model_normal_offset = offsets[i+1];
 
-void set_Forests() {
-    
+        model = glm::translate(model,model_pos_offset);
+
+        model = glm::scale(model,glm::vec3(tree_scaling));
+
+        glm::vec3 localUp = glm::vec3(0.0f,1.0f,0.0f);
+        glm::vec3 origin = glm::vec3(0.0f,0.0f,0.0f);
+        glm::vec3 direction = glm::normalize(model_pos_offset);
+
+        glm::vec3 rotAxis = glm::normalize(glm::cross(localUp,(model_normal_offset)));
+        float rotAngle = glm::acos(glm::dot(localUp,model_normal_offset));
+
+        model = glm::rotate(model,rotAngle,rotAxis);
+        tree_transformation_matrices.push_back(model);
+    }
 }

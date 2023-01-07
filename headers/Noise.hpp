@@ -13,10 +13,11 @@ public:
         Type type;
         float strength;
         float persistence;
-        float amplification;
+        float amplification; 
     };
     constexpr static Parameters asteroid = {SIMPLE, 2.f, 0.5f, 2.f};
     constexpr static Parameters mountainous = {AMPLIFIED, 0.8f, 0.25f, 1.5f};
+    constexpr static Parameters forests = {AMPLIFIED, 0.8f, 0.25f, 1.5f};
     constexpr static Parameters continental = {MULTILAYER, 0.8f, 0.25f, 1.5f};
     Noise(unsigned long seed, Noise::Parameters parameters);
     float getValue(glm::vec3 point);

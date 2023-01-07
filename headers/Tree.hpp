@@ -12,11 +12,10 @@ class PineTree: public Model{
         void set_instance_matrix_buffer(std::vector<glm::mat4>& instanceMatrices);
         void calculate_TreeOffsets();
         glm::vec2 translations[100];
-        std::vector<glm::vec3> tree_offsets;
         
 
     public:
         PineTree();
         void draw(int width, int height) override;
-        void draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2, glm::vec3& planet_info);
+        void draw_instanced(int width,int height,std::vector<glm::mat4> instance_matrices, glm::vec3& planet_info);
 };
