@@ -28,6 +28,8 @@ private:
     std::vector<float> displacements;
     std::vector<int> edgeVertexIndices;
 
+    Noise *noise;
+
     GLuint VAO;
     GLuint VBO;
     glm::vec3 localUp;
@@ -44,6 +46,7 @@ public:
     void draw();
     void drawInstanced(int instanceCount);
     bool addCrater(glm::vec3 center);
+    std::tuple<glm::vec3, float> displacePointOnUnitSphere(glm::vec3 pointOnUnitSphere);
     std::vector<glm::vec3> filter_vertices_from_map();
     std::vector<glm::vec3> filter_vertices_and_normals_from_map();
     ~ CubeFace();

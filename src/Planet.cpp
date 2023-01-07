@@ -77,10 +77,10 @@ Planet::Planet(unsigned long noiseSeed) {
     //generate planet Textures
     set_Textures();
 
-    Noise noise = Noise(noiseSeed, Noise::mountainous);
+    noise = new Noise(noiseSeed, Noise::mountainous);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
-        cubefaces[i] = std::make_unique<CubeFace>(direction, noise, PLANET_RESOLUTION);
+        cubefaces[i] = std::make_unique<CubeFace>(direction, *noise, PLANET_RESOLUTION);
     }
 
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
@@ -104,31 +104,42 @@ void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
     glUniformMatrix4fv(glGetUniformLocation(planetProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Planet::handleCollisions() {
+    for (auto &item : vertexUpdateQueue) {
+        if (--item.collisionCounter <= 0) {
+            particleQueue.push_back({item.craterCenter, 0});
+        }
+    }
+}
+
 void Planet::drawParticles(int width, int height) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
-    for (auto &craterCenter : vertexUpdateQueue) {
-        for (int i = 0; i < 100; ++i) {
-            float x = Random::getFromNormalDistribution();
-            float y = Random::getFromNormalDistribution();
-            float z = Random::getFromNormalDistribution();
-            float r = Random::getInRange(0.8f, 1.3f);
-            particle.Position = r * (2.f * craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
-            particle.CraterCenter = craterCenter;
-            particleSystem.emit(particle);
+    for (int j = 0; j < particleQueue.size(); ++j) {
+        if (++particleQueue[j].particleCounter <= PARTICLE_DURATION) {
+            for (int i = 0; i < 100; ++i) {
+                float x = Random::getFromNormalDistribution();
+                float y = Random::getFromNormalDistribution();
+                float z = Random::getFromNormalDistribution();
+                float r = Random::getInRange(0.8f, 1.3f);
+                particle.Position = r * (2.f * particleQueue[j].craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
+                particle.CraterCenter = particleQueue[j].craterCenter;
+                particleSystem.emit(particle);
+            }
+        } else {
+            particleQueue.erase(particleQueue.begin() + j);
         }
     }
     particleSystem.draw(width, height);
     glDisable(GL_BLEND);
 }
 
-void Planet::draw(int width, int height, glm::vec3 &planet_info) {
-    drawParticles(width, height);
+void Planet::checkForVertexUpdate() {
     //check if vertex data has been updated
-    if (vertexUpdateInProgress) {
+    if (vertexUpdateInProgress && vertexUpdateQueue.front().collisionCounter <= 0) {
         std::chrono::milliseconds waitTime(0);
         if (currentVertexUpdate.wait_for(waitTime) == std::future_status::ready) {
             auto changed = currentVertexUpdate.get();
@@ -142,6 +153,13 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
             dispatchVertexUpdate();
         }
     }
+}
+
+
+void Planet::draw(int width, int height, glm::vec3 &planet_info) {
+    handleCollisions();
+    drawParticles(width, height);
+    checkForVertexUpdate();
 
     Camera* camera = Camera::get_Active_Camera();
 
@@ -179,20 +197,25 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     
 }
 
-void Planet::addCrater(glm::vec3 center) {
-    vertexUpdateQueue.push_back(center);
+void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed) {
+    glm::vec3 pointOnUnitSphere = glm::normalize(throwDirection);
+    glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(pointOnUnitSphere));
+    float tCollision = glm::abs(collisionPoint.x / throwDirection.x);
+    int collisionCounter = (tCollision - 1) / throwSpeed;
+    vertexUpdateQueue.push_back({pointOnUnitSphere, collisionCounter});
     dispatchVertexUpdate();
 }
 
 void Planet::dispatchVertexUpdate() {
     if (vertexUpdateInProgress || vertexUpdateQueue.empty())
         return;
-    glm::vec3 center = vertexUpdateQueue.front();
+    glm::vec3 center = vertexUpdateQueue.front().craterCenter;
     currentVertexUpdate = std::async(std::launch::async, [this, center](){
         return this->recomputeVertexDataAsync(center);
     });
     vertexUpdateInProgress = true;
 }
+
 
 std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 center) {
     std::array<bool, CUBE_NUM_FACES> changed;
@@ -222,6 +245,10 @@ void Planet::create_Forests(){
             }
     }
     
+}
+
+Planet::~Planet() {
+    delete noise;
 }
 
 void set_Forests() {

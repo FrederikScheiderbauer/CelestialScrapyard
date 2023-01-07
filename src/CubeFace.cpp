@@ -30,9 +30,16 @@ int CubeFace::computeNumEdgeVertices() {
     return 4 * RESOLUTION - 4;
 }
 
+std::tuple<glm::vec3, float> CubeFace::displacePointOnUnitSphere(glm::vec3 pointOnUnitSphere) {
+    //elevation as in https://www.youtube.com/watch?v=uY9PAcNMu8s
+    float displacement = noise->getValue(pointOnUnitSphere);
+    return {(1 + displacement) * pointOnUnitSphere, displacement};
+}
+
 //based on: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20E01/Assets/TerrainFace.cs
 CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, int resolution)
     : RESOLUTION(resolution), NUM_VERTICES(computeNumVertices()), NUM_INDICES(computeNumIndices()), NUM_EDGE_VERTICES(computeNumEdgeVertices()) {
+    this->noise = &noise;
     axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
     axisB = glm::cross(localUp, axisA);
 
@@ -51,9 +58,8 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, int resolution)
             glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
             glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
 
-            //elevation as in https://www.youtube.com/watch?v=uY9PAcNMu8s
-            float displacement = noise.getValue(pointOnUnitSphere);
-            pointOnUnitSphere = (1 + displacement) * pointOnUnitSphere;
+            auto [point, displacement] = displacePointOnUnitSphere(pointOnUnitSphere);
+            pointOnUnitSphere = point;
 
             //set least significant bit of pointOnUnitSphere.x to zero to encode that this vertex is not within a crater
             uint32_t t;
