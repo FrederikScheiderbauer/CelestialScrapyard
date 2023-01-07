@@ -18,5 +18,5 @@ class PineTree: public Model{
     public:
         PineTree();
         void draw(int width, int height) override;
-        void draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2);
+        void draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2, glm::vec3& planet_info);
 };

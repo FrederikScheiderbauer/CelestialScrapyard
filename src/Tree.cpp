@@ -183,7 +183,7 @@ void PineTree::draw(int width,int height) {
 std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& offsets){
     //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
     std::vector<glm::mat4> model_matrices;
-    float tree_scaling = 0.003f;
+    float tree_scaling = 0.004f;
     for(int i = 0; i< offsets.size();i +=2) {
         glm::mat4 model = glm::mat4(1.0f);
         glm::vec3 model_pos_offset = offsets[i];
@@ -194,8 +194,10 @@ std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& of
         model = glm::scale(model,glm::vec3(tree_scaling));
 
         glm::vec3 localUp = glm::vec3(0.0f,1.0f,0.0f);
+        glm::vec3 origin = glm::vec3(0.0f,0.0f,0.0f);
+        glm::vec3 direction = glm::normalize(model_pos_offset);
 
-        glm::vec3 rotAxis = glm::normalize(glm::cross(localUp,model_normal_offset));
+        glm::vec3 rotAxis = glm::normalize(glm::cross(localUp,(model_normal_offset)));
         float rotAngle = glm::acos(glm::dot(localUp,model_normal_offset));
 
         model = glm::rotate(model,rotAngle,rotAxis);
@@ -204,7 +206,7 @@ std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& of
     return model_matrices;
 }
 
-void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2) {
+void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_offsets_2, glm::vec3& planet_info) {
     std::vector<glm::mat4> model_transformations = calculate_tree_transformations(tree_offsets_2);
     set_instance_matrix_buffer(model_transformations);
     //set_instance_buffer(tree_offsets_2);
@@ -226,6 +228,8 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::vec3>& tree_
     view = camera->get_View_Matrix();
 
     setUniformMatrix(view,"view");
+
+    glUniform3fv(glGetUniformLocation(modelShader->name, "planet_info"), 1, &planet_info[0]);
     
     modelShader->use();
     glBindVertexArray(VAO);

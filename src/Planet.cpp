@@ -175,7 +175,7 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     }
 
     //draw trees
-    pineTreeModel.draw_instanced(width,height,treeOffsets);
+    pineTreeModel.draw_instanced(width,height,treeOffsets, planet_info);
     
 }
 
@@ -214,30 +214,16 @@ void sanity_check(std::vector<glm::vec3>& vector) {
 }
 void Planet::create_Forests(){
     
-    std::vector<glm::vec3> treeOffsets_2;
     for ( int i = 0; i < CUBE_NUM_FACES; i++) {
-        //std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_from_map();
         std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_and_normals_from_map();
         sanity_check(offsets);
             for ( int j = 0; j < offsets.size(); j++) {
                 treeOffsets.push_back(offsets[j]);
             }
     }
-    //treeOffsets.push_back(glm::vec3(5.0f,5.0f,5.0f));
-    /*
-    int index = 0;
-    float offset = 0.1f;
-    for(int y = -10; y < 10; y += 2)a
-    {
-        for(int x = -10; x < 10; x += 2)
-        {
-            glm::vec3 translation;
-            translation.x = (float)x  + offset;
-            translation.y = (float)y  + offset;
-            translation.z = 0.0f;
-            treeOffsets.push_back(translation);
-        }
-    } 
-    */
+    
+}
+
+void set_Forests() {
     
 }
