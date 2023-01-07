@@ -204,6 +204,7 @@ void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed) {
     int collisionCounter = (tCollision - 1) / throwSpeed;
     vertexUpdateQueue.push_back({pointOnUnitSphere, collisionCounter});
     dispatchVertexUpdate();
+    destroy_trees(collisionPoint,0.35f);
 }
 
 void Planet::dispatchVertexUpdate() {
@@ -227,6 +228,7 @@ std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 cent
             cubefaces[i]->addEdgeNormals(cubefaces);
         }
     }
+    //destroy_trees(center,0.5f);
     return changed;
 }
 //make sure there arent too many trees per side
@@ -269,6 +271,7 @@ void Planet::create_Forests(unsigned long noiseSeed){
 }
 void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets){
     //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
+    std::vector<glm::mat4> transformation_matrices;
     float tree_scaling = 0.004f;
     for(int i = 0; i< offsets.size();i +=2) {
         glm::mat4 model = glm::mat4(1.0f);
@@ -287,6 +290,19 @@ void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets){
         float rotAngle = glm::acos(glm::dot(localUp,model_normal_offset));
 
         model = glm::rotate(model,rotAngle,rotAxis);
-        tree_transformation_matrices.push_back(model);
+        transformation_matrices.push_back(model);
     }
+    tree_transformation_matrices = transformation_matrices;
+}
+
+void Planet::destroy_trees(glm::vec3 crater_center,float radius) {
+    std::vector<glm::vec3> new_trees;
+    for (int i = 0; i < treeOffsets.size(); i+=2) {
+        if(glm::length(treeOffsets[i]-crater_center) > radius) {
+            new_trees.push_back(treeOffsets[i]);
+            new_trees.push_back(treeOffsets[i+1]);
+        }
+    }
+    treeOffsets = new_trees;
+    calculate_tree_transformations(new_trees);
 }

@@ -256,8 +256,8 @@ std::vector<glm::vec3> CubeFace::filter_vertices_and_normals_from_map( Noise &no
         int vertex_index  = indices[index];
         glm::vec3 position_vertex = vertices[vertex_index];// + displacements[middle/2];
         glm::vec3 normal_vertex = vertices[vertex_index];
-        float tree_chance = noise.getValue(position_vertex);
-        if(tree_chance < 0.5f) {
+        float tree_chance = noise.getValue(position_vertex) * glm::length(position_vertex);
+        if(tree_chance < 0.7f) {
             results.push_back(position_vertex);
             results.push_back(normal_vertex);
         }
