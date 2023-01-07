@@ -49,6 +49,7 @@ public:
     std::tuple<glm::vec3, float> displacePointOnUnitSphere(glm::vec3 pointOnUnitSphere);
     std::vector<glm::vec3> filter_vertices_from_map();
     std::vector<glm::vec3> filter_vertices_and_normals_from_map(Noise &noise);
+    std::vector<glm::vec3> get_Surface_Vertices_On_Surface(glm::vec3 center, float radius);
     ~ CubeFace();
 };
 #endif

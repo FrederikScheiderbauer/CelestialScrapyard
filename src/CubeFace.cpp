@@ -265,3 +265,16 @@ std::vector<glm::vec3> CubeFace::filter_vertices_and_normals_from_map( Noise &no
     }
     return results;
 }
+
+std::vector<glm::vec3> CubeFace::get_Surface_Vertices_On_Surface(glm::vec3 center, float radius) {
+    std::vector<glm::vec3> results;
+    for ( int i = 0; i < NUM_VERTICES; i+=2) {
+        glm::vec3 position_vertex = vertices[i];// + displacements[middle/2];
+        glm::vec3 normal_vertex = vertices[i];
+        if(glm::length(position_vertex-center) <= radius) {
+            results.push_back(position_vertex);
+            results.push_back(normal_vertex);
+        }
+    }
+    return results;
+}

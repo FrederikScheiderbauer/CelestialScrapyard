@@ -228,7 +228,6 @@ std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 cent
             cubefaces[i]->addEdgeNormals(cubefaces);
         }
     }
-    //destroy_trees(center,0.5f);
     return changed;
 }
 //make sure there arent too many trees per side
@@ -298,11 +297,27 @@ void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets){
 void Planet::destroy_trees(glm::vec3 crater_center,float radius) {
     std::vector<glm::vec3> new_trees;
     for (int i = 0; i < treeOffsets.size(); i+=2) {
-        if(glm::length(treeOffsets[i]-crater_center) > radius) {
+        if(glm::length(treeOffsets[i]-crater_center) > radius) {w
             new_trees.push_back(treeOffsets[i]);
             new_trees.push_back(treeOffsets[i+1]);
         }
     }
     treeOffsets = new_trees;
-    calculate_tree_transformations(new_trees);
+    calculate_tree_transformations(treeOffsets);
+}
+
+void Planet::plant_trees(glm::vec3 forest_center,float radius) {
+    std::vector<glm::vec3> new_trees;
+    for (int i=0; i < cubefaces.size(); i++) {
+        std::vector<glm::vec3> tree_vertices = cubefaces[i]->get_Surface_Vertices_On_Surface(forest_center,radius);
+        if(tree_vertices.empty()) {
+            continue;
+        }
+        std::vector<glm::vec3> actual_trees = sanity_check(tree_vertices);
+        for( int j = 0; j < actual_trees.size(); j++) {
+            treeOffsets.push_back(actual_trees[j]);
+        }
+    }
+
+    calculate_tree_transformations(treeOffsets);
 }
