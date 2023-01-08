@@ -208,6 +208,8 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::mat4> instan
     view = camera->get_View_Matrix();
 
     setUniformMatrix(view,"view");
+    glm::vec3 cameraPos = camera->get_Camera_Position();
+    glUniform3fv(glGetUniformLocation(modelShader->name, "cameraPos"), 1, &cameraPos[0]);
 
     glUniform3fv(glGetUniformLocation(modelShader->name, "planet_info"), 1, &planet_info[0]);
     std::cout << "rendering:" << amount <<" trees" << std::endl;

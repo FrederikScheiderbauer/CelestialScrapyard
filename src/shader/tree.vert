@@ -9,7 +9,8 @@ layout (location = 3) in mat4 instanceMatrix;
 
 out vec2 TexCoords;
 out vec3 Color;
-
+out vec3 worldNormal;
+out vec3 worldPosition;
 
 
 uniform mat4 projection;
@@ -23,8 +24,10 @@ const float snow_peak_Height = planet_info[2];
 
 void main()
 {
-    vec3 worldPosition = vec3(instanceMatrix * vec4(1.0f));
-    float distance_To_Planet_Center =length(worldPosition);
+    vec3 tree_begin = vec3(instanceMatrix * vec4(1.0f));
+    worldPosition = vec3(instanceMatrix * vec4(aPos,1.0f));
+    worldNormal = vec3(instanceMatrix * vec4(aNormal,1.0f));
+    float distance_To_Planet_Center =length(tree_begin);
     if(distance_To_Planet_Center > water_Level && distance_To_Planet_Center < snow_peak_Height) {
 
         if(aMaterial == 0.0f) {
