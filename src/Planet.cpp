@@ -146,11 +146,16 @@ void Planet::checkForVertexUpdate() {
             for(int i = 0; i < CUBE_NUM_FACES; ++i) {
                 if (changed[i]) {
                     cubefaces[i]->updateGPUBuffer();
+                    //destroy trees only on changed cubefaces
+
                 }
             }
+            glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(vertexUpdateQueue.front().craterCenter));
+            destroy_trees(collisionPoint,0.35f);
             vertexUpdateQueue.pop_front();
             vertexUpdateInProgress = false;
             dispatchVertexUpdate();
+            //destroy_trees(vertexUpdateQueue.front().craterCenter,0.35f);
         }
     }
 }
@@ -204,7 +209,7 @@ void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed) {
     int collisionCounter = (tCollision - 1) / throwSpeed;
     vertexUpdateQueue.push_back({pointOnUnitSphere, collisionCounter});
     dispatchVertexUpdate();
-    destroy_trees(collisionPoint,0.35f);
+    //destroy_trees(collisionPoint,0.35f);
 }
 
 void Planet::dispatchVertexUpdate() {
