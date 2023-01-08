@@ -26,9 +26,12 @@ private:
 
     bool picking = false;
     int pickedID = -1;
-    bool throwInProgress = false;
-    glm::vec3 throwDirection;
-    float t;
+    struct ThrowInfo {
+        glm::vec3 direction;
+        float t;
+        int instanceId;
+    };
+    std::vector<ThrowInfo> throwInfos;
     const float THROW_SPEED = -0.008f;
 public:
     AsteroidBelt(unsigned long noiseSeed);

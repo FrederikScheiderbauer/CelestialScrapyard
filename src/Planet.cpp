@@ -297,7 +297,7 @@ void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets){
 void Planet::destroy_trees(glm::vec3 crater_center,float radius) {
     std::vector<glm::vec3> new_trees;
     for (int i = 0; i < treeOffsets.size(); i+=2) {
-        if(glm::length(treeOffsets[i]-crater_center) > radius) {w
+        if(glm::length(treeOffsets[i]-crater_center) > radius) {
             new_trees.push_back(treeOffsets[i]);
             new_trees.push_back(treeOffsets[i+1]);
         }
