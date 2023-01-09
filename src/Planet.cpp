@@ -45,18 +45,18 @@ void Planet::set_Textures(){
     Texture crater_texture_cube = TextureLoader::generate_One_Texture_As_cubemap(crater_path);
 
     planetProgram->use(); // don't forget to activate the shader before setting uniforms!
-    glUniform1i(glGetUniformLocation(planetProgram->name, "crater"), 5);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "crater"), 0);
     std::vector<Texture> planet_textures = {grassland_texture,water_texture,mountain_texture, snow_texture, crater_texture};
 
     glUniform1i(glGetUniformLocation(planetProgram->name, "grassland_cube"), 6);
     glUniform1i(glGetUniformLocation(planetProgram->name, "water_cube"), 7);
     glUniform1i(glGetUniformLocation(planetProgram->name, "mountain_cube"), 8);
     glUniform1i(glGetUniformLocation(planetProgram->name, "snow_cube"), 9);
-    glUniform1i(glGetUniformLocation(planetProgram->name, "crater_cube"), 10);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "crater_cube"), 1);
     std::vector<Texture> planet_textures_cube = {grassland_texture_cube,water_texture_cube,mountain_texture_cube, snow_texture_cube, crater_texture_cube};
 
 
-    glActiveTexture(GL_TEXTURE5);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,planet_textures[4].id);
 
     glActiveTexture(GL_TEXTURE6);
@@ -67,7 +67,7 @@ void Planet::set_Textures(){
     glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[2].id);
     glActiveTexture(GL_TEXTURE9);
     glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[3].id);
-    glActiveTexture(GL_TEXTURE10);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP,planet_textures_cube[4].id);
 }
 

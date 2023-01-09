@@ -3,8 +3,8 @@ out vec4 FragColor;
 in vec2 TexCoords;
 in vec3 Color;
 
-in vec3 worldNormal;
-in vec3 worldPosition;
+flat in vec3 worldNormal;
+flat in vec3 worldPosition;
 
 uniform sampler2D leaf_Texture;
 uniform sampler2D Trunk_Texture;
