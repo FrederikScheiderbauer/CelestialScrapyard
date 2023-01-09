@@ -153,8 +153,8 @@ int main(void)
     glm::vec3 first_camera_Target = glm::vec3(0.0,0.0,0.0);
     float speed = 1.0f;
 
-    //LockedCamera camera = LockedCamera(first_camera_Position,first_camera_Target,speed);
-    FreeFlightCamera camera2 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed);
+    LockedCamera camera = LockedCamera(first_camera_Position,first_camera_Target,speed);
+    //FreeFlightCamera camera2 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed);
     //FreeFlightCamera camera3 = FreeFlightCamera(first_camera_Position,first_camera_Target,speed*2.0f);
     //camera2.set_As_Active_Camera();
 
