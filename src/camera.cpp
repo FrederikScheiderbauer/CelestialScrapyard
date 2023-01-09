@@ -126,8 +126,8 @@ bool LockedCamera::handle_key_event(int key, float deltaTime)
     return handled;
 }
 
-bool LockedCamera::handle_scroll_event(float xoffset, float yoffset) {
-    cameraPos += camera_Speed  * yoffset * glm::normalize(cameraTarget - cameraPos);
+bool LockedCamera::handle_scroll_event(float xoffset, float yoffset, float deltaTime) {
+    cameraPos += deltaTime*3 * camera_Speed  * yoffset * glm::normalize(cameraTarget - cameraPos);
     update_Camera_State();
     return true;
 }
@@ -188,7 +188,7 @@ bool FreeFlightCamera::handle_key_event(int key, float deltaTime)
     return handled;
 }
 
-bool FreeFlightCamera::handle_scroll_event(float xoffset, float yoffset) {
+bool FreeFlightCamera::handle_scroll_event(float xoffset, float yoffset, float deltaTime) {
 
     return false;
 }

@@ -29,6 +29,8 @@ bool firstMouse = true;
 float lastX;
 float lastY;
 
+float deltaTime;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -37,7 +39,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     auto camera = LockedCamera::get_Active_Camera();
-    camera->handle_scroll_event((float)xoffset,(float)yoffset);
+    camera->handle_scroll_event((float)xoffset,(float)yoffset,deltaTime);
 
 }
 
@@ -216,6 +218,7 @@ int main(void)
     {
         current_Time = std::chrono::system_clock::now();
         elapsed_Time = current_Time - last_Time;
+        deltaTime = (float)elapsed_Time.count();
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
         /*Input handling here*/

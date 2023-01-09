@@ -22,6 +22,7 @@ const vec3 light_intensity = vec3(20.0f);
 uniform vec3 planet_info;
 
 const float water_Level = planet_info[0];
+const float deep_water_Level = planet_info[0] -0.2f;
 const float mountain_Height = planet_info[1];
 const float snow_peak_Height = planet_info[2];
 const float ocean_interpolation_width = 0.1f;
@@ -48,16 +49,16 @@ void main()
     if(inCrater == 1) {
         k_d =  texture(crater,vec2(TexCoord)).rgb;
     } else {
-        if(distance_To_Planet_Center > water_Level) {
-            distance_To_Biome_Edge = distance_To_Planet_Center - water_Level;
+        if(distance_To_Planet_Center < water_Level) {
+            distance_To_Biome_Edge = water_Level - distance_To_Planet_Center;
             interpolation_degree = distance_To_Biome_Edge / ocean_interpolation_width;
-            if(interpolation_degree <= 0.7f) {
-                k_d = mix(texture(water_cube,TexCoord).rgb,texture(grassland_cube,TexCoord).rgb, interpolation_degree);
+            if(interpolation_degree <= 0.8f) {
+                k_d = mix(texture(grassland_cube,TexCoord).rgb,texture(water_cube,TexCoord).rgb, interpolation_degree);
             } else {
-            k_d = texture(grassland_cube,TexCoord).rgb;
+                k_d = texture(water_cube,TexCoord).rgb;
             }
         } else {
-            k_d = texture(water_cube,TexCoord).rgb;
+            k_d = texture(grassland_cube,TexCoord).rgb;
         }
         if(distance_To_Planet_Center > mountain_Height) {
             distance_To_Biome_Edge = distance_To_Planet_Center - mountain_Height;
@@ -75,6 +76,15 @@ void main()
                 k_d = mix(texture(mountain_cube,TexCoord).rgb,texture(snow_cube,TexCoord).rgb, interpolation_degree);
             } else {
             k_d = texture(snow_cube,TexCoord).rgb;
+            }
+        }
+        if(distance_To_Planet_Center < deep_water_Level) {
+            distance_To_Biome_Edge = deep_water_Level - distance_To_Planet_Center;
+            interpolation_degree = distance_To_Biome_Edge / ocean_interpolation_width;
+            if(interpolation_degree <= 1.0f) {
+                k_d = mix(texture(water_cube,TexCoord).rgb ,texture(water_cube,TexCoord).rgb*0.6f, interpolation_degree);
+            } else {
+                k_d = texture(water_cube,TexCoord).rgb*0.6f;
             }
         }
     }
