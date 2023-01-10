@@ -32,12 +32,21 @@ float Noise::getValue(glm::vec3 point) {
         case MULTILAYER: {
             float firstLayerValue = perlin.normalizedOctave3D_01(point.x, point.y, point.z, 8, 0.33f);
             firstLayerValue *= 0.8f;
-            //float secondLayerValue = 1.0f - glm::abs(perlin.normalizedOctave3D(point.x, point.y, point.z, 8, parameters.persistence));
-            //secondLayerValue = glm::pow(secondLayerValue, parameters.amplification);
-            //secondLayerValue *= 0.25f;
-            return glm::max(0.f, firstLayerValue /*+ (secondLayerValue * firstLayerValue)*/ - 0.4f);
+            glm::vec3 secondLayerPoint = point + SECOND_LAYER_OFFSET;
+            float secondLayerValue = 1.0f - glm::abs(perlin.normalizedOctave3D(secondLayerPoint.x, secondLayerPoint.y, secondLayerPoint.z, 8, parameters.persistence));
+            secondLayerValue = glm::pow(secondLayerValue, parameters.amplification);
+            secondLayerValue *= 0.33f;
+            return glm::max(0.f, firstLayerValue + (secondLayerValue * firstLayerValue) - 0.4f);
         }
         default:
             return -1.f;
     }
+}
+
+float Noise::getParticleHeight() {
+    return parameters.particleHeight;
+}
+
+glm::vec3 Noise::getPlanetInfo() {
+    return parameters.planet_info;
 }

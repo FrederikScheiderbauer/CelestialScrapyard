@@ -67,6 +67,7 @@ public:
     void addCrater(glm::vec3 throwDirection, float asteroidSpeed);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
     void create_Forests(unsigned long noiseSeed);
+    glm::vec3 getPlanetInfo();
 };
 
 #endif

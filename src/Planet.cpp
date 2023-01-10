@@ -77,7 +77,7 @@ Planet::Planet(unsigned long noiseSeed) {
     //generate planet Textures
     set_Textures();
 
-    noise = new Noise(noiseSeed, Noise::mountainous);
+    noise = new Noise(noiseSeed, Noise::continental);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         glm::vec3 direction = directions[i];
         cubefaces[i] = std::make_unique<CubeFace>(direction, *noise, PLANET_RESOLUTION);
@@ -118,6 +118,7 @@ void Planet::drawParticles(int width, int height) {
     glBlendEquation(GL_FUNC_ADD);
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
+    float particleHeight = noise->getParticleHeight();
     for (int j = 0; j < particleQueue.size(); ++j) {
         if (++particleQueue[j].particleCounter <= PARTICLE_DURATION) {
             for (int i = 0; i < 100; ++i) {
@@ -125,7 +126,7 @@ void Planet::drawParticles(int width, int height) {
                 float y = Random::getFromNormalDistribution();
                 float z = Random::getFromNormalDistribution();
                 float r = Random::getInRange(0.8f, 1.3f);
-                particle.Position = r * (2.f * particleQueue[j].craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
+                particle.Position = r * (particleHeight * particleQueue[j].craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
                 particle.CraterCenter = particleQueue[j].craterCenter;
                 particleSystem.emit(particle);
             }
@@ -325,4 +326,8 @@ void Planet::plant_trees(glm::vec3 forest_center,float radius) {
     }
 
     calculate_tree_transformations(treeOffsets);
+}
+
+glm::vec3 Planet::getPlanetInfo() {
+    return noise->getPlanetInfo();
 }

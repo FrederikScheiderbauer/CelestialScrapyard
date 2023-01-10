@@ -212,7 +212,7 @@ int main(void)
     //string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
 
     //Model tree_model = Model(obj_file,material_directory);
-    glm::vec3 planet_info = glm::vec3(1.4f,1.7f,1.78f); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
+    glm::vec3 planet_info = planet.getPlanetInfo(); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
