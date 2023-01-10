@@ -152,7 +152,7 @@ void Planet::checkForVertexUpdate() {
                 }
             }
             glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(vertexUpdateQueue.front().craterCenter));
-            destroy_trees(collisionPoint,0.35f);
+            destroy_trees(collisionPoint,0.25f);
             vertexUpdateQueue.pop_front();
             vertexUpdateInProgress = false;
             dispatchVertexUpdate();
@@ -313,9 +313,11 @@ void Planet::destroy_trees(glm::vec3 crater_center,float radius) {
 }
 
 void Planet::plant_trees(glm::vec3 forest_center,float radius) {
+    glm::vec3 pointOnUnitSphere = glm::normalize(forest_center);
+    glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(pointOnUnitSphere));
     std::vector<glm::vec3> new_trees;
     for (int i=0; i < cubefaces.size(); i++) {
-        std::vector<glm::vec3> tree_vertices = cubefaces[i]->get_Surface_Vertices_On_Surface(forest_center,radius);
+        std::vector<glm::vec3> tree_vertices = cubefaces[i]->get_Surface_Vertices_On_Surface(collisionPoint,radius);
         if(tree_vertices.empty()) {
             continue;
         }

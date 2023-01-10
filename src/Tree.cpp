@@ -212,7 +212,6 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::mat4> instan
     glUniform3fv(glGetUniformLocation(modelShader->name, "cameraPos"), 1, &cameraPos[0]);
 
     glUniform3fv(glGetUniformLocation(modelShader->name, "planet_info"), 1, &planet_info[0]);
-    std::cout << "rendering:" << amount <<" trees" << std::endl;
     modelShader->use();
     glBindVertexArray(VAO);
     glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, amount);

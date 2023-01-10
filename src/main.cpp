@@ -64,6 +64,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         //glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
         planet->addCrater(throwDirection, belt->getThrowSpeed());
     }
+    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    {
+        Planet *planet = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->planet;
+        auto camera = Camera::get_Active_Camera();
+        glm::vec3 throwDirection = -(camera->get_Camera_Front()); 
+        if (throwDirection == glm::vec3(0.f)) {
+            return;
+        }
+        //glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
+        planet->plant_trees(throwDirection,0.3f);
+    }
 }
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {

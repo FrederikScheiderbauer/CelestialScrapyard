@@ -58,7 +58,7 @@ private:
     void set_Textures();
     void calculate_tree_transformations(std::vector<glm::vec3>& offsets);
     void destroy_trees(glm::vec3 crater_center,float radius);
-    void plant_trees(glm::vec3 forest_center,float radius);
+    
     std::vector<glm::mat4> tree_transformation_matrices;
     
 public:
@@ -67,6 +67,7 @@ public:
     void addCrater(glm::vec3 throwDirection, float asteroidSpeed);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
     void create_Forests(unsigned long noiseSeed);
+    void plant_trees(glm::vec3 forest_center,float radius);
     glm::vec3 getPlanetInfo();
 };
 
