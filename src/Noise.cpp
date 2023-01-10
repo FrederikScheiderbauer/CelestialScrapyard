@@ -30,6 +30,7 @@ float Noise::getValue(glm::vec3 point) {
             return value;
         }
         case MULTILAYER: {
+            //based on: https://www.youtube.com/watch?v=uY9PAcNMu8s and https://www.youtube.com/watch?v=H4g-TC__cvg
             float firstLayerValue = perlin.normalizedOctave3D_01(point.x, point.y, point.z, 8, 0.33f);
             firstLayerValue *= 0.8f;
             glm::vec3 secondLayerPoint = point + SECOND_LAYER_OFFSET;
