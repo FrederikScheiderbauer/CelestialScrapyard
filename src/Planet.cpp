@@ -248,14 +248,17 @@ std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
         glm::vec3 pos_vertex = vector[i];
         bool to_be_added = true;
         for (int j = 0; j < results.size();j+=2) {
-            if(glm::abs(glm::length(pos_vertex-results[j])) < 0.02f) {
+            if(glm::abs(glm::length(pos_vertex-results[j])) < 0.0005f) {
                 to_be_added = false;
                 break;
             }
         }
         if(to_be_added) {
-            results.push_back(vector[i]);
-            results.push_back(vector[i+1]);
+            float rand_x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+            float rand_y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+            float rand_z = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+            results.push_back(vector[i]+glm::vec3(rand_x,rand_y,rand_z));
+            results.push_back(vector[i+1]+glm::vec3(rand_x,rand_y,rand_z));
         }
     }
     if(vector.size() > 10000) {
@@ -277,7 +280,7 @@ void Planet::create_Forests(unsigned long noiseSeed){
 void Planet::calculate_tree_transformations(std::vector<glm::vec3>& offsets){
     //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
     std::vector<glm::mat4> transformation_matrices;
-    float tree_scaling = 0.004f;
+    float tree_scaling = 0.001f;
     for(int i = 0; i< offsets.size();i +=2) {
         glm::mat4 model = glm::mat4(1.0f);
         glm::vec3 model_pos_offset = offsets[i];

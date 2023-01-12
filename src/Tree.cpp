@@ -163,7 +163,7 @@ void PineTree::draw(int width,int height) {
 std::vector<glm::mat4> calculate_tree_transformations(std::vector<glm::vec3>& offsets){
     //offsets2 consist of vec3s which apepar in pairs: 0:pos_vector;1:normal_vector...n-2:pos_vector;n-1:normal_vector
     std::vector<glm::mat4> model_matrices;
-    float tree_scaling = 0.004f;
+    float tree_scaling = 0.1f;
     for(int i = 0; i< offsets.size();i +=2) {
         glm::mat4 model = glm::mat4(1.0f);
         glm::vec3 model_pos_offset = offsets[i];
@@ -200,7 +200,7 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::mat4> instan
     setUniformMatrix(proj,"projection");
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model,glm::vec3(0.01f));
+    model = glm::scale(model,glm::vec3(0.001f));
     setUniformMatrix(model,"model");
 
     glm::mat4 view = glm::mat4(1.0f);
