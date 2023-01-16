@@ -4,6 +4,8 @@
 #include "../headers/camera.hpp"
 #include "config/config.h"
 #include "../headers/Random.hpp"
+#include "../headers/OrbitUtil.hpp"
+#include "../headers/LightSource.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -29,11 +31,7 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
         //check that asteroids aren't too close, TODO: might run indefinitely if there are too many asteroids
         do {
             minDistance = std::numeric_limits<float>::max();
-            float x_pos = Random::getInRange(-1.f, 1.f);
-            float z_pos = Random::getInRange(-1.f, 1.f);
-            float r = Random::getInRange(3.5f, 4.5f);
-
-            asteroidCenter = r * glm::normalize(glm::vec4(x_pos, 0.f, z_pos, 0.f));
+            asteroidCenter = glm::vec4(getRandomPositionInOrbit(3.5f, 4.5f), 0.f);
             for (int j = 0; j < i; ++j) {
                 float distance = glm::length(asteroidCenter - offsets[j]);
                 if (distance < minDistance) {
@@ -54,22 +52,6 @@ void AsteroidBelt::setUniformMatrix(glm::mat4 matrix, std::string type) {
     glUniformMatrix4fv(glGetUniformLocation(asteroidBeltProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-glm::vec3 asteroidCenterToSpherical(glm::vec4 center) {
-    //https://mathworld.wolfram.com/SphericalCoordinates.html
-    float r = glm::length(glm::vec3(center));
-    float phi = glm::acos(center.z / r);
-    float theta = glm::atan(center.y, center.x);
-    return {r, 0.5f * glm::pi<float>() - phi, theta};
-}
-
-glm::vec4 sphericalToAsteroidCenter(glm::vec3 spherical) {
-    //https://mathworld.wolfram.com/SphericalCoordinates.html
-    float x = spherical.x * glm::cos(spherical.z) * glm::cos(spherical.y);
-    float y = spherical.x * glm::sin(spherical.z) * glm::cos(spherical.y);
-    float z = spherical.x * glm::sin(spherical.y);
-    return {x, y, z, 0.f};
-}
-
 void AsteroidBelt::move() {
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
         auto throwInfo = std::find_if(throwInfos.begin(), throwInfos.end(), [i](const ThrowInfo &info) {return info.instanceId == i;});
@@ -82,11 +64,7 @@ void AsteroidBelt::move() {
                 offsets[i] = glm::vec4{throwInfo->direction * throwInfo->t, 0.f};
             }
         } else {
-            auto spherical = asteroidCenterToSpherical(offsets[i]);
-            float speed = ASTEROID_SPEED * (glm::abs(spherical.z) < 0.5f * glm::pi<float>() ? 1.f : -1.f);
-            spherical.y += speed;
-            spherical.y = std::fmod(spherical.y, glm::pi<float>());
-            offsets[i] = sphericalToAsteroidCenter(spherical);
+            offsets[i] = glm::vec4(moveInOrbit(offsets[i], ASTEROID_SPEED), 0.f);
         }
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
@@ -124,6 +102,7 @@ void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
     glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
+    LightSource::getInstance().bindToShader(asteroidBeltProgram->name);
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);

@@ -20,6 +20,7 @@
 #include "../headers/model.hpp"
 #include "../headers/AsteroidBelt.hpp"
 #include "../headers/Tree.hpp"
+#include "../headers/LightSource.hpp"
 
 using namespace std;
 
@@ -236,6 +237,7 @@ int main(void)
         processInput(window, (float)elapsed_Time.count());
 
         /*Update Game state*/
+        LightSource::getInstance().updatePosition();
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

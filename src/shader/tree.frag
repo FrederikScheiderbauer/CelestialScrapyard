@@ -10,7 +10,7 @@ uniform sampler2D leaf_Texture;
 uniform sampler2D Trunk_Texture;
 
 uniform vec3 cameraPos;
-
+uniform vec3 lightPos;
 
 //const vec3 k_s = vec3(1.0f);
 //const vec3 k_a = vec3(0.01f);
@@ -25,7 +25,7 @@ vec3 calculate_camera_light_contribution() {
     vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));
 
-    vec3 L = normalize(cameraPos - worldPosition);
+    vec3 L = normalize(lightPos - worldPosition);
 
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);

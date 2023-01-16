@@ -5,6 +5,7 @@ flat in int instanceId;
 out vec4 fragColor;
 
 uniform vec3 cameraPos;
+uniform vec3 lightPos;
 uniform bool picking;
 uniform int pickedID;
 //0: draw normal, 1: only draw picked asteroid with write to stencil buffer, 2: draw picked with asteroid with solid color
@@ -38,7 +39,7 @@ void main()
             vec3 V = normalize(cameraPos - worldPosition);
             vec3 R = normalize(reflect((-1)*V, N));
 
-            vec3 L = normalize(cameraPos - worldPosition);
+            vec3 L = normalize(lightPos - worldPosition);
 
             vec3 k_d;
             if (instanceId != pickedID) {

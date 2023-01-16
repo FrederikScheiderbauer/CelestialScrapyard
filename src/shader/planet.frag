@@ -6,6 +6,7 @@ flat in int inCrater;
 out vec4 fragColor;
 
 uniform vec3 cameraPos;
+uniform vec3 lightPos;
 uniform sampler2D crater;
 
 uniform samplerCube grassland_cube;
@@ -35,7 +36,7 @@ void main()
     vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));
 
-    vec3 L = normalize(cameraPos - worldPosition);
+    vec3 L = normalize(lightPos - worldPosition);
 
     vec3 k_d;
 

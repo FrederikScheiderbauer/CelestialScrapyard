@@ -5,6 +5,7 @@
 #include "../headers/model.hpp"
 #include "../headers/Tree.hpp"
 #include "../headers/camera.hpp"
+#include "../headers/LightSource.hpp"
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -210,6 +211,7 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::mat4> instan
     setUniformMatrix(view,"view");
     glm::vec3 cameraPos = camera->get_Camera_Position();
     glUniform3fv(glGetUniformLocation(modelShader->name, "cameraPos"), 1, &cameraPos[0]);
+    LightSource::getInstance().bindToShader(modelShader->name);
 
     glUniform3fv(glGetUniformLocation(modelShader->name, "planet_info"), 1, &planet_info[0]);
     modelShader->use();

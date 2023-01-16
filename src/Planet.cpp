@@ -14,6 +14,7 @@
 #include "../headers/texture_loader.hpp"
 #include "../headers/texture.hpp"
 #include "../headers/Random.hpp"
+#include "../headers/LightSource.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -187,6 +188,7 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     setUniformMatrix(view,"view");
 
     glUniform3fv(glGetUniformLocation(planetProgram->name, "cameraPos"), 1, &cameraPos[0]);
+    LightSource::getInstance().bindToShader(planetProgram->name);
 
 
     //
@@ -253,13 +255,13 @@ std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
                 break;
             }
         }
-        if(to_be_added) {
-            float rand_x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
-            float rand_y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
-            float rand_z = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
-            results.push_back(vector[i]+glm::vec3(rand_x,rand_y,rand_z));
-            results.push_back(vector[i+1]+glm::vec3(rand_x,rand_y,rand_z));
-        }
+//        if(to_be_added) {
+//            float rand_x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+//            float rand_y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+//            float rand_z = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+//            results.push_back(vector[i]+glm::vec3(rand_x,rand_y,rand_z));
+//            results.push_back(vector[i+1]+glm::vec3(rand_x,rand_y,rand_z));
+//        }
     }
     if(vector.size() > 10000) {
         vector.resize(10000);

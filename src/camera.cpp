@@ -127,7 +127,7 @@ bool LockedCamera::handle_key_event(int key, float deltaTime)
 }
 
 bool LockedCamera::handle_scroll_event(float xoffset, float yoffset, float deltaTime) {
-    cameraPos += deltaTime*3 * camera_Speed  * yoffset * glm::normalize(cameraTarget - cameraPos);
+    cameraPos += deltaTime * 10.f * camera_Speed  * yoffset * glm::normalize(cameraTarget - cameraPos);
     update_Camera_State();
     return true;
 }

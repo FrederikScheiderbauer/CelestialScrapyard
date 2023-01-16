@@ -30,7 +30,9 @@ set(GGD_SOURCE_FILES
   ${CMAKE_SOURCE_DIR}/src/model.cpp
   ${CMAKE_SOURCE_DIR}/src/AsteroidBelt.cpp
   ${CMAKE_SOURCE_DIR}/src/Tree.cpp
-  ${CMAKE_SOURCE_DIR}/src/Random.cpp)
+  ${CMAKE_SOURCE_DIR}/src/Random.cpp
+  ${CMAKE_SOURCE_DIR}/src/LightSource.cpp
+  ${CMAKE_SOURCE_DIR}/src/OrbitUtil.cpp)
 
 
 set(Project_SOURCE_DIR ${CMAKE_SOURCE_DIR})
