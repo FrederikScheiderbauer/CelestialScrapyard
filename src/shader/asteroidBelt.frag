@@ -12,6 +12,8 @@ uniform int pickedID;
 uniform int outlining;
 
 const vec3 k_s = vec3(0.1f);
+const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
+const float ambientStrength = 0.2f;
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
 
@@ -50,7 +52,9 @@ void main()
 
             vec3 diffuse = k_d * max(0.0, dot(L, N));
             vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
-            vec3 sum = diffuse + specular;
+            //ambient: https://learnopengl.com/Lighting/Basic-Lighting
+            vec3 ambient = k_a * ambientStrength * k_d;
+            vec3 sum = diffuse + specular + ambient;
 
             /* leave out for now, gets too bright when close to the sphere*/
             //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
