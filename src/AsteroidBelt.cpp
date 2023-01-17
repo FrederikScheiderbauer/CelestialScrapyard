@@ -8,10 +8,12 @@
 #include "../headers/LightSource.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};
+const std::vector<std::string> SHADER_PATHS_DEPTH_MAP = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt_depthMap.vert", (std::string)Project_SOURCE_DIR + "/src/shader/depthMap.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
     asteroidBeltProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    asteroidBeltProgramDepthMap = std::make_unique<ShaderProgram>(SHADER_PATHS_DEPTH_MAP, SHADER_TYPES);
 
     Noise noise = Noise(noiseSeed, Noise::asteroid);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
@@ -147,6 +149,18 @@ void AsteroidBelt::draw(int width, int height) {
     glStencilMask(0xFF);
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glDisable(GL_STENCIL_TEST);
+}
+
+
+void AsteroidBelt::drawForDepthMap() {
+    asteroidBeltProgramDepthMap->use();
+    LightSource::getInstance().bindLightMatrices(asteroidBeltProgramDepthMap->name);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    setUniformMatrix(model,"model");
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
+    executeDraw();
 }
 
 void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {

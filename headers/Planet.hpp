@@ -25,6 +25,7 @@ class Planet
 private:
     //PineTree pineTreeModel;
     std::unique_ptr<ShaderProgram> planetProgram;
+    std::unique_ptr<ShaderProgram> planetProgramDepthMap;
     std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> cubefaces;
     Noise *noise;
     const int PLANET_RESOLUTION = 200;
@@ -64,6 +65,7 @@ private:
 public:
     Planet(unsigned long noiseSeed);
     void draw(int width, int height, glm::vec3 &planet_info);
+    void drawForDepthMap();
     void addCrater(glm::vec3 throwDirection, float asteroidSpeed);
     std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
     void create_Forests(unsigned long noiseSeed);

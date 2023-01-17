@@ -17,6 +17,7 @@
 #include "../headers/LightSource.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
+const std::vector<std::string> SHADER_PATHS_DEPTH_MAP = {(std::string)Project_SOURCE_DIR +"/src/shader/planet_depthMap.vert", (std::string)Project_SOURCE_DIR + "/src/shader/depthMap.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 struct Planet_Info{
@@ -74,6 +75,7 @@ void Planet::set_Textures(){
 
 Planet::Planet(unsigned long noiseSeed) {
     planetProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    planetProgramDepthMap = std::make_unique<ShaderProgram>(SHADER_PATHS_DEPTH_MAP, SHADER_TYPES);
 
     //generate planet Textures
     set_Textures();
@@ -205,6 +207,18 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
 
 }
 
+void Planet::drawForDepthMap() {
+    planetProgramDepthMap->use();
+    LightSource::getInstance().bindLightMatrices(planetProgramDepthMap->name);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    setUniformMatrix(model,"model");
+
+    for (int i = 0; i < CUBE_NUM_FACES; ++i) {
+        cubefaces[i]->draw();
+    }
+}
+
 void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed) {
     glm::vec3 pointOnUnitSphere = glm::normalize(throwDirection);
     glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(pointOnUnitSphere));
@@ -261,8 +275,8 @@ std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
 //            float rand_z = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
 //            results.push_back(vector[i]+glm::vec3(rand_x,rand_y,rand_z));
 //            results.push_back(vector[i+1]+glm::vec3(rand_x,rand_y,rand_z));
-            results.push_back(vector[i]);
-            results.push_back(vector[i+1]);
+//            results.push_back(vector[i]);
+//            results.push_back(vector[i+1]);
        }
     }
     if(vector.size() > 10000) {

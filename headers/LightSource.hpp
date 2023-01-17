@@ -2,18 +2,24 @@
 #define GGD_LIGHTSOURCE_HPP
 
 
-#include "glm/vec3.hpp"
+#include "glm/glm.hpp"
 #include "glad/glad.h"
 
 class LightSource {
 private:
     glm::vec3 position;
+    GLuint depthMapFBO;
+    GLuint depthMap;
+    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
     const float LIGHT_SOURCE_SPEED = 0.005f;
     LightSource();
 public:
     static LightSource& getInstance();
     void updatePosition();
     void bindToShader(GLuint program);
+    void prepareDepthMapCreation();
+    void finishDepthMapCreation(int width, int height);
+    void bindLightMatrices(GLuint program);
     LightSource(LightSource const&) = delete;
     void operator=(LightSource const&) = delete;
 };
