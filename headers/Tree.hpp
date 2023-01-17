@@ -8,6 +8,7 @@
 class PineTree: public Model{
     private:
         std::vector<float> setupVertices(std::vector<glm::vec3> model_vertices,std::vector<glm::vec3> model_normals);
+        void setupTreeData(std::vector<glm::vec3> model_vertices,std::vector<glm::vec3> model_normals,std::vector<float>& vertices,std::vector<float>& normals,std::vector<int>& material_ids);
         void set_instance_buffer(std::vector<glm::vec3>& offsets);
         void set_instance_matrix_buffer(std::vector<glm::mat4>& instanceMatrices);
         void calculate_TreeOffsets();

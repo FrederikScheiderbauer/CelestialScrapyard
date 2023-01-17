@@ -41,6 +41,31 @@ std::vector<float> PineTree::setupVertices(std::vector<glm::vec3> model_vertices
 
     return result;
 }
+void PineTree::setupTreeData(std::vector<glm::vec3> model_vertices,std::vector<glm::vec3> model_normals,std::vector<float>& vertices,std::vector<float>& normals,std::vector<int>& material_ids) {
+    //std::vector<float> result = std::vector<float>(7*model_vertices.size());// 7 comes from the datafromat chosen,which contains 7 float values per vertex
+    for ( int i = 0; i < mesh.vertices_indices.size();i++) {
+        int vertex_index = mesh.vertices_indices[i];
+        int normal_index = mesh.normals_indices[i];
+        int material_id = mesh.material_indices[i];
+
+        vertices[vertex_index*3] = model_vertices[vertex_index].x;
+        vertices[vertex_index*3+1] = model_vertices[vertex_index].y;
+        vertices[vertex_index*3+2] = model_vertices[vertex_index].z;
+        //vertices.push_back(model_vertices[vertex_index].x);
+        //vertices.push_back(model_vertices[vertex_index].y);
+        //vertices.push_back(model_vertices[vertex_index].z);
+
+        normals[vertex_index*3] = model_normals[normal_index].x;
+        normals[vertex_index*3+1] = model_normals[normal_index].y;
+        normals[vertex_index*3+2] = model_normals[normal_index].z;
+        //normals.push_back(model_normals[normal_index].x);
+        //normals.push_back(model_normals[normal_index].y);
+        //normals.push_back(model_normals[normal_index].z);
+
+        material_ids[vertex_index] = material_id;
+        //material_ids.push_back(material_id);
+    }
+}
 /*
 void CubeFace::updateGPUBuffer() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -73,55 +98,64 @@ PineTree::PineTree() {
 
     load_obj(obj_file,material_directory,model_vertices,mesh,model_normals,vertuvs,object_materials);
     std::vector<float> vertices = setupVertices(model_vertices,model_normals);
+
+    std::vector<float> vertices_2 = std::vector<float>(model_vertices.size()*3);
+    std::vector<float> normals = std::vector<float>(model_vertices.size()*3);
+    std::vector<int> material_ids= std::vector<int>(model_vertices.size());
+
+    setupTreeData(model_vertices,model_normals,vertices_2,normals,material_ids);
     //setup VAO and bind vertices/normals/texcoords
     unsigned int VBO,EBO;
-
-    //glGenBuffers(1, &instanceVBO);
-    glGenBuffers(1, &instanceMatrixVBO);
-    //set_instance_buffer(tree_offsets); 
-
+    unsigned int vertexVBO,normalVBO,materialVBO;
 
 
     //vertex format
     //vertices: v.x;v.y;v.z; ;n.x;n.y;n.z; ;m.id;
 
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &instanceMatrixVBO);
+    //glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
+    
+    glGenBuffers(1, &vertexVBO);
+    glGenBuffers(1, &normalVBO);
+    glGenBuffers(1, &materialVBO);
+    
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER,7* sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-
-    //glBufferData(GL_ARRAY_BUFFER,6* sizeof(float) * model_vertices.size(), &model_vertices[0], GL_STATIC_DRAW);
-    //glBufferSubData(GL_ARRAY_BUFFER,3*sizeof(float) * model_vertices.size(),model_normals.size(),&model_normals[0]);
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glBufferData(GL_ARRAY_BUFFER,7* sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int) * mesh.vertices_indices.size(), &mesh.vertices_indices[0], GL_STATIC_DRAW);
 
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.vertices_indices.size() + sizeof(unsigned int) * mesh.normals_indices.size(), &mesh.vertices_indices[0], GL_STATIC_DRAW);
-    //glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int) * mesh.vertices_indices.size(),mesh.normals_indices.size(),&mesh.normals_indices[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, materialVBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * material_ids.size(), &material_ids[0], GL_STATIC_DRAW);
+
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices_2.size(), &vertices_2[0], GL_STATIC_DRAW);
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE,7 * sizeof(float), (void*)(6 * sizeof(float)));
-    /*
-    glEnableVertexAttribArray(3);
-    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);	
-    glVertexAttribDivisor(3, 1);  
-    */
+    glBindBuffer(GL_ARRAY_BUFFER, materialVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(int) * material_ids.size(), &material_ids[0], GL_STATIC_DRAW);
+    //glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE,7 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE,sizeof(int), (void*)0);
     
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, instanceMatrixVBO);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(glm::mat4),NULL,GL_STATIC_DRAW);
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));

@@ -255,13 +255,15 @@ std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
                 break;
             }
         }
-//        if(to_be_added) {
+        if(to_be_added) {
 //            float rand_x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
 //            float rand_y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
 //            float rand_z = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
 //            results.push_back(vector[i]+glm::vec3(rand_x,rand_y,rand_z));
 //            results.push_back(vector[i+1]+glm::vec3(rand_x,rand_y,rand_z));
-//        }
+            results.push_back(vector[i]);
+            results.push_back(vector[i+1]);
+       }
     }
     if(vector.size() > 10000) {
         vector.resize(10000);
