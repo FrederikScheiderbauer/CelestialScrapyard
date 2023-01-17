@@ -2,6 +2,7 @@
 in vec3 worldNormal;
 in vec3 worldPosition;
 in vec3 TexCoord;
+in vec4 lightSpacePosition;
 flat in int inCrater;
 out vec4 fragColor;
 
@@ -14,6 +15,8 @@ uniform samplerCube snow_cube;
 uniform samplerCube mountain_cube;
 uniform samplerCube water_cube;
 uniform samplerCube crater_cube;
+
+layout(location = 15) uniform sampler2D depthMap;
 
 const vec3 k_s = vec3(0.1f);
 const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
@@ -31,6 +34,23 @@ const float snow_peak_Height = planet_info[2];
 const float ocean_interpolation_width = 0.1f;
 const float mountain_interpolation_width = 0.03f;
 const float snow_interpolation_width = 0.01f;
+
+//https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(depthMap, projCoords.xy).r;
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}
 
 void main()
 {
@@ -96,7 +116,9 @@ void main()
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     //ambient: https://learnopengl.com/Lighting/Basic-Lighting
     vec3 ambient = k_a * ambientStrength * k_d;
-    vec3 sum = diffuse + specular + ambient;
+
+    float shadow = ShadowCalculation(lightSpacePosition);
+    vec3 sum = /*(1.0 - shadow) **/ (diffuse + specular) + ambient;
 
 /* leave out for now, gets too bright when close to the sphere*/
 //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);

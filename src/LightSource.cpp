@@ -40,6 +40,7 @@ void LightSource::prepareDepthMapCreation() {
 }
 
 void LightSource::finishDepthMapCreation(int width, int height) {
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
     glViewport(0, 0, width, height);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -50,4 +51,8 @@ void LightSource::bindLightMatrices(GLuint program) {
     glm::mat4 lightView = glm::lookAt(position, glm::vec3( 0.0f, 0.0f,  0.0f),glm::vec3( 0.0f, 1.0f,  0.0f));
     glm::mat4 lightSpaceMatrix = lightProjection * lightView;
     glUniformMatrix4fv(glGetUniformLocation(program, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+}
+
+GLuint LightSource::getDepthMap() {
+    return depthMap;
 }

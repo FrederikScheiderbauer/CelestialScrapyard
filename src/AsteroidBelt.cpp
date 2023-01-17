@@ -156,7 +156,7 @@ void AsteroidBelt::drawForDepthMap() {
     asteroidBeltProgramDepthMap->use();
     LightSource::getInstance().bindLightMatrices(asteroidBeltProgramDepthMap->name);
 
-    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(ASTEROID_RADIUS);
     setUniformMatrix(model,"model");
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);

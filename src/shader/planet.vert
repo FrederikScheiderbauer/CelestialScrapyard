@@ -4,11 +4,13 @@ layout (location = 1) in vec3 normal;
 out vec3 worldNormal;
 out vec3 worldPosition;
 out vec3 TexCoord;
+out vec4 lightSpacePosition;
 flat out int inCrater;
 
 uniform mat4 projection;
 uniform mat4 model;
 uniform mat4 view;
+uniform mat4 lightSpaceMatrix;
 
 void main()
 {
@@ -19,6 +21,6 @@ void main()
     gl_Position = projection * view * model * vec4(position, 1.0);
     worldNormal = vec3(model * vec4(normal, 0.0));
     worldPosition = vec3(model * vec4(position, 1.0));
+    lightSpacePosition = lightSpaceMatrix * vec4(worldPosition, 1.0);
     TexCoord = position;
-
 }

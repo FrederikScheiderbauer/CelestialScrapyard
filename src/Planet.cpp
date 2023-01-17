@@ -190,13 +190,14 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     setUniformMatrix(view,"view");
 
     glUniform3fv(glGetUniformLocation(planetProgram->name, "cameraPos"), 1, &cameraPos[0]);
-    LightSource::getInstance().bindToShader(planetProgram->name);
-
-
-    //
     glUniform3fv(glGetUniformLocation(planetProgram->name, "planet_info"), 1, &planet_info[0]);
 
-    //
+    LightSource &lightSource = LightSource::getInstance();
+    lightSource.bindToShader(planetProgram->name);
+    lightSource.bindLightMatrices(planetProgram->name);
+    GLuint depthMap = lightSource.getDepthMap();
+    glActiveTexture(GL_TEXTURE15);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
 
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->draw();
