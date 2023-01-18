@@ -10,6 +10,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform int pickedID;
 uniform int outlining;
+uniform bool depthRender;
 
 layout(std430, binding = 0) buffer offsetBuffer {
     vec4 offsets[];
@@ -55,7 +56,9 @@ void main()
 
         worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
         gl_Position = projection * view * vec4(worldPosition, 1.0);
-        worldNormal = vec3(rotation * model * vec4(normal, 0.0));
-        instanceId = gl_InstanceID;
+        if (!depthRender) {
+            worldNormal = vec3(rotation * model * vec4(normal, 0.0));
+            instanceId = gl_InstanceID;
+        }
     }
 }

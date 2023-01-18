@@ -11,16 +11,21 @@ uniform mat4 projection;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 lightSpaceMatrix;
+uniform bool depthRender;
 
 void main()
 {
-    inCrater = floatBitsToInt(position.x) & 1;
+    if (depthRender) {
+        gl_Position = lightSpaceMatrix * model * vec4(position, 1.0);
+    } else {
+        inCrater = floatBitsToInt(position.x) & 1;
 
-    float texture_U = asin(normal[0])/2 +0.5;
-    float texture_V = asin(normal[1])/2 +0.5;
-    gl_Position = projection * view * model * vec4(position, 1.0);
-    worldNormal = vec3(model * vec4(normal, 0.0));
-    worldPosition = vec3(model * vec4(position, 1.0));
-    lightSpacePosition = lightSpaceMatrix * vec4(worldPosition, 1.0);
-    TexCoord = position;
+        float texture_U = asin(normal[0])/2 +0.5;
+        float texture_V = asin(normal[1])/2 +0.5;
+        gl_Position = projection * view * model * vec4(position, 1.0);
+        worldNormal = vec3(model * vec4(normal, 0.0));
+        worldPosition = vec3(model * vec4(position, 1.0));
+        lightSpacePosition = lightSpaceMatrix * vec4(worldPosition, 1.0);
+        TexCoord = position;
+    }
 }

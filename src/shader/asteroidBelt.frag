@@ -10,6 +10,7 @@ uniform bool picking;
 uniform int pickedID;
 //0: draw normal, 1: only draw picked asteroid with write to stencil buffer, 2: draw picked with asteroid with solid color
 uniform int outlining;
+uniform bool depthRender;
 
 const vec3 k_s = vec3(0.1f);
 const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
@@ -27,6 +28,10 @@ vec3 instanceIdToColor() {
 
 void main()
 {
+    if (depthRender) {
+        fragColor = vec4(1.0f);
+        return;
+    }
     if ((outlining > 0 && pickedID != instanceId) || (outlining == 0 && pickedID == instanceId)) {
         discard;
     }

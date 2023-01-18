@@ -26,6 +26,7 @@ const vec3 light_intensity = vec3(20.0f);
 
 
 uniform vec3 planet_info;
+uniform bool depthRender;
 
 const float water_Level = planet_info[0];
 const float deep_water_Level = planet_info[0] -0.2f;
@@ -54,6 +55,10 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
+    if (depthRender) {
+        fragColor = vec4(1.0f);
+        return;
+    }
     vec3 N = normalize(worldNormal);
     vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));

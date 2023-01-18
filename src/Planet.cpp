@@ -17,7 +17,6 @@
 #include "../headers/LightSource.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/planet.vert", (std::string)Project_SOURCE_DIR + "/src/shader/planet.frag"};
-const std::vector<std::string> SHADER_PATHS_DEPTH_MAP = {(std::string)Project_SOURCE_DIR +"/src/shader/planet_depthMap.vert", (std::string)Project_SOURCE_DIR + "/src/shader/depthMap.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 struct Planet_Info{
@@ -75,7 +74,6 @@ void Planet::set_Textures(){
 
 Planet::Planet(unsigned long noiseSeed) {
     planetProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    planetProgramDepthMap = std::make_unique<ShaderProgram>(SHADER_PATHS_DEPTH_MAP, SHADER_TYPES);
 
     //generate planet Textures
     set_Textures();
@@ -191,6 +189,7 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
 
     glUniform3fv(glGetUniformLocation(planetProgram->name, "cameraPos"), 1, &cameraPos[0]);
     glUniform3fv(glGetUniformLocation(planetProgram->name, "planet_info"), 1, &planet_info[0]);
+    glUniform1i(glGetUniformLocation(planetProgram->name, "depthRender"), false);
 
     LightSource &lightSource = LightSource::getInstance();
     lightSource.bindToShader(planetProgram->name);
@@ -209,8 +208,9 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
 }
 
 void Planet::drawForDepthMap() {
-    planetProgramDepthMap->use();
-    LightSource::getInstance().bindLightMatrices(planetProgramDepthMap->name);
+    planetProgram->use();
+    glUniform1i(glGetUniformLocation(planetProgram->name, "depthRender"), true);
+    LightSource::getInstance().bindLightMatrices(planetProgram->name);
 
     glm::mat4 model = glm::mat4(1.0f);
     setUniformMatrix(model,"model");

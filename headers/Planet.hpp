@@ -25,7 +25,6 @@ class Planet
 private:
     //PineTree pineTreeModel;
     std::unique_ptr<ShaderProgram> planetProgram;
-    std::unique_ptr<ShaderProgram> planetProgramDepthMap;
     std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> cubefaces;
     Noise *noise;
     const int PLANET_RESOLUTION = 200;

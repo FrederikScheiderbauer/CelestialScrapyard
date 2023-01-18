@@ -8,12 +8,10 @@
 #include "../headers/LightSource.hpp"
 
 const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt.vert", (std::string)Project_SOURCE_DIR + "/src/shader/asteroidBelt.frag"};
-const std::vector<std::string> SHADER_PATHS_DEPTH_MAP = {(std::string)Project_SOURCE_DIR +"/src/shader/asteroidBelt_depthMap.vert", (std::string)Project_SOURCE_DIR + "/src/shader/depthMap.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
     asteroidBeltProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
-    asteroidBeltProgramDepthMap = std::make_unique<ShaderProgram>(SHADER_PATHS_DEPTH_MAP, SHADER_TYPES);
 
     Noise noise = Noise(noiseSeed, Noise::asteroid);
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
@@ -104,6 +102,7 @@ void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
     glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "depthRender"), false);
     LightSource::getInstance().bindToShader(asteroidBeltProgram->name);
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
@@ -153,8 +152,9 @@ void AsteroidBelt::draw(int width, int height) {
 
 
 void AsteroidBelt::drawForDepthMap() {
-    asteroidBeltProgramDepthMap->use();
-    LightSource::getInstance().bindLightMatrices(asteroidBeltProgramDepthMap->name);
+    asteroidBeltProgram->use();
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "depthRender"), true);
+    LightSource::getInstance().bindLightMatrices(asteroidBeltProgram->name);
 
     glm::mat4 model = glm::mat4(ASTEROID_RADIUS);
     setUniformMatrix(model,"model");
