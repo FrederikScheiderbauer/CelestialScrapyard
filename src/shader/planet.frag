@@ -16,7 +16,7 @@ uniform samplerCube mountain_cube;
 uniform samplerCube water_cube;
 uniform samplerCube crater_cube;
 
-layout(location = 15) uniform sampler2D depthMap;
+layout(binding = 15) uniform sampler2D depthMap;
 
 const vec3 k_s = vec3(0.1f);
 const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
@@ -123,7 +123,7 @@ void main()
     vec3 ambient = k_a * ambientStrength * k_d;
 
     float shadow = ShadowCalculation(lightSpacePosition);
-    vec3 sum = /*(1.0 - shadow) **/ (diffuse + specular) + ambient;
+    vec3 sum = (1.0 - shadow) * (diffuse + specular) + ambient;
 
 /* leave out for now, gets too bright when close to the sphere*/
 //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
