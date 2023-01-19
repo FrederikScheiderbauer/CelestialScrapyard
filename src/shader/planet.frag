@@ -28,13 +28,13 @@ const vec3 light_intensity = vec3(20.0f);
 uniform vec3 planet_info;
 uniform bool depthRender;
 
-const float water_Level = planet_info[0];
-const float deep_water_Level = planet_info[0] -0.2f;
-const float mountain_Height = planet_info[1];
-const float snow_peak_Height = planet_info[2];
-const float ocean_interpolation_width = 0.1f;
-const float mountain_interpolation_width = 0.03f;
-const float snow_interpolation_width = 0.01f;
+float water_Level = planet_info[0];
+float deep_water_Level = planet_info[0] -0.2f;
+float mountain_Height = planet_info[1];
+float snow_peak_Height = planet_info[2];
+float ocean_interpolation_width = 0.1f;
+float mountain_interpolation_width = 0.03f;
+float snow_interpolation_width = 0.01f;
 
 //https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 float ShadowCalculation(vec4 fragPosLightSpace)

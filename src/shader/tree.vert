@@ -18,9 +18,9 @@ uniform mat4 model;
 uniform mat4 view;
 uniform vec3 planet_info;
 
-const float water_Level = planet_info[0];
-const float mountain_Height = planet_info[1];
-const float snow_peak_Height = planet_info[2];
+float water_Level = planet_info[0];
+float mountain_Height = planet_info[1];
+float snow_peak_Height = planet_info[2];
 
 void main()
 {
