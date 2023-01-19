@@ -8,6 +8,7 @@ flat out int instanceId;
 uniform mat4 projection;
 uniform mat4 model;
 uniform mat4 view;
+uniform mat4 lightSpaceMatrix;
 uniform int pickedID;
 uniform int outlining;
 uniform bool depthRender;
@@ -55,8 +56,10 @@ void main()
         mat4 rotation = rotationMatrix(axis, angle);
 
         worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
-        gl_Position = projection * view * vec4(worldPosition, 1.0);
-        if (!depthRender) {
+        if (depthRender) {
+            gl_Position = lightSpaceMatrix * vec4(worldPosition, 1.0);
+        } else {
+            gl_Position = projection * view * vec4(worldPosition, 1.0);
             worldNormal = vec3(rotation * model * vec4(normal, 0.0));
             instanceId = gl_InstanceID;
         }
