@@ -10,7 +10,7 @@ private:
     glm::vec3 position;
     GLuint depthMapFBO;
     GLuint depthMap;
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+    const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 1024;
     const float LIGHT_SOURCE_SPEED = 0.005f;
     LightSource();
 public:

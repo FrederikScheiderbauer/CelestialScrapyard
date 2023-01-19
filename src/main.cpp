@@ -237,7 +237,7 @@ int main(void)
         processInput(window, (float)elapsed_Time.count());
 
         /*Update Game state*/
-        LightSource::getInstance().updatePosition();
+        //LightSource::getInstance().updatePosition();
 
         /* Render here */
         int current_width, current_height;
