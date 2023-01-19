@@ -154,6 +154,7 @@ void AsteroidBelt::draw(int width, int height) {
 void AsteroidBelt::drawForDepthMap() {
     asteroidBeltProgram->use();
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "depthRender"), true);
+    glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "outlining"), 0);
     LightSource::getInstance().bindLightMatrices(asteroidBeltProgram->name);
 
     glm::mat4 model = glm::mat4(ASTEROID_RADIUS);

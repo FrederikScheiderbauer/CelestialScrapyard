@@ -10,6 +10,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 lightSpaceMatrix;
 uniform int pickedID;
+//0 = standard draw, 1 = write to stencil buffer, 2 = render outline
 uniform int outlining;
 uniform bool depthRender;
 
