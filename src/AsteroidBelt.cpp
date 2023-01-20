@@ -127,6 +127,9 @@ void AsteroidBelt::draw(int width, int height) {
     //standard draw
     prepareDraw(width, height, false);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "outlining"), 0);
+    GLuint depthMap = LightSource::getInstance().getDepthMap();
+    glActiveTexture(GL_TEXTURE15);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
     executeDraw();
 
     //draw picked asteroid again in stencil buffer and in solid color for outline rendering

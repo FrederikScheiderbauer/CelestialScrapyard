@@ -1,6 +1,7 @@
 #version 460 core
 in vec3 worldNormal;
 in vec3 worldPosition;
+in vec4 lightSpacePosition;
 flat in int instanceId;
 out vec4 fragColor;
 
@@ -11,6 +12,8 @@ uniform int pickedID;
 //0: draw normal, 1: only draw picked asteroid with write to stencil buffer, 2: draw picked with asteroid with solid color
 uniform int outlining;
 uniform bool depthRender;
+
+layout(binding = 15) uniform sampler2D depthMap;
 
 const vec3 k_s = vec3(0.1f);
 const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
@@ -24,6 +27,24 @@ vec3 instanceIdToColor() {
     float g = float((instanceId & 0x0000FF00) >> 8) / 255.f;
     float b = float((instanceId & 0x00FF0000) >> 16) / 255.f;
     return vec3(r,g,b);
+}
+
+//https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(depthMap, projCoords.xy).r;
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    float bias = 0.005;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
 }
 
 void main()
@@ -59,7 +80,8 @@ void main()
             vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
             //ambient: https://learnopengl.com/Lighting/Basic-Lighting
             vec3 ambient = k_a * ambientStrength * k_d;
-            vec3 sum = diffuse + specular + ambient;
+            float shadow = ShadowCalculation(lightSpacePosition);
+            vec3 sum = (1.0 - shadow) * (diffuse + specular) + ambient;
 
             /* leave out for now, gets too bright when close to the sphere*/
             //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
