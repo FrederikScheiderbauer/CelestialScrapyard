@@ -22,7 +22,7 @@ void Gui::imgui_Init(GLFWwindow* window)
     ImGui_ImplGlfw_InitForOpenGL(window,true);
     ImGui_ImplOpenGL3_Init("#version 460");
 }
-void Gui::imgui_Debug_Window(bool* is_Wireframe, glm::vec3 &planet_info)
+void Gui::imgui_Debug_Window(bool* is_Wireframe, glm::vec3 &planet_info, float &pickedAsteroidTheta)
 {
     float water_level = 0.5f;
     float mountain_start = 0.5f;
@@ -32,6 +32,7 @@ void Gui::imgui_Debug_Window(bool* is_Wireframe, glm::vec3 &planet_info)
     ImGui::SliderFloat("Water level",&planet_info[0],1.0f,2.0f);
     ImGui::SliderFloat("Mountain start",&planet_info[1],1.0f,2.0f);
     ImGui::SliderFloat("Snow peaks",&planet_info[2],1.0f,2.0f);
+    ImGui::SliderFloat("Selected Asteroid Position", &pickedAsteroidTheta,-M_PI,M_PI);
 
     ImGui::End();
 }

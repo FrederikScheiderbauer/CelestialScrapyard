@@ -52,7 +52,7 @@ void AsteroidBelt::setUniformMatrix(glm::mat4 matrix, std::string type) {
     glUniformMatrix4fv(glGetUniformLocation(asteroidBeltProgram->name, type.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void AsteroidBelt::move() {
+void AsteroidBelt::move(float &pickedAsteroidTheta) {
     for (int i = 0; i < NUM_ASTEROIDS; ++i) {
         auto throwInfo = std::find_if(throwInfos.begin(), throwInfos.end(), [i](const ThrowInfo &info) {return info.instanceId == i;});
         if (throwInfo != throwInfos.end()) {
@@ -64,7 +64,11 @@ void AsteroidBelt::move() {
                 offsets[i] = glm::vec4{throwInfo->direction * throwInfo->t, 0.f};
             }
         } else {
-            offsets[i] = glm::vec4(moveInOrbit(offsets[i], ASTEROID_SPEED), 0.f);
+            if (i == pickedID) {
+                offsets[i] = glm::vec4(moveInOrbitWithTheta(offsets[i], ASTEROID_SPEED, pickedAsteroidTheta), 0.f);
+            } else {
+                offsets[i] = glm::vec4(moveInOrbit(offsets[i], ASTEROID_SPEED), 0.f);
+            }
         }
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
@@ -116,9 +120,9 @@ void AsteroidBelt::executeDraw() {
     }
 }
 
-void AsteroidBelt::draw(int width, int height) {
+void AsteroidBelt::draw(int width, int height, float &pickedAsteroidTheta) {
     if (!picking) {
-        move();
+        move(pickedAsteroidTheta);
     }
 
     //outline rendering based on https://learnopengl.com/Advanced-OpenGL/Stencil-testing
@@ -167,10 +171,11 @@ void AsteroidBelt::drawForDepthMap() {
     executeDraw();
 }
 
-void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {
+void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition, float &pickedAsteroidTheta) {
     picking = true;
     glClear(GL_COLOR_BUFFER_BIT);
-    draw(width, height);
+    float temp = 0.f;
+    draw(width, height, temp);
 
     glMemoryBarrier(GL_PIXEL_BUFFER_BARRIER_BIT);
 
@@ -180,8 +185,11 @@ void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition) {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     unsigned char data[4];
     glReadPixels((GLint) mousePosition.x, height - (GLint) mousePosition.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    pickedID = data[0] + data[1] * 256 + data[2] * 256 * 256;
-    std::cout << pickedID << std::endl;
+    int newID = data[0] + data[1] * 256 + data[2] * 256 * 256;
+    if (newID != 0) {
+        pickedID = newID;
+    }
+    pickedAsteroidTheta = cartesianToSpherical(offsets[pickedID]).z;
     picking = false;
 }
 

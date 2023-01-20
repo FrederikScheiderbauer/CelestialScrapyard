@@ -20,7 +20,7 @@ private:
     const float ASTEROID_RADIUS = 0.05f;
     const float ASTEROID_SPEED = 0.001f;
 
-    void move();
+    void move(float &pickedAsteroidTheta);
     void prepareDraw(int width, int height, bool outlining);
     void executeDraw();
 
@@ -35,9 +35,9 @@ private:
     const float THROW_SPEED = -0.008f;
 public:
     AsteroidBelt(unsigned long noiseSeed);
-    void draw(int width, int height);
+    void draw(int width, int height, float &pickedAsteroidTheta);
     void drawForDepthMap();
-    void pick(int width, int height, glm::vec2 mousePosition);
+    void pick(int width, int height, glm::vec2 mousePosition, float &pickedAsteroidTheta);
     glm::vec3 throwTowardsCenter();
     float getThrowSpeed();
     ~AsteroidBelt();

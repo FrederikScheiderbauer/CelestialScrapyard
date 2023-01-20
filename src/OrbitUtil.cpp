@@ -26,10 +26,22 @@ glm::vec3 sphericalToCartesian(glm::vec3 spherical) {
     return {x, y, z};
 }
 
-glm::vec3 moveInOrbit(glm::vec3 position, float speed) {
-    auto spherical = cartesianToSpherical(position);
+glm::vec3 doOrbitalMovement(glm::vec3 &spherical, float speed) {
     float signedSpeed = speed * (glm::abs(spherical.z) < 0.5f * glm::pi<float>() ? 1.f : -1.f);
     spherical.y += signedSpeed;
     spherical.y = std::fmod(spherical.y, glm::pi<float>());
     return sphericalToCartesian(spherical);
+}
+
+glm::vec3 moveInOrbit(glm::vec3 position, float speed) {
+    auto spherical = cartesianToSpherical(position);
+    return doOrbitalMovement(spherical, speed);
+}
+
+glm::vec3 moveInOrbitWithTheta(glm::vec3 position, float speed, float &theta) {
+    auto spherical = cartesianToSpherical(position);
+    spherical.z = theta;
+    glm::vec3 result = doOrbitalMovement(spherical, speed);
+    theta = spherical.z;
+    return result;
 }
