@@ -35,7 +35,7 @@ class Camera {
         virtual void update_Camera_State() = 0;
 
         float cameraShakeAmplitude = 0.f;
-        glm::vec3 cameraPosBeforeShake;
+        glm::vec3 lastFrameOffset;
         const float CAMERA_SHAKE_DECREMENT = 0.0005f;
 };
 

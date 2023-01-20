@@ -67,7 +67,7 @@ void Camera::set_As_Active_Camera()
 
 void Camera::start_Camera_Shake() {
     cameraShakeAmplitude = 0.05f;
-    cameraPosBeforeShake = cameraPos;
+    lastFrameOffset = glm::vec3(0.f);
 }
 
 void Camera::update_Camera_Shake() {
@@ -78,11 +78,13 @@ void Camera::update_Camera_Shake() {
     offset.x = Random::getInRange(-1.f, 1.f);
     offset.y = Random::getInRange(-1.f, 1.f);
     offset.z = Random::getInRange(-1.f, 1.f);
-    cameraPos = cameraPosBeforeShake + offset * cameraShakeAmplitude;
+    offset *= cameraShakeAmplitude;
+    cameraPos = cameraPos - lastFrameOffset + offset;
+    lastFrameOffset = offset;
     viewMatrix = glm::lookAt(cameraPos,cameraPos + camera_Front,get_Camera_Up());
     cameraShakeAmplitude -= CAMERA_SHAKE_DECREMENT;
     if (cameraShakeAmplitude < 1E-5) {
-        cameraPos = cameraPosBeforeShake;
+        cameraPos -= lastFrameOffset;
     }
 }
 
