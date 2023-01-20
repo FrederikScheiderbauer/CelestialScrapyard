@@ -1,4 +1,5 @@
 #include "../headers/camera.hpp"
+#include "../headers/Random.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -63,7 +64,27 @@ void Camera::set_As_Active_Camera()
 {
 	active_camera = this;
 }
-//
+
+void Camera::start_Camera_Shake() {
+    cameraShakeAmplitude = 0.05f;
+    cameraPosBeforeShake = cameraPos;
+}
+
+void Camera::update_Camera_Shake() {
+    if (cameraShakeAmplitude < 1E-5) {
+        return;
+    }
+    glm::vec3 offset;
+    offset.x = Random::getInRange(-1.f, 1.f);
+    offset.y = Random::getInRange(-1.f, 1.f);
+    offset.z = Random::getInRange(-1.f, 1.f);
+    cameraPos = cameraPosBeforeShake + offset * cameraShakeAmplitude;
+    viewMatrix = glm::lookAt(cameraPos,cameraPos + camera_Front,get_Camera_Up());
+    cameraShakeAmplitude -= CAMERA_SHAKE_DECREMENT;
+    if (cameraShakeAmplitude < 1E-5) {
+        cameraPos = cameraPosBeforeShake;
+    }
+}
 
 
 LockedCamera::LockedCamera(glm::vec3 first_camera_Position,glm::vec3 first_camera_Target, float speed)

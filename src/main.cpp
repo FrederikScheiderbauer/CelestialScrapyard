@@ -238,6 +238,7 @@ int main(void)
 
         /*Update Game state*/
         //LightSource::getInstance().updatePosition();
+        Camera::get_Active_Camera()->update_Camera_Shake();
 
         /* Render here */
         int current_width, current_height;

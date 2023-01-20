@@ -157,6 +157,7 @@ void Planet::checkForVertexUpdate() {
             vertexUpdateQueue.pop_front();
             vertexUpdateInProgress = false;
             dispatchVertexUpdate();
+            Camera::get_Active_Camera()->start_Camera_Shake();
             //destroy_trees(vertexUpdateQueue.front().craterCenter,0.35f);
         }
     }

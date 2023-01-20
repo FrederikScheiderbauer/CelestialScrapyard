@@ -21,6 +21,9 @@ class Camera {
         static Camera* get_Active_Camera();
         void set_As_Active_Camera();
 
+        void start_Camera_Shake();
+        void update_Camera_Shake();
+
     protected:
         glm::vec3 cameraPos;
         glm::vec3 cameraTarget;
@@ -30,6 +33,10 @@ class Camera {
         float camera_Speed;
         static Camera* active_camera;
         virtual void update_Camera_State() = 0;
+
+        float cameraShakeAmplitude = 0.f;
+        glm::vec3 cameraPosBeforeShake;
+        const float CAMERA_SHAKE_DECREMENT = 0.0005f;
 };
 
 class LockedCamera : public Camera
