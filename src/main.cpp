@@ -21,6 +21,7 @@
 #include "../headers/AsteroidBelt.hpp"
 #include "../headers/Tree.hpp"
 #include "../headers/LightSource.hpp"
+#include "../headers/GBuffer.hpp"
 
 using namespace std;
 
@@ -219,6 +220,7 @@ int main(void)
     WindowPointerParameters param = {&planet, &asteroidBelt, false, glm::vec2(0.f)};
     glfwSetWindowUserPointer(window, &param);
     Skybox skybox = Skybox();
+    GBuffer gBuffer = GBuffer(WIDTH, HEIGHT);
 
     //string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
     //string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
@@ -238,7 +240,7 @@ int main(void)
         processInput(window, (float)elapsed_Time.count());
 
         /*Update Game state*/
-        //LightSource::getInstance().updatePosition();
+        LightSource::getInstance().updatePosition();
         Camera::get_Active_Camera()->update_Camera_Shake();
 
         /* Render here */
@@ -254,6 +256,9 @@ int main(void)
         LightSource::getInstance().finishDepthMapCreation(current_width, current_height);
 
         //Main render passes
+        gBuffer.checkDimensions(current_width, current_height);
+        gBuffer.clear();
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glStencilMask(0x00);
 
