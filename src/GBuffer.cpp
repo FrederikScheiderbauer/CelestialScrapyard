@@ -79,7 +79,11 @@ void GBuffer::finishGemoetryPass() {
 }
 
 void GBuffer::blitDepthAndStencilBuffer() {
-
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+    glBlitFramebuffer(0, 0, allocatedWidth, allocatedHeight, 0, 0, allocatedWidth, allocatedHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, allocatedWidth, allocatedHeight, 0, 0, allocatedWidth, allocatedHeight, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GBuffer::executeLightingPass() {

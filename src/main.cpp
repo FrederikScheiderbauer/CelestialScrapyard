@@ -268,7 +268,7 @@ int main(void)
         glStencilMask(0x00);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        //Main render passes
+        //deferred shading pass
         gBuffer.prepareGeometryPass(current_width, current_height);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -285,9 +285,13 @@ int main(void)
         glStencilMask(0x00);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
+        glDepthMask(GL_FALSE);
         gBuffer.executeLightingPass();
+        glDepthMask(GL_TRUE);
 
-        //skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
+        //additional forward rendering
+        gBuffer.blitDepthAndStencilBuffer();
+        skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
