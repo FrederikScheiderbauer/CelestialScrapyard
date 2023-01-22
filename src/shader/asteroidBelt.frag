@@ -62,7 +62,8 @@ void main()
     }
 
     if (picking) {
-        fragColor = vec4(instanceIdToColor(), 1.0f);
+        //gPosition is at out location 0 for deferred shading -> replaces fragColor for picking
+        gPosition = instanceIdToColor();
     } else {
         if (outlining == 2) {
             fragColor = vec4(0.8, 0.0, 0.0, 1.0);
