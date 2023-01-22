@@ -256,12 +256,9 @@ int main(void)
         LightSource::getInstance().finishDepthMapCreation(current_width, current_height);
 
         //Main render passes
-        gBuffer.checkDimensions(current_width, current_height);
-        gBuffer.clear();
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        gBuffer.prepareRender(current_width, current_height);
+        
         glStencilMask(0x00);
-
         if(param.mouseClicked) {
             asteroidBelt.pick(current_width, current_height, param.mousePosition, pickedAsteroidTheta);
             param.mouseClicked = false;
@@ -277,6 +274,9 @@ int main(void)
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
         asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
+
+        gBuffer.finishRender();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
