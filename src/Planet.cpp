@@ -113,10 +113,8 @@ void Planet::handleCollisions() {
     }
 }
 
-void Planet::drawParticles(int width, int height) {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendEquation(GL_FUNC_ADD);
+
+void Planet::updateParticles() {
     //compute random point on sphere around crater for each particle
     //https://math.stackexchange.com/questions/1585975/how-to-generate-random-points-on-a-sphere
     float particleHeight = noise->getParticleHeight();
@@ -135,6 +133,12 @@ void Planet::drawParticles(int width, int height) {
             particleQueue.erase(particleQueue.begin() + j);
         }
     }
+}
+
+void Planet::drawParticles(int width, int height) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
     particleSystem.draw(width, height);
     glDisable(GL_BLEND);
 }
@@ -166,7 +170,7 @@ void Planet::checkForVertexUpdate() {
 
 void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     handleCollisions();
-    drawParticles(width, height);
+    updateParticles();
     checkForVertexUpdate();
 
     Camera* camera = Camera::get_Active_Camera();
@@ -356,3 +360,4 @@ void Planet::plant_trees(glm::vec3 forest_center,float radius) {
 glm::vec3 Planet::getPlanetInfo() {
     return noise->getPlanetInfo();
 }
+

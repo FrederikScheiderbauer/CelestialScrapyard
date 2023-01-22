@@ -291,6 +291,7 @@ int main(void)
 
         //additional forward rendering
         gBuffer.blitDepthAndStencilBuffer();
+        planet.drawParticles(current_width, current_height);
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
         gui_Object.imgui_Frame_Setup();

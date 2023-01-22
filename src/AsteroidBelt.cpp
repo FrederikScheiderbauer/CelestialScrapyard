@@ -189,6 +189,7 @@ void AsteroidBelt::pick(int width, int height, glm::vec2 mousePosition, float &p
     if (newID != 0) {
         pickedID = newID;
     }
+    std::cout << pickedID << std::endl;
     pickedAsteroidTheta = cartesianToSpherical(offsets[pickedID]).z;
     picking = false;
 }

@@ -46,7 +46,7 @@ private:
     bool vertexUpdateInProgress = false;
     const int PARTICLE_DURATION = 80;
     void handleCollisions();
-    void drawParticles(int width, int height);
+    void updateParticles();
     void checkForVertexUpdate();
     void dispatchVertexUpdate();
 
@@ -63,6 +63,7 @@ private:
     
 public:
     Planet(unsigned long noiseSeed);
+    void drawParticles(int width, int height);
     void draw(int width, int height, glm::vec3 &planet_info);
     void drawForDepthMap();
     void addCrater(glm::vec3 throwDirection, float asteroidSpeed);
