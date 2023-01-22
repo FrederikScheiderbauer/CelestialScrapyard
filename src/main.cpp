@@ -255,10 +255,10 @@ int main(void)
 
         LightSource::getInstance().finishDepthMapCreation(current_width, current_height);
 
-        //Main render passes
-        gBuffer.prepareRender(current_width, current_height);
-        
+        //Picking
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glStencilMask(0x00);
+
         if(param.mouseClicked) {
             asteroidBelt.pick(current_width, current_height, param.mousePosition, pickedAsteroidTheta);
             param.mouseClicked = false;
@@ -268,15 +268,26 @@ int main(void)
         glStencilMask(0x00);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
+        //Main render passes
+        gBuffer.prepareGeometryPass(current_width, current_height);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilMask(0x00);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
         //pinetree_model.draw_instanced(current_width, current_height);
         planet.draw(current_width, current_height,planet_info);
-
-        skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
-
         asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
 
-        gBuffer.finishRender();
+        gBuffer.finishGemoetryPass();
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilMask(0x00);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+        gBuffer.executeLightingPass();
+
+        //skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);

@@ -5,6 +5,10 @@ in vec4 lightSpacePosition;
 flat in int instanceId;
 out vec4 fragColor;
 
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec4 gAlbedoSpec;
+
 uniform vec3 cameraPos;
 uniform vec3 lightPos;
 uniform bool picking;
@@ -50,7 +54,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
     if (depthRender) {
-        fragColor = vec4(1.0f);
+        //fragColor = vec4(1.0f);
         return;
     }
     if ((outlining > 0 && pickedID != instanceId) || (outlining == 0 && pickedID == instanceId)) {
@@ -83,10 +87,19 @@ void main()
             float shadow = ShadowCalculation(lightSpacePosition);
             vec3 sum = (1.0 - shadow) * (diffuse + specular) + ambient;
 
+            // store the fragment position vector in the first gbuffer texture
+            gPosition = worldPosition;
+            // also store the per-fragment normals into the gbuffer
+            gNormal = N;
+            // and the diffuse per-fragment color
+            gAlbedoSpec.rgb = k_d;
+            gAlbedoSpec.a = shadow;
+
             /* leave out for now, gets too bright when close to the sphere*/
             //     float distance = dot(worldPosition - cameraPos, worldPosition - cameraPos);
             //     vec3 intensity = light_intensity / distance;
-            fragColor = vec4(sum /** intensity*/, 1.0);
+            //fragColor = vec4(sum /** intensity*/, 1.0);
+            fragColor = vec4(1.0f);
         }
     }
 }
