@@ -192,16 +192,8 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
 
-    glUniform3fv(glGetUniformLocation(planetProgram->name, "cameraPos"), 1, &cameraPos[0]);
     glUniform3fv(glGetUniformLocation(planetProgram->name, "planet_info"), 1, &planet_info[0]);
     glUniform1i(glGetUniformLocation(planetProgram->name, "depthRender"), false);
-
-    LightSource &lightSource = LightSource::getInstance();
-    lightSource.bindToShader(planetProgram->name);
-    lightSource.bindLightMatrices(planetProgram->name);
-    GLuint depthMap = lightSource.getDepthMap();
-    glActiveTexture(GL_TEXTURE15);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
 
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->draw();
@@ -294,8 +286,8 @@ void Planet::create_Forests(unsigned long noiseSeed){
     Noise noise = Noise(noiseSeed, Noise::forests);
     for ( int i = 0; i < CUBE_NUM_FACES; i++) {
         std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_and_normals_from_map(noise);
-        //std::vector<glm::vec3> tree_positions = sanity_check(offsets);
-        std::vector<glm::vec3> &tree_positions = offsets;
+        std::vector<glm::vec3> tree_positions = sanity_check(offsets);
+        //std::vector<glm::vec3> &tree_positions = offsets;
             for ( int j = 0; j < tree_positions.size(); j++) {
                 treeOffsets.push_back(tree_positions[j]);
             }

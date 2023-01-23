@@ -95,7 +95,10 @@ void GBuffer::executeLightingPass() {
     Camera* camera = Camera::get_Active_Camera();
     glm::vec3 cameraPos = camera->get_Camera_Position();
     glUniform3fv(glGetUniformLocation(lightingPassShaderProgram->name, "cameraPos"), 1, &cameraPos[0]);
-    LightSource::getInstance().bindToShader(lightingPassShaderProgram->name);
+    auto &lightSource = LightSource::getInstance();
+    lightSource.bindToShader(lightingPassShaderProgram->name);
+    lightSource.bindLightMatrices(lightingPassShaderProgram->name);
+    lightSource.bindDepthMap();
     quad->draw();
 }
 

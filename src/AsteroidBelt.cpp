@@ -105,9 +105,7 @@ void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
     //Camera* camera2 = Camera::get_Active_Camera();
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
-    glUniform3fv(glGetUniformLocation(asteroidBeltProgram->name, "cameraPos"), 1, &cameraPos[0]);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "depthRender"), false);
-    LightSource::getInstance().bindToShader(asteroidBeltProgram->name);
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);
@@ -131,9 +129,6 @@ void AsteroidBelt::draw(int width, int height, float &pickedAsteroidTheta) {
     //standard draw
     prepareDraw(width, height, false);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "outlining"), 0);
-    GLuint depthMap = LightSource::getInstance().getDepthMap();
-    glActiveTexture(GL_TEXTURE15);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
     executeDraw();
 
     //draw picked asteroid again in stencil buffer and in solid color for outline rendering

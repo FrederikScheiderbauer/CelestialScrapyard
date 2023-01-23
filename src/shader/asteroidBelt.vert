@@ -3,7 +3,6 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 out vec3 worldNormal;
 out vec3 worldPosition;
-out vec4 lightSpacePosition;
 flat out int instanceId;
 
 uniform mat4 projection;
@@ -62,7 +61,6 @@ void main()
             gl_Position = lightSpaceMatrix * vec4(worldPosition, 1.0);
         } else {
             gl_Position = projection * view * vec4(worldPosition, 1.0);
-            lightSpacePosition = lightSpaceMatrix * vec4(worldPosition, 1.0);
             worldNormal = vec3(rotation * model * vec4(normal, 0.0));
             instanceId = gl_InstanceID;
         }

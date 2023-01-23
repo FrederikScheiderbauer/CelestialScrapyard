@@ -20,6 +20,7 @@ public:
     void prepareDepthMapCreation();
     void finishDepthMapCreation(int width, int height);
     void bindLightMatrices(GLuint program);
+    void bindDepthMap();
     GLuint getDepthMap();
 
     LightSource(LightSource const&) = delete;

@@ -56,3 +56,8 @@ void LightSource::bindLightMatrices(GLuint program) {
 GLuint LightSource::getDepthMap() {
     return depthMap;
 }
+
+void LightSource::bindDepthMap() {
+    glActiveTexture(GL_TEXTURE15);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+}
