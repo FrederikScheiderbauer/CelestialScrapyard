@@ -209,10 +209,9 @@ void Planet::draw(int width, int height, glm::vec3 &planet_info) {
 
     //draw trees
     pineTreeModel.draw_instanced(width,height,tree_transformation_matrices, planet_info);
-
 }
 
-void Planet::drawForDepthMap() {
+void Planet::drawForDepthMap(glm::vec3 &planet_info) {
     planetProgram->use();
     glUniform1i(glGetUniformLocation(planetProgram->name, "depthRender"), true);
     LightSource::getInstance().bindLightMatrices(planetProgram->name);
@@ -223,6 +222,7 @@ void Planet::drawForDepthMap() {
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
         cubefaces[i]->draw();
     }
+    pineTreeModel.draw_for_depth_map(tree_transformation_matrices, planet_info);
 }
 
 void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed) {
@@ -294,7 +294,8 @@ void Planet::create_Forests(unsigned long noiseSeed){
     Noise noise = Noise(noiseSeed, Noise::forests);
     for ( int i = 0; i < CUBE_NUM_FACES; i++) {
         std::vector<glm::vec3> offsets = cubefaces[i]->filter_vertices_and_normals_from_map(noise);
-        std::vector<glm::vec3> tree_positions = sanity_check(offsets);
+        //std::vector<glm::vec3> tree_positions = sanity_check(offsets);
+        std::vector<glm::vec3> &tree_positions = offsets;
             for ( int j = 0; j < tree_positions.size(); j++) {
                 treeOffsets.push_back(tree_positions[j]);
             }

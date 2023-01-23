@@ -250,7 +250,7 @@ int main(void)
         //Shadow Mapping
         LightSource::getInstance().prepareDepthMapCreation();
 
-        planet.drawForDepthMap();
+        planet.drawForDepthMap(planet_info);
         asteroidBelt.drawForDepthMap();
 
         LightSource::getInstance().finishDepthMapCreation(current_width, current_height);

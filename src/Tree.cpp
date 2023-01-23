@@ -248,10 +248,29 @@ void PineTree::draw_instanced(int width,int height,std::vector<glm::mat4> instan
     LightSource::getInstance().bindToShader(modelShader->name);
 
     glUniform3fv(glGetUniformLocation(modelShader->name, "planet_info"), 1, &planet_info[0]);
+    glUniform1i(glGetUniformLocation(modelShader->name, "depthRender"), false);
     modelShader->use();
     glBindVertexArray(VAO);
     glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, amount);
     glBindVertexArray(0);
 
+}
+
+void PineTree::draw_for_depth_map(std::vector<glm::mat4> instance_matrices, glm::vec3 &planet_info) {
+    modelShader->use();
+    set_instance_matrix_buffer(instance_matrices);
+
+    glUniform1i(glGetUniformLocation(modelShader->name, "depthRender"), true);
+    LightSource::getInstance().bindLightMatrices(modelShader->name);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model,glm::vec3(0.001f));
+    setUniformMatrix(model,"model");
+    glUniform3fv(glGetUniformLocation(modelShader->name, "planet_info"), 1, &planet_info[0]);
+
+    int amount = instance_matrices.size();
+    glBindVertexArray(VAO);
+    glDrawElementsInstanced(GL_TRIANGLES, mesh.vertices_indices.size(), GL_UNSIGNED_INT, 0, amount);
+    glBindVertexArray(0);
 }
 

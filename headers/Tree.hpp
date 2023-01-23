@@ -19,4 +19,5 @@ class PineTree: public Model{
         PineTree();
         void draw(int width, int height) override;
         void draw_instanced(int width,int height,std::vector<glm::mat4> instance_matrices, glm::vec3& planet_info);
+        void draw_for_depth_map(std::vector<glm::mat4> instance_matrices, glm::vec3& planet_info);
 };

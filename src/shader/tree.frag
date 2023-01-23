@@ -15,6 +15,7 @@ uniform sampler2D Trunk_Texture;
 
 uniform vec3 cameraPos;
 uniform vec3 lightPos;
+uniform bool depthRender;
 
 //const vec3 k_s = vec3(1.0f);
 //const vec3 k_a = vec3(0.01f);
@@ -37,7 +38,7 @@ vec3 calculate_camera_light_contribution() {
     gNormal = N;
     // and the diffuse per-fragment color
     gAlbedoSpec.rgb = k_d;
-    gAlbedoSpec.a = 1.0;
+    gAlbedoSpec.a = 0.0;
 
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
@@ -47,6 +48,9 @@ vec3 calculate_camera_light_contribution() {
 }
 void main()
 {
+    if (depthRender) {
+        return;
+    }
 /*
     vec3 k_d =0.8f* Color.rgb;
     vec3 k_s = 0.2f * Color.rgb;
