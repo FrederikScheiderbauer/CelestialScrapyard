@@ -4,12 +4,15 @@
 #include "glm/vec3.hpp"
 #include "../headers/camera.hpp"
 #include "../headers/LightSource.hpp"
+#include "../headers/Random.hpp"
 
-const std::vector<std::string> SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/lightingPass.vert", (std::string)Project_SOURCE_DIR + "/src/shader/lightingPass.frag"};
+const std::vector<std::string> LIGHTING_PASS_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/lightingPass.frag"};
+const std::vector<std::string> SSAO_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/ssao.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 GBuffer::GBuffer(int width, int height) {
-    lightingPassShaderProgram = std::make_unique<ShaderProgram>(SHADER_PATHS, SHADER_TYPES);
+    lightingPassShaderProgram = std::make_unique<ShaderProgram>(LIGHTING_PASS_SHADER_PATHS, SHADER_TYPES);
+    ssaoShaderProgram = std::make_unique<ShaderProgram>(SSAO_SHADER_PATHS, SHADER_TYPES);
     quad = std::make_unique<Quad>();
 
     glGenFramebuffers(1, &gBuffer);
@@ -19,10 +22,21 @@ GBuffer::GBuffer(int width, int height) {
     glGenTextures(1, &gAlbedoSpec);
     glGenTextures(1, &depthAndStencil);
 
+    glGenFramebuffers(1, &ssaoBuffer);
+    glGenTextures(1, &ssaoTexture);
+
     allocateTextures(width, height);
     bindToFBO();
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "incomplete G-Buffer" << std::endl;
+    }
+
+    for (int i = 0; i < NUM_SSAO_SAMPLES; ++i) {
+        float x = Random::getInRange(-1.f, 1.f);
+        float y = Random::getInRange(-1.f, 1.f);
+        float z = Random::getInRange(0.f, 1.f);
+        float r = Random::getInRange(0.f, 1.f);
+        ssaoKernel[i] = r * glm::normalize(glm::vec3(x, y, z));
     }
 }
 
@@ -31,24 +45,34 @@ void GBuffer::allocateTextures(int width, int height) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, gNormal);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, depthAndStencil);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 
+    glBindTexture(GL_TEXTURE_2D, ssaoTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
     allocatedWidth = width;
     allocatedHeight = height;
 }
-
 
 void GBuffer::bindToFBO() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
@@ -86,11 +110,32 @@ void GBuffer::blitDepthAndStencilBuffer() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void GBuffer::executeSSAOPass(int width, int height) {
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoTexture, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ssaoShaderProgram->use();
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+    glUniformMatrix4fv(glGetUniformLocation(ssaoShaderProgram->name, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+    glm::mat4 view = Camera::get_Active_Camera()->get_View_Matrix();
+    glUniformMatrix4fv(glGetUniformLocation(ssaoShaderProgram->name, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+    glBindImageTexture(0, gPosition, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+    glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+    glUniform3fv(glGetUniformLocation(ssaoShaderProgram->name, "kernel"), NUM_SSAO_SAMPLES, glm::value_ptr(ssaoKernel[0]));
+    glm::vec2 resolution = glm::vec2(width, height);
+    glUniform2fv(glGetUniformLocation(ssaoShaderProgram->name, "resolution"), 1, &resolution[0]);
+    quad->draw();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void GBuffer::executeLightingPass() {
     lightingPassShaderProgram->use();
     glBindImageTexture(0, gPosition, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(2, gAlbedoSpec, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+    glBindImageTexture(3, ssaoTexture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_R16F);
 
     Camera* camera = Camera::get_Active_Camera();
     glm::vec3 cameraPos = camera->get_Camera_Position();
@@ -101,7 +146,6 @@ void GBuffer::executeLightingPass() {
     lightSource.bindDepthMap();
     quad->draw();
 }
-
 
 GBuffer::Quad::Quad() {
     //https://learnopengl.com/Getting-started/Hello-Triangle

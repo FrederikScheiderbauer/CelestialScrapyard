@@ -4,6 +4,7 @@ out vec4 fragColor;
 layout(binding = 0, rgba16f) uniform image2D gPosition;
 layout(binding = 1, rgba16f) uniform image2D gNormal;
 layout(binding = 2, rgba16f) uniform image2D gAlbedoSpec;
+layout(binding = 3, r16f) uniform image2D ssao;
 layout(binding = 15) uniform sampler2D depthMap;
 
 uniform vec3 cameraPos;
@@ -46,10 +47,12 @@ void main()
     vec3 k_d = imageLoad(gAlbedoSpec, ivec2(fragCoord)).rgb;
 
     float shadow = ShadowCalculation(lightSpacePosition);
+    float ambientOcclusion = imageLoad(ssao, ivec2(fragCoord)).r;
+
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     //ambient: https://learnopengl.com/Lighting/Basic-Lighting
-    vec3 ambient = k_a * ambientStrength * k_d;
+    vec3 ambient = ambientOcclusion * k_a * ambientStrength * k_d;
     vec3 sum = (1.0 - shadow) * (diffuse + specular) + ambient;
 
     fragColor = vec4(sum , 1.0);

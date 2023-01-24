@@ -280,10 +280,7 @@ int main(void)
         asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
 
         gBuffer.finishGemoetryPass();
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glStencilMask(0x00);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        gBuffer.executeSSAOPass(current_width, current_height);
 
         glDepthMask(GL_FALSE);
         gBuffer.executeLightingPass();
