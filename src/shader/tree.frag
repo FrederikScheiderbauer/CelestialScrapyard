@@ -22,30 +22,24 @@ uniform bool depthRender;
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
 
-vec3 calculate_camera_light_contribution() {
-    vec3 k_d =0.8f* Color.rgb;
-    vec3 k_s = 0.2f * Color.rgb;
-    vec3 k_a = Color.rgb;
-    vec3 N = normalize(worldNormal);
-    vec3 V = normalize(cameraPos - worldPosition);
-    vec3 R = normalize(reflect((-1)*V, N));
+//TODO: remove
+//vec3 calculate_camera_light_contribution() {
+//    vec3 k_d =0.8f* Color.rgb;
+//    vec3 k_s = 0.2f * Color.rgb;
+//    vec3 k_a = Color.rgb;
+//    vec3 N = normalize(worldNormal);
+//    vec3 V = normalize(cameraPos - worldPosition);
+//    vec3 R = normalize(reflect((-1)*V, N));
+//
+//    vec3 L = normalize(lightPos - worldPosition);
+//
+//    vec3 diffuse = k_d * max(0.0, dot(L, N));
+//    vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
+//
+//    vec3 sum = diffuse + specular;
+//    return sum;
+//}
 
-    vec3 L = normalize(lightPos - worldPosition);
-
-    // store the fragment position vector in the first gbuffer texture
-    gPosition = worldPosition;
-    // also store the per-fragment normals into the gbuffer
-    gNormal = N;
-    // and the diffuse per-fragment color
-    gAlbedoSpec.rgb = k_d;
-    gAlbedoSpec.a = 0.0;
-
-    vec3 diffuse = k_d * max(0.0, dot(L, N));
-    vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
-
-    vec3 sum = diffuse + specular;
-    return sum;
-}
 void main()
 {
     if (depthRender) {
@@ -66,5 +60,14 @@ void main()
 
     vec3 sum = diffuse + specular;
     */
-    FragColor = vec4(calculate_camera_light_contribution(), 1.0);
+
+    vec3 k_d = 0.8f * Color.rgb;
+
+    gPosition = worldPosition;
+    gNormal = normalize(worldNormal);
+    gAlbedoSpec.rgb = k_d;
+    //set specular to one to indicate usage of tree illumination model
+    gAlbedoSpec.a = 1.f;
+
+    //FragColor = vec4(calculate_camera_light_contribution(), 1.0);
 }

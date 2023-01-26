@@ -86,4 +86,5 @@ void main()
     gPosition = worldPosition;
     gNormal = normalize(worldNormal);
     gAlbedoSpec.rgb = k_d;
+    gAlbedoSpec.a = 0.f;
 }

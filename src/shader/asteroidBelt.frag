@@ -41,6 +41,7 @@ void main()
             gPosition = worldPosition;
             gNormal = normalize(worldNormal);
             gAlbedoSpec.rgb = vec3(0.5);
+            gAlbedoSpec.a = 0.f;
         }
     }
 }

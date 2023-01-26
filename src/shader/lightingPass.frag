@@ -12,7 +12,6 @@ uniform vec3 lightPos;
 uniform mat4 lightSpaceMatrix;
 uniform bool useSSAO;
 
-const vec3 k_s = vec3(0.1f);
 const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
 const float ambientStrength = 0.2f;
 const float n = 100.0f;
@@ -53,7 +52,14 @@ void main()
     vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));
     vec3 L = normalize(lightPos - worldPosition);
-    vec3 k_d = imageLoad(gAlbedoSpec, ivec2(fragCoord)).rgb;
+    vec4 albedoSpec = imageLoad(gAlbedoSpec, ivec2(fragCoord)).rgba;
+    vec3 k_d = albedoSpec.rgb;
+    vec3 k_s = vec3(0.1f);
+    //check for trees
+    if (albedoSpec.a != 0.f) {
+        // 1 / 0.8 * 0.2 = 0.25
+        k_s = 0.25f * k_d;
+    }
 
     float shadow = ShadowCalculation(lightSpacePosition);
     float ambientOcclusion = useSSAO ? imageLoad(ssao, ivec2(fragCoord)).r : 1.f;
