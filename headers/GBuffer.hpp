@@ -37,7 +37,7 @@ public:
     void prepareGeometryPass(int width, int height);
     void finishGemoetryPass();
     void executeSSAOPass(int width, int height);
-    void executeLightingPass();
+    void executeLightingPass(bool useSSAO);
     void blitDepthAndStencilBuffer();
 };
 

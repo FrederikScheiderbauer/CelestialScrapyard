@@ -131,7 +131,7 @@ void GBuffer::executeSSAOPass(int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GBuffer::executeLightingPass() {
+void GBuffer::executeLightingPass(bool useSSAO) {
     lightingPassShaderProgram->use();
     glBindImageTexture(0, gPosition, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
@@ -141,10 +141,14 @@ void GBuffer::executeLightingPass() {
     Camera* camera = Camera::get_Active_Camera();
     glm::vec3 cameraPos = camera->get_Camera_Position();
     glUniform3fv(glGetUniformLocation(lightingPassShaderProgram->name, "cameraPos"), 1, &cameraPos[0]);
+
     auto &lightSource = LightSource::getInstance();
     lightSource.bindToShader(lightingPassShaderProgram->name);
     lightSource.bindLightMatrices(lightingPassShaderProgram->name);
     lightSource.bindDepthMap();
+
+    glUniform1i(glGetUniformLocation(lightingPassShaderProgram->name, "useSSAO"), useSSAO);
+
     quad->draw();
 }
 

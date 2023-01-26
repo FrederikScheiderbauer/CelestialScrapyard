@@ -5,7 +5,7 @@ layout(binding = 0, rgba16f) uniform image2D gPosition;
 layout(binding = 1, rgba16f) uniform image2D gNormal;
 
 #define NUM_SSAO_SAMPLES 64
-#define RADIUS 2.5
+#define RADIUS 0.5
 #define BIAS 0.025
 
 uniform mat4 view;

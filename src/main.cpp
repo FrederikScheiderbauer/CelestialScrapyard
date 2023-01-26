@@ -228,6 +228,7 @@ int main(void)
     //Model tree_model = Model(obj_file,material_directory);
     glm::vec3 planet_info = planet.getPlanetInfo(); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
     float pickedAsteroidTheta = 0.f;
+    bool useSSAO = false;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -283,7 +284,7 @@ int main(void)
         gBuffer.executeSSAOPass(current_width, current_height);
 
         glDepthMask(GL_FALSE);
-        gBuffer.executeLightingPass();
+        gBuffer.executeLightingPass(useSSAO);
         glDepthMask(GL_TRUE);
 
         //additional forward rendering
@@ -293,7 +294,7 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
-        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta);
+        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta, useSSAO);
         gui_Object.imgui_Render();
 
         /* Swap front and back buffers */

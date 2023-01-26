@@ -10,6 +10,7 @@ layout(binding = 15) uniform sampler2D depthMap;
 uniform vec3 cameraPos;
 uniform vec3 lightPos;
 uniform mat4 lightSpaceMatrix;
+uniform bool useSSAO;
 
 const vec3 k_s = vec3(0.1f);
 const vec3 k_a = vec3(0.09f, 0.77f, 0.97f);
@@ -47,13 +48,13 @@ void main()
     vec3 k_d = imageLoad(gAlbedoSpec, ivec2(fragCoord)).rgb;
 
     float shadow = ShadowCalculation(lightSpacePosition);
-    float ambientOcclusion = imageLoad(ssao, ivec2(fragCoord)).r;
+    float ambientOcclusion = useSSAO ? imageLoad(ssao, ivec2(fragCoord)).r : 1.f;
 
     vec3 diffuse = k_d * max(0.0, dot(L, N));
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     //ambient: https://learnopengl.com/Lighting/Basic-Lighting
     vec3 ambient = ambientOcclusion * k_a * ambientStrength * k_d;
-    vec3 sum = (1.0 - shadow) * (diffuse + specular) + ambient;
+    vec3 sum = /*(1.0 - shadow) */ (diffuse + specular) + ambient;
 
     fragColor = vec4(sum , 1.0);
 }
