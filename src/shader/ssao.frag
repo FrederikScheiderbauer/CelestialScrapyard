@@ -14,18 +14,18 @@ uniform vec3 kernel[NUM_SSAO_SAMPLES];
 uniform vec2 resolution;
 
 //https://www.shadertoy.com/view/4djSRW
-vec3 hash32(vec2 p)
+vec2 hash22(vec2 p)
 {
     vec3 p3 = fract(vec3(p.xyx) * vec3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yxz+33.33);
-    return fract((p3.xxy+p3.yzz)*p3.zyx);
+    p3 += dot(p3, p3.yzx+33.33);
+    return fract((p3.xx+p3.yz)*p3.zy);
 }
 
 void main() {
     vec2 fragCoord = gl_FragCoord.xy;
     vec3 viewPos = vec3(view * vec4(imageLoad(gPosition, ivec2(fragCoord)).rgb, 1.f));
     vec3 viewNormal = vec3(view * vec4(imageLoad(gNormal, ivec2(fragCoord)).rgb, 0.f));
-    vec3 randomDir = 2.f * hash32(fragCoord) - vec3(1.f);
+    vec3 randomDir = vec3(2.f * hash22(fragCoord) - vec2(1.f), 0.f);
 
     vec3 tangent = normalize(randomDir - viewNormal * dot(randomDir, viewNormal));
     vec3 bitangent = cross(viewNormal, tangent);
@@ -42,7 +42,7 @@ void main() {
         offset.xyz  = offset.xyz * 0.5 + 0.5;
         vec2 screenCoords = offset.xy * resolution;
 
-        float sampleDepth = imageLoad(gPosition, ivec2(screenCoords)).z;
+        float sampleDepth = vec3(view * vec4(imageLoad(gPosition, ivec2(screenCoords)).xyz, 1.f)).z;
         float rangeCheck = smoothstep(0.0, 1.0, RADIUS / abs(viewPos.z - sampleDepth));
         occlusion += (sampleDepth >= samplePos.z + BIAS ? 1.0 : 0.0) * rangeCheck;
     }

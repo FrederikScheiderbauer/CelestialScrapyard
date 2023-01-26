@@ -5,6 +5,7 @@
 #include "../headers/camera.hpp"
 #include "../headers/LightSource.hpp"
 #include "../headers/Random.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 const std::vector<std::string> LIGHTING_PASS_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/lightingPass.frag"};
 const std::vector<std::string> SSAO_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/ssao.frag"};
