@@ -354,3 +354,50 @@ glm::vec3 Planet::getPlanetInfo() {
     return noise->getPlanetInfo();
 }
 
+
+//Code for Ocean class here
+//
+//
+//
+const std::vector<std::string> OCEAN_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/ocean.vert", (std::string)Project_SOURCE_DIR + "/src/shader/ocean.frag"};
+const std::vector<GLenum> OCEAN_SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
+Ocean::Ocean(unsigned int planet_resolution) {
+    oceanProgram = std::make_unique<ShaderProgram>(OCEAN_SHADER_PATHS, OCEAN_SHADER_TYPES);
+
+    for(int i = 0; i < CUBE_NUM_FACES; ++i) {
+        glm::vec3 direction = directions[i];
+        int ocean_resolution = planet_resolution/compression_factor;
+        cubefaces[i] = std::make_unique<CubeFace>(direction,ocean_resolution);
+    }
+
+    for(int i = 0; i < CUBE_NUM_FACES; ++i) {
+        cubefaces[i]->addEdgeNormals(cubefaces);
+        cubefaces[i]->uploadToGPU();
+    }
+}
+
+
+void Ocean::draw(int width, int height, glm::vec3 &planet_info) {
+    Camera* camera = Camera::get_Active_Camera();
+
+    //generating Projection,Model and view matrixes for Shader.
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::vec3 cameraPos = camera->get_Camera_Position();
+    view = camera->get_View_Matrix();
+
+
+    oceanProgram->use();
+    glUniformMatrix4fv(glGetUniformLocation(oceanProgram->name, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(glGetUniformLocation(oceanProgram->name, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(glGetUniformLocation(oceanProgram->name, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3fv(glGetUniformLocation(oceanProgram->name, "planet_info"), 1, &planet_info[0]);
+    
+    for (int i = 0; i < CUBE_NUM_FACES; ++i) {
+        cubefaces[i]->draw();
+    }
+}

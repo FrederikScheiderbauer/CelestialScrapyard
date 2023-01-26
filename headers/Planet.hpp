@@ -73,4 +73,19 @@ public:
     glm::vec3 getPlanetInfo();
 };
 
+
+
+class Ocean{
+
+    private:
+        std::unique_ptr<ShaderProgram> oceanProgram;
+        std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> cubefaces;
+        const std::array<glm::vec3, CUBE_NUM_FACES> directions = {glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0)};
+        const int compression_factor = 10;
+        GLuint water_surface_texture;
+
+    public:
+        Ocean(unsigned int planet_resolution);
+        void draw(int width, int height, glm::vec3 &planet_info);
+};
 #endif
