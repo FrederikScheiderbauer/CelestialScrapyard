@@ -54,7 +54,7 @@ void main()
     vec3 specular = k_s *  pow(max(0.0, dot(R, L)), n);
     //ambient: https://learnopengl.com/Lighting/Basic-Lighting
     vec3 ambient = ambientOcclusion * k_a * ambientStrength * k_d;
-    vec3 sum = /*(1.0 - shadow) */ (diffuse + specular) + ambient;
+    vec3 sum = (1.0 - shadow) * (diffuse + specular) + ambient;
 
     fragColor = vec4(sum , 1.0);
 }

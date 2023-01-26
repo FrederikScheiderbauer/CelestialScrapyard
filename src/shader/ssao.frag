@@ -1,4 +1,5 @@
 #version 460
+#extension GL_KHR_shader_subgroup_quad : enable
 out float fragColor;
 
 layout(binding = 0, rgba16f) uniform image2D gPosition;
@@ -47,5 +48,10 @@ void main() {
         occlusion += (sampleDepth >= samplePos.z + BIAS ? 1.0 : 0.0) * rangeCheck;
     }
     occlusion = 1.0 - (occlusion / NUM_SSAO_SAMPLES);
+    #ifdef GL_KHR_shader_subgroup_quad
+    occlusion += subgroupQuadSwapHorizontal(occlusion);
+    occlusion += subgroupQuadSwapVertical(occlusion);
+    occlusion /= 4.f;
+    #endif
     fragColor = occlusion;
 }
