@@ -219,6 +219,8 @@ int main(void)
 
     Planet planet = Planet(seed);
     AsteroidBelt asteroidBelt = AsteroidBelt(seed);
+    Ocean ocean = Ocean(200);
+    bool shouldDrawOcean = false;
     //hacky way to make object available in callback, TODO: change this
     WindowPointerParameters param = {&planet, &asteroidBelt, false, glm::vec2(0.f)};
     glfwSetWindowUserPointer(window, &param);
@@ -279,12 +281,13 @@ int main(void)
         glStencilMask(0x00);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        //pinetree_model.draw_instanced(current_width, current_height);
+
         planet.draw(current_width, current_height,planet_info);
         asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
 
         gBuffer.finishGemoetryPass();
         gBuffer.executeSSAOPass(current_width, current_height);
+
 
         glDepthMask(GL_FALSE);
         gBuffer.executeLightingPass(useSSAO);
@@ -294,10 +297,13 @@ int main(void)
         gBuffer.blitDepthAndStencilBuffer();
         planet.drawParticles(current_width, current_height);
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
+        if(shouldDrawOcean) {
+            ocean.draw(current_width,current_height,planet_info);
+        }
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
-        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta, useSSAO);
+        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta, useSSAO, shouldDrawOcean);
         gui_Object.imgui_Render();
 
         /* Swap front and back buffers */

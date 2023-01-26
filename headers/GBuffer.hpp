@@ -32,12 +32,21 @@ private:
     glm::vec3 ssaoKernel[NUM_SSAO_SAMPLES];
     GLuint ssaoBuffer;
     GLuint ssaoTexture;
+
+    std::unique_ptr<ShaderProgram> refractionShaderProgram;
+    std::unique_ptr<ShaderProgram> reflectionShaderProgram;
+    GLuint refractionBuffer;
+    GLuint refractionTexture;
+    GLuint reflectionBuffer;
+    GLuint reflectionTexture;
 public:
     GBuffer(int width, int height);
     void prepareGeometryPass(int width, int height);
     void finishGemoetryPass();
     void executeSSAOPass(int width, int height);
     void executeLightingPass(bool useSSAO);
+    void prepareRefractionPass(int width, int height);
+    void finishRefractionPass();
     void blitDepthAndStencilBuffer();
 };
 

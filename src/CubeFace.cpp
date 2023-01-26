@@ -90,6 +90,56 @@ CubeFace::CubeFace(glm::vec3 localUp, Noise &noise, int resolution)
     computeNormals();
 }
 
+CubeFace::CubeFace(glm::vec3 localUp, int resolution)
+    : RESOLUTION(resolution), NUM_VERTICES(computeNumVertices()), NUM_INDICES(computeNumIndices()), NUM_EDGE_VERTICES(computeNumEdgeVertices()) {
+    axisA = glm::vec3(localUp.y, localUp.z, localUp.x);
+    axisB = glm::cross(localUp, axisA);
+
+    vertices = new glm::vec3[NUM_VERTICES] {};
+    indices = new int[NUM_INDICES];
+    displacements.reserve(NUM_VERTICES / 2);
+    edgeVertexIndices.reserve(NUM_EDGE_VERTICES);
+    int triangleIndex = 0;
+    int edgeVertexIndicesIndex = 0;
+
+    //compute vertices
+    for (int y = 0; y < RESOLUTION; y++) {
+        for (int x = 0; x < RESOLUTION; x++) {
+            int i = x + y * RESOLUTION;
+            glm::vec2 percent = glm::vec2(x, y) / (RESOLUTION - 1.0f);
+            glm::vec3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
+            glm::vec3 pointOnUnitSphere = computePointOnSphere(pointOnUnitCube);
+            float displacement = 0.0f;
+
+            //set least significant bit of pointOnUnitSphere.x to zero to encode that this vertex is not within a crater
+            uint32_t t;
+            std::memcpy(&t, &pointOnUnitSphere.x, sizeof(i));
+            t &= 0xFFFFFFFE;
+            std::memcpy(&pointOnUnitSphere.x, &t, sizeof(i));
+
+            int vertexIndex = i * 2;
+            vertices[vertexIndex] = pointOnUnitSphere;
+            displacements.push_back(displacement);
+            if (x == 0 || y == 0 || x == RESOLUTION - 1 || y == RESOLUTION - 1) {
+                edgeVertexIndices.push_back(vertexIndex);
+            }
+
+            if (x != RESOLUTION - 1 && y != RESOLUTION - 1) {
+                //OpenGL uses stride provided by vertex attributes -> does not need to be multiplied by 2 for normal
+                indices[triangleIndex] = i;
+                indices[triangleIndex + 1] = i + RESOLUTION + 1;
+                indices[triangleIndex + 2] = i + RESOLUTION;
+
+                indices[triangleIndex + 3] = i;
+                indices[triangleIndex + 4] = i + 1;
+                indices[triangleIndex + 5] = i + RESOLUTION + 1;
+                triangleIndex += 6;
+            }
+        }
+    }
+    computeNormals();
+}
+
 void CubeFace::computeNormals() {
     for (int j = 0; j < NUM_INDICES; j += 6) {
         //set normals to zero

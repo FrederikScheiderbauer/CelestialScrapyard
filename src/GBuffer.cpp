@@ -26,6 +26,12 @@ GBuffer::GBuffer(int width, int height) {
     glGenFramebuffers(1, &ssaoBuffer);
     glGenTextures(1, &ssaoTexture);
 
+    glGenFramebuffers(1, &refractionBuffer);
+    glGenTextures(1, &refractionTexture);
+
+    glGenFramebuffers(1, &reflectionBuffer);
+    glGenTextures(1, &reflectionTexture);
+
     allocateTextures(width, height);
     bindToFBO();
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -39,6 +45,7 @@ GBuffer::GBuffer(int width, int height) {
         float r = Random::getInRange(0.f, 1.f);
         ssaoKernel[i] = r * glm::normalize(glm::vec3(x, y, z));
     }
+
 }
 
 void GBuffer::allocateTextures(int width, int height) {
@@ -70,6 +77,20 @@ void GBuffer::allocateTextures(int width, int height) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D, refractionTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D, reflectionTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     allocatedWidth = width;
     allocatedHeight = height;
@@ -194,4 +215,22 @@ void GBuffer::Quad::draw() {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void GBuffer::prepareRefractionPass(int width, int height) {
+    glBindFramebuffer(GL_FRAMEBUFFER, refractionBuffer);
+    /*
+    if (width != allocatedWidth || height != allocatedHeight) {
+        allocateTextures(width, height);
+    }
+    */
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, refractionTexture, 0);
+
+    glBindImageTexture(0, gPosition, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+    glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+}
+
+void GBuffer::finishRefractionPass() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

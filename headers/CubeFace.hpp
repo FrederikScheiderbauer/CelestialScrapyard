@@ -40,6 +40,7 @@ private:
     void computeNormals();
 public:
     CubeFace(glm::vec3 localUp, Noise &noise, int resolution);
+    CubeFace(glm::vec3 localUp, int resolution);
     void uploadToGPU();
     void updateGPUBuffer();
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);
