@@ -8,7 +8,7 @@ layout(binding = 3, r16f) uniform image2D ssao;
 layout(binding = 15) uniform sampler2D depthMap;
 
 uniform vec3 cameraPos;
-uniform vec3 lightPos;
+uniform vec3 lightDir;
 uniform mat4 lightSpaceMatrix;
 uniform bool useSSAO;
 
@@ -170,7 +170,7 @@ void main()
     vec3 N = imageLoad(gNormal, ivec2(fragCoord)).rgb;
     vec3 V = normalize(cameraPos - worldPosition);
     vec3 R = normalize(reflect((-1)*V, N));
-    vec3 L = normalize(lightPos - worldPosition);
+    vec3 L = normalize(lightDir);
     vec4 albedoSpec = imageLoad(gAlbedoSpec, ivec2(fragCoord)).rgba;
     vec3 k_d = albedoSpec.rgb;
     vec3 k_s = vec3(0.1f);

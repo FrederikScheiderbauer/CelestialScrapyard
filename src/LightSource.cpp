@@ -22,7 +22,7 @@ void LightSource::updatePosition() {
 }
 
 void LightSource::bindToShader(GLuint program) {
-    glUniform3fv(glGetUniformLocation(program, "lightPos"), 1, &position[0]);
+    glUniform3fv(glGetUniformLocation(program, "lightDir"), 1, &position[0]);
 }
 
 LightSource& LightSource::getInstance() {
