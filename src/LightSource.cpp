@@ -46,7 +46,7 @@ void LightSource::finishDepthMapCreation(int width, int height) {
 }
 
 void LightSource::bindLightMatrices(GLuint program) {
-    float near_plane = 5.f, far_plane = 12.f;
+    float near_plane = 5.f, far_plane = 20.f;
     glm::mat4 lightProjection = glm::ortho(-5.0f, 5.0f, -2.5f, 2.5f, near_plane ,far_plane);
     glm::mat4 lightView = glm::lookAt(position, glm::vec3( 0.0f, 0.0f,  0.0f),glm::vec3( 0.0f, 1.0f,  0.0f));
     glm::mat4 lightSpaceMatrix = lightProjection * lightView;
