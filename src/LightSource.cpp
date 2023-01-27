@@ -61,3 +61,7 @@ void LightSource::bindDepthMap() {
     glActiveTexture(GL_TEXTURE15);
     glBindTexture(GL_TEXTURE_2D, depthMap);
 }
+
+glm::vec3 &LightSource::getPosition() {
+    return position;
+}

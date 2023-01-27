@@ -19,6 +19,7 @@ layout(std430, binding = 0) buffer offsetBuffer {
 };
 
 #define PI 3.1415926538
+const mat4 lightModel = mat4(2.0);
 
 //based on: https://www.shadertoy.com/view/4djSRW
 float hash11(inout float p)
@@ -56,12 +57,21 @@ void main()
         float angle = 2 * PI * hash11(seed);
         mat4 rotation = rotationMatrix(axis, angle);
 
-        worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
+        if (gl_InstanceID == 0) {
+            worldPosition = vec3(lightModel * vec4(normalize(position), 1.0) + 3.f * offsets[gl_InstanceID]);
+        } else {
+            worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
+        }
+
         if (depthRender) {
             gl_Position = lightSpaceMatrix * vec4(worldPosition, 1.0);
         } else {
             gl_Position = projection * view * vec4(worldPosition, 1.0);
-            worldNormal = vec3(rotation * model * vec4(normal, 0.0));
+            if (gl_InstanceID == 0) {
+                worldNormal = vec3(rotation * lightModel * vec4(normalize(position), 0.0));
+            } else {
+                worldNormal = vec3(rotation * model * vec4(normal, 0.0));
+            }
             instanceId = gl_InstanceID;
         }
     }

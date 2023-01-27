@@ -13,6 +13,8 @@ uniform int pickedID;
 uniform int outlining;
 uniform bool depthRender;
 
+#define LIGHTSOURCE_FLAG 2.f
+
 vec3 instanceIdToColor() {
     //http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/
     float r = float((instanceId & 0x000000FF) >> 0) / 255.f;
@@ -40,8 +42,13 @@ void main()
         } else {
             gPosition = worldPosition;
             gNormal = normalize(worldNormal);
-            gAlbedoSpec.rgb = vec3(0.5);
-            gAlbedoSpec.a = 0.f;
+            if (instanceId == 0) {
+                gAlbedoSpec.rgb = vec3(1.0);
+                gAlbedoSpec.a = LIGHTSOURCE_FLAG;
+            } else {
+                gAlbedoSpec.rgb = vec3(0.5);
+                gAlbedoSpec.a = 0.f;
+            }
         }
     }
 }

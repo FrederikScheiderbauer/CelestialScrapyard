@@ -17,6 +17,9 @@ const float ambientStrength = 0.2f;
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
 
+#define TREE_K_S_FLAG 1.f
+#define LIGHTSOURCE_FLAG 2.f
+
 //https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -175,7 +178,7 @@ void main()
     vec3 k_d = albedoSpec.rgb;
     vec3 k_s = vec3(0.1f);
     //check for trees
-    if (albedoSpec.a != 0.f) {
+    if (albedoSpec.a == TREE_K_S_FLAG) {
         // 1 / 0.8 * 0.2 = 0.25
         k_s = 0.25f * k_d;
     }
@@ -189,6 +192,11 @@ void main()
     vec3 ambient = ambientOcclusion * k_a * ambientStrength * k_d;
     vec3 sum = (1.0 - 0.85 * shadow) * (diffuse + specular) + ambient;
 
-    fragColor = vec4(sum , 1.0);
+    if (albedoSpec.a == LIGHTSOURCE_FLAG) {
+        fragColor = vec4(k_d, 1.0);
+    } else {
+        fragColor = vec4(sum , 1.0);
+    }
+
     //fragColor = reflection_Calculation();
 }

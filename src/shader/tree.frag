@@ -22,6 +22,8 @@ uniform bool depthRender;
 const float n = 100.0f;
 const vec3 light_intensity = vec3(20.0f);
 
+#define TREE_K_S_FLAG 1.f
+
 //TODO: remove
 //vec3 calculate_camera_light_contribution() {
 //    vec3 k_d =0.8f* Color.rgb;
@@ -67,7 +69,7 @@ void main()
     gNormal = normalize(worldNormal);
     gAlbedoSpec.rgb = k_d;
     //set specular to one to indicate usage of tree illumination model
-    gAlbedoSpec.a = 1.f;
+    gAlbedoSpec.a = TREE_K_S_FLAG;
 
     //FragColor = vec4(calculate_camera_light_contribution(), 1.0);
 }

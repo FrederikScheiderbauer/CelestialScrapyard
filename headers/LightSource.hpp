@@ -22,6 +22,7 @@ public:
     void bindLightMatrices(GLuint program);
     void bindDepthMap();
     GLuint getDepthMap();
+    glm::vec3& getPosition();
 
     LightSource(LightSource const&) = delete;
     void operator=(LightSource const&) = delete;

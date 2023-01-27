@@ -25,7 +25,8 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
     }
 
     offsets = new glm::vec4[NUM_ASTEROIDS];
-    for (int i = 0; i < NUM_ASTEROIDS; ++i) {
+    offsets[0] = glm::vec4(LightSource::getInstance().getPosition(), 0.f);
+    for (int i = 1; i < NUM_ASTEROIDS; ++i) {
         glm::vec4 asteroidCenter;
         float minDistance;
         //check that asteroids aren't too close, TODO: might run indefinitely if there are too many asteroids
@@ -53,7 +54,8 @@ void AsteroidBelt::setUniformMatrix(glm::mat4 matrix, std::string type) {
 }
 
 void AsteroidBelt::move(float &pickedAsteroidTheta) {
-    for (int i = 0; i < NUM_ASTEROIDS; ++i) {
+    offsets[0] = glm::vec4(LightSource::getInstance().getPosition(), 0.f);
+    for (int i = 1; i < NUM_ASTEROIDS - 1; ++i) {
         auto throwInfo = std::find_if(throwInfos.begin(), throwInfos.end(), [i](const ThrowInfo &info) {return info.instanceId == i;});
         if (throwInfo != throwInfos.end()) {
             //keep asteroid at center of planet after throw
