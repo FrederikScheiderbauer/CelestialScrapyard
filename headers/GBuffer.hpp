@@ -43,7 +43,7 @@ public:
     GBuffer(int width, int height);
     void prepareGeometryPass(int width, int height);
     void finishGemoetryPass();
-    void executeSSAOPass(int width, int height);
+    void executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower);
     void executeLightingPass(bool useSSAO);
     void prepareRefractionPass(int width, int height);
     void finishRefractionPass();

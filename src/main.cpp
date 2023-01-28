@@ -233,7 +233,8 @@ int main(void)
     //Model tree_model = Model(obj_file,material_directory);
     glm::vec3 planet_info = planet.getPlanetInfo(); // holds info about when to render certain biomes; TODO package into a struct called Planet_Config
     float pickedAsteroidTheta = 0.f;
-    bool useSSAO = false;
+    bool useSSAO = true;
+    glm::vec3 radiusBiasPower = glm::vec3(0.45f, 0.05f, 10.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -286,7 +287,7 @@ int main(void)
         asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
 
         gBuffer.finishGemoetryPass();
-        gBuffer.executeSSAOPass(current_width, current_height);
+        gBuffer.executeSSAOPass(current_width, current_height, radiusBiasPower);
 
 
         glDepthMask(GL_FALSE);
@@ -303,7 +304,7 @@ int main(void)
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
-        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta, useSSAO, shouldDrawOcean);
+        gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta, useSSAO, radiusBiasPower, shouldDrawOcean);
         gui_Object.imgui_Render();
 
         /* Swap front and back buffers */

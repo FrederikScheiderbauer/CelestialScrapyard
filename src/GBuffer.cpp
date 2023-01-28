@@ -132,7 +132,7 @@ void GBuffer::blitDepthAndStencilBuffer() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GBuffer::executeSSAOPass(int width, int height) {
+void GBuffer::executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower) {
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoBuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoTexture, 0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -147,6 +147,7 @@ void GBuffer::executeSSAOPass(int width, int height) {
     glUniform3fv(glGetUniformLocation(ssaoShaderProgram->name, "kernel"), NUM_SSAO_SAMPLES, glm::value_ptr(ssaoKernel[0]));
     glm::vec2 resolution = glm::vec2(width, height);
     glUniform2fv(glGetUniformLocation(ssaoShaderProgram->name, "resolution"), 1, &resolution[0]);
+    glUniform3fv(glGetUniformLocation(ssaoShaderProgram->name, "radiusBiasPower"), 1, &radiusBiasPower[0]);
     quad->draw();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

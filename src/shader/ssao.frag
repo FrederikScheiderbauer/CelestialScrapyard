@@ -6,13 +6,14 @@ layout(binding = 0, rgba16f) uniform image2D gPosition;
 layout(binding = 1, rgba16f) uniform image2D gNormal;
 
 #define NUM_SSAO_SAMPLES 64
-#define RADIUS 0.5
-#define BIAS 0.025
+//#define RADIUS 0.5
+//#define BIAS 0.025
 
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 kernel[NUM_SSAO_SAMPLES];
 uniform vec2 resolution;
+uniform vec3 radiusBiasPower;
 
 //https://www.shadertoy.com/view/4djSRW
 vec2 hash22(vec2 p)
@@ -23,6 +24,9 @@ vec2 hash22(vec2 p)
 }
 
 void main() {
+    float RADIUS = radiusBiasPower.x;
+    float BIAS = radiusBiasPower.y;
+    float power = radiusBiasPower.z;
     vec2 fragCoord = gl_FragCoord.xy;
     vec3 viewPos = vec3(view * vec4(imageLoad(gPosition, ivec2(fragCoord)).rgb, 1.f));
     vec3 viewNormal = vec3(view * vec4(imageLoad(gNormal, ivec2(fragCoord)).rgb, 0.f));
@@ -53,5 +57,5 @@ void main() {
     occlusion += subgroupQuadSwapVertical(occlusion);
     occlusion /= 4.f;
     #endif
-    fragColor = occlusion;
+    fragColor = pow(occlusion, power);
 }
