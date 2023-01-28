@@ -5,6 +5,7 @@ layout(binding = 0, rgba16f) uniform image2D gPosition;
 layout(binding = 1, rgba16f) uniform image2D gNormal;
 layout(binding = 2, rgba16f) uniform image2D gAlbedoSpec;
 layout(binding = 3, r16f) uniform image2D ssao;
+layout(binding = 4, rgba16f) uniform writeonly image2D result;
 layout(binding = 15) uniform sampler2D depthMap;
 
 uniform vec3 cameraPos;
@@ -193,9 +194,11 @@ void main()
     vec3 sum = (1.0 - 0.85 * shadow) * (diffuse + specular) + ambient;
 
     if (albedoSpec.a == LIGHTSOURCE_FLAG) {
-        fragColor = vec4(k_d, 1.0);
+        //fragColor = vec4(k_d, 1.0);
+        imageStore(result, ivec2(fragCoord), vec4(k_d, 1.0));
     } else {
-        fragColor = vec4(sum , 1.0);
+        //fragColor = vec4(sum , 1.0);
+        imageStore(result, ivec2(fragCoord), vec4(sum , 1.0));
     }
 
     //fragColor = reflection_Calculation();

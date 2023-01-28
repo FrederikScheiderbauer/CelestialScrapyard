@@ -9,11 +9,13 @@
 
 const std::vector<std::string> LIGHTING_PASS_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/lightingPass.frag"};
 const std::vector<std::string> SSAO_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/ssao.frag"};
+const std::vector<std::string> BLOOM_SHADER_PATHS = {(std::string)Project_SOURCE_DIR +"/src/shader/quad.vert", (std::string)Project_SOURCE_DIR + "/src/shader/bloom.frag"};
 const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
 GBuffer::GBuffer(int width, int height) {
     lightingPassShaderProgram = std::make_unique<ShaderProgram>(LIGHTING_PASS_SHADER_PATHS, SHADER_TYPES);
     ssaoShaderProgram = std::make_unique<ShaderProgram>(SSAO_SHADER_PATHS, SHADER_TYPES);
+    bloomShaderProgram = std::make_unique<ShaderProgram>(BLOOM_SHADER_PATHS, SHADER_TYPES);
     quad = std::make_unique<Quad>();
 
     glGenFramebuffers(1, &gBuffer);
@@ -22,6 +24,8 @@ GBuffer::GBuffer(int width, int height) {
     glGenTextures(1, &gNormal);
     glGenTextures(1, &gAlbedoSpec);
     glGenTextures(1, &depthAndStencil);
+
+    glGenTextures(1, &lightingPassTexture);
 
     glGenFramebuffers(1, &ssaoBuffer);
     glGenTextures(1, &ssaoTexture);
@@ -72,6 +76,13 @@ void GBuffer::allocateTextures(int width, int height) {
 
     glBindTexture(GL_TEXTURE_2D, depthAndStencil);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, lightingPassTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, ssaoTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
@@ -159,6 +170,7 @@ void GBuffer::executeLightingPass(bool useSSAO) {
     glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(2, gAlbedoSpec, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(3, ssaoTexture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_R16F);
+    glBindImageTexture(4, lightingPassTexture, 0, GL_FALSE, 0,  GL_WRITE_ONLY, GL_RGBA16F);
 
     Camera* camera = Camera::get_Active_Camera();
     glm::vec3 cameraPos = camera->get_Camera_Position();
@@ -171,6 +183,13 @@ void GBuffer::executeLightingPass(bool useSSAO) {
 
     glUniform1i(glGetUniformLocation(lightingPassShaderProgram->name, "useSSAO"), useSSAO);
 
+    quad->draw();
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+void GBuffer::executeBloomPass() {
+    bloomShaderProgram->use();
+    glBindImageTexture(0, lightingPassTexture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     quad->draw();
 }
 

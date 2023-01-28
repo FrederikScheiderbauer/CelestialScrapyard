@@ -292,6 +292,8 @@ int main(void)
 
         glDepthMask(GL_FALSE);
         gBuffer.executeLightingPass(useSSAO);
+        //bloom also write image into default framebuffer -> needs to be executed right after lighting pass
+        gBuffer.executeBloomPass();
         glDepthMask(GL_TRUE);
 
         //additional forward rendering

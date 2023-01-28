@@ -11,6 +11,7 @@ class GBuffer {
 private:
     GLuint gBuffer;
     GLuint gPosition, gNormal, gAlbedoSpec, depthAndStencil;
+    GLuint lightingPassTexture;
     int allocatedWidth, allocatedHeight;
     const int NUM_LAYERS = 3;
     void allocateTextures(int width, int height);
@@ -33,6 +34,8 @@ private:
     GLuint ssaoBuffer;
     GLuint ssaoTexture;
 
+    std::unique_ptr<ShaderProgram> bloomShaderProgram;
+
     std::unique_ptr<ShaderProgram> refractionShaderProgram;
     std::unique_ptr<ShaderProgram> reflectionShaderProgram;
     GLuint refractionBuffer;
@@ -45,6 +48,7 @@ public:
     void finishGemoetryPass();
     void executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower);
     void executeLightingPass(bool useSSAO);
+    void executeBloomPass();
     void prepareRefractionPass(int width, int height);
     void finishRefractionPass();
     void blitDepthAndStencilBuffer();
