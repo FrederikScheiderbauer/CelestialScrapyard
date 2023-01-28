@@ -195,7 +195,7 @@ void main()
 
     if (albedoSpec.a == LIGHTSOURCE_FLAG) {
         //fragColor = vec4(k_d, 1.0);
-        imageStore(result, ivec2(fragCoord), vec4(k_d, 1.0));
+        imageStore(result, ivec2(fragCoord), vec4(k_d, 0.0));
     } else {
         //fragColor = vec4(sum , 1.0);
         imageStore(result, ivec2(fragCoord), vec4(sum , 1.0));

@@ -11,7 +11,6 @@ class GBuffer {
 private:
     GLuint gBuffer;
     GLuint gPosition, gNormal, gAlbedoSpec, depthAndStencil;
-    GLuint lightingPassTexture;
     int allocatedWidth, allocatedHeight;
     const int NUM_LAYERS = 3;
     void allocateTextures(int width, int height);
@@ -35,6 +34,7 @@ private:
     GLuint ssaoTexture;
 
     std::unique_ptr<ShaderProgram> bloomShaderProgram;
+    GLuint lightingPassTexture, bloomBuffer;
 
     std::unique_ptr<ShaderProgram> refractionShaderProgram;
     std::unique_ptr<ShaderProgram> reflectionShaderProgram;

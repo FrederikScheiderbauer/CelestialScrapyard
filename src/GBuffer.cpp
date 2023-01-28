@@ -26,6 +26,7 @@ GBuffer::GBuffer(int width, int height) {
     glGenTextures(1, &depthAndStencil);
 
     glGenTextures(1, &lightingPassTexture);
+    glGenTextures(1, &bloomBuffer);
 
     glGenFramebuffers(1, &ssaoBuffer);
     glGenTextures(1, &ssaoTexture);
@@ -78,6 +79,13 @@ void GBuffer::allocateTextures(int width, int height) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 
     glBindTexture(GL_TEXTURE_2D, lightingPassTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -188,9 +196,18 @@ void GBuffer::executeLightingPass(bool useSSAO) {
 }
 
 void GBuffer::executeBloomPass() {
-    bloomShaderProgram->use();
-    glBindImageTexture(0, lightingPassTexture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
-    quad->draw();
+    const int NUM_PASSES = 5;
+    for (int i = 0; i < NUM_PASSES; ++i) {
+        bloomShaderProgram->use();
+        GLuint readBuffer = (i % 2 == 0) ? lightingPassTexture : bloomBuffer;
+        GLuint writeBuffer = (i % 2 == 1) ? lightingPassTexture : bloomBuffer;
+        glBindImageTexture(0, readBuffer, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+        glBindImageTexture(1, writeBuffer, 0, GL_FALSE, 0,  GL_WRITE_ONLY, GL_RGBA16F);
+        bool lastPass = i == NUM_PASSES - 1;
+        glUniform1i(glGetUniformLocation(bloomShaderProgram->name, "lastPass"), lastPass);
+        quad->draw();
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    }
 }
 
 GBuffer::Quad::Quad() {
