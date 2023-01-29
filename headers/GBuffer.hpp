@@ -9,12 +9,15 @@
 
 class GBuffer {
 private:
+    GLuint intermediateFBO;
     GLuint gBuffer;
     GLuint gPosition, gNormal, gAlbedoSpec, depthAndStencil;
     int allocatedWidth, allocatedHeight;
     const int NUM_LAYERS = 3;
     void allocateTextures(int width, int height);
+    void allocateMultisampleTextures(int width, int height);
     void bindToFBO();
+    void bindToFBOMultiSample();
 
     class Quad
     {
@@ -51,7 +54,9 @@ public:
     GBuffer(int width, int height);
     void prepareGeometryPass(int width, int height);
     void finishGemoetryPass();
+    void finishGemoetryPassMultisample();
     void executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower);
+    void executeSSAOPassMultisample(int width, int height, glm::vec3 &radiusBiasPower);
     void executeLightingPass(bool useSSAO);
     void executeBloomPass();
     void prepareRefractionPass(int width, int height);

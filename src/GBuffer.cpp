@@ -39,7 +39,9 @@ GBuffer::GBuffer(int width, int height) {
     glGenTextures(1, &reflectionTexture);
 
     allocateTextures(width, height);
+    //allocateMultisampleTextures(width,height);
     bindToFBO();
+    //bindToFBOMultiSample();
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "incomplete G-Buffer" << std::endl;
     }
@@ -105,6 +107,55 @@ void GBuffer::allocateAndBindReflectionTextures(int width, int height) {
     glDrawBuffers(3, attachments);
     glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
+void GBuffer::allocateMultisampleTextures(int width, int height) {
+    int number_samples = 4;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, gPosition);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, gNormal);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, gAlbedoSpec);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, depthAndStencil);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_DEPTH24_STENCIL8, width, height,GL_TRUE);
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, lightingPassTexture);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, bloomBuffer);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ssaoTexture);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_R16F, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+    allocatedWidth = width;
+    allocatedHeight = height;
+}
 void GBuffer::allocateTextures(int width, int height) {
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
@@ -169,6 +220,15 @@ void GBuffer::bindToFBO() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthAndStencil, 0);
 }
 
+void GBuffer::bindToFBOMultiSample() {
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, gPosition, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, gNormal, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, gAlbedoSpec, 0);
+    GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, attachments);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, depthAndStencil, 0);
+}
+
 void GBuffer::prepareGeometryPass(int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     if (width != allocatedWidth || height != allocatedHeight) {
@@ -185,6 +245,12 @@ void GBuffer::finishGemoetryPass() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, 0, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, 0, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+void GBuffer::finishGemoetryPassMultisample() {
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -217,6 +283,27 @@ void GBuffer::executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void GBuffer::executeSSAOPassMultisample(int width, int height, glm::vec3 &radiusBiasPower) {
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ssaoTexture, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ssaoShaderProgram->use();
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+    glUniformMatrix4fv(glGetUniformLocation(ssaoShaderProgram->name, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+    glm::mat4 view = Camera::get_Active_Camera()->get_View_Matrix();
+    glUniformMatrix4fv(glGetUniformLocation(ssaoShaderProgram->name, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+    glBindImageTexture(0, gPosition, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+    glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+    glUniform3fv(glGetUniformLocation(ssaoShaderProgram->name, "kernel"), NUM_SSAO_SAMPLES, glm::value_ptr(ssaoKernel[0]));
+    glm::vec2 resolution = glm::vec2(width, height);
+    glUniform2fv(glGetUniformLocation(ssaoShaderProgram->name, "resolution"), 1, &resolution[0]);
+    glUniform3fv(glGetUniformLocation(ssaoShaderProgram->name, "radiusBiasPower"), 1, &radiusBiasPower[0]);
+    quad->draw();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void GBuffer::executeLightingPass(bool useSSAO) {
     lightingPassShaderProgram->use();
     glBindImageTexture(0, gPosition, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
@@ -233,6 +320,7 @@ void GBuffer::executeLightingPass(bool useSSAO) {
     lightSource.bindToShader(lightingPassShaderProgram->name);
     lightSource.bindLightMatrices(lightingPassShaderProgram->name);
     lightSource.bindDepthMap();
+    //lightSource.bindDepthMapMultisample();
 
     glUniform1i(glGetUniformLocation(lightingPassShaderProgram->name, "useSSAO"), useSSAO);
 

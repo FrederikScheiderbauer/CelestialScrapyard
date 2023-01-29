@@ -15,12 +15,17 @@ private:
     LightSource();
 public:
     static LightSource& getInstance();
+    void allocateTextures();
+    void allocateTexturesMultisample();
     void updatePosition();
     void bindToShader(GLuint program);
     void prepareDepthMapCreation();
+    void prepareDepthMapCreationMultisample();
     void finishDepthMapCreation(int width, int height);
+    void finishDepthMapCreationMultisample(int width, int height);
     void bindLightMatrices(GLuint program);
     void bindDepthMap();
+    void bindDepthMapMultisample();
     GLuint getDepthMap();
     glm::vec3& getPosition();
 

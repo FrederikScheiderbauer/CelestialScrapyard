@@ -160,6 +160,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(WIDTH, WIDTH, "Hello World", NULL, NULL);
@@ -179,7 +180,7 @@ int main(void)
         glfwTerminate();
         return -1;
     }
-
+    //glEnable(GL_MULTISAMPLE);
     //Camera configurations for Menu purposes,till that part is done.
     bool is_Locked_Camera = true;
     bool is_Free_Camera = false;
@@ -257,11 +258,13 @@ int main(void)
 
         //Shadow Mapping
         LightSource::getInstance().prepareDepthMapCreation();
+        //LightSource::getInstance().prepareDepthMapCreationMultisample();
 
         planet.drawForDepthMap(planet_info);
         asteroidBelt.drawForDepthMap();
 
         LightSource::getInstance().finishDepthMapCreation(current_width, current_height);
+        //LightSource::getInstance().finishDepthMapCreationMultisample(current_width, current_height);
 
         //Picking
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -290,6 +293,7 @@ int main(void)
             ocean.draw(current_width,current_height,planet_info);
         }
         gBuffer.finishGemoetryPass();
+        //gBuffer.finishGemoetryPassMultisample();
 
         /*
         //calculate the reflection
