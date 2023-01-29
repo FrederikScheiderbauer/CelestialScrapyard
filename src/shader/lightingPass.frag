@@ -200,6 +200,5 @@ void main()
         //fragColor = vec4(sum , 1.0);
         imageStore(result, ivec2(fragCoord), vec4(sum , 1.0));
     }
-
     //fragColor = reflection_Calculation();
 }

@@ -18,7 +18,7 @@ LightSource::LightSource() {
 }
 
 void LightSource::updatePosition() {
-    position = moveInOrbit(position, LIGHT_SOURCE_SPEED);
+    position = moveInOrbit(position, LIGHT_SOURCE_SPEED, false);
 }
 
 void LightSource::bindToShader(GLuint program) {

@@ -6,11 +6,8 @@ uniform mat4 lensProjection;
 uniform sampler2D positionTexture;
 uniform sampler2D normalTexture;
 
-
-
-void main() {
-
-    float maxDistance = 15;
+void screenSpaceReflectionAlgorithm() {
+        float maxDistance = 15;
     float resolution  = 0.3;
     int   steps       = 10;
     float thickness   = 0.5;
@@ -118,4 +115,8 @@ void main() {
     uv.ba = vec2(visibility);
 
     fragColor = uv;
+}
+
+void main() {
+
 }

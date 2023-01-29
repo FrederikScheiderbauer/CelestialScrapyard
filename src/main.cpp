@@ -226,6 +226,7 @@ int main(void)
     glfwSetWindowUserPointer(window, &param);
     Skybox skybox = Skybox();
     GBuffer gBuffer = GBuffer(WIDTH, HEIGHT);
+    GBuffer reflectionBuffer = GBuffer(WIDTH, HEIGHT);
 
     //string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
     //string material_directory = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack";
@@ -285,10 +286,35 @@ int main(void)
 
         planet.draw(current_width, current_height,planet_info);
         asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
-
+        if(shouldDrawOcean) {
+            ocean.draw(current_width,current_height,planet_info);
+        }
         gBuffer.finishGemoetryPass();
-        gBuffer.executeSSAOPass(current_width, current_height, radiusBiasPower);
 
+        /*
+        //calculate the reflection
+        reflectionBuffer.prepareGeometryPass(current_width, current_height);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilMask(0x00);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+
+        asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
+        skybox.draw(current_width, current_height);
+        reflectionBuffer.finishGemoetryPass();
+        */
+
+
+        /*
+        gBuffer.prepareRefractionPass(current_width,current_height);
+
+        ocean.draw();
+
+        gBuffer.finishRefractionPass();
+        */
+
+        gBuffer.executeSSAOPass(current_width, current_height, radiusBiasPower);
 
         glDepthMask(GL_FALSE);
         gBuffer.executeLightingPass(useSSAO);
@@ -300,9 +326,7 @@ int main(void)
         gBuffer.blitDepthAndStencilBuffer();
         planet.drawParticles(current_width, current_height);
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
-        if(shouldDrawOcean) {
-            ocean.draw(current_width,current_height,planet_info);
-        }
+
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);

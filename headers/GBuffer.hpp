@@ -42,6 +42,11 @@ private:
     GLuint refractionTexture;
     GLuint reflectionBuffer;
     GLuint reflectionTexture;
+    GLuint rPosition, rNormal, rAlbedoSpec;
+    void allocateAndBindReflectionTextures(int width, int height);
+
+    void generateRefractionBuffer(int width, int height);
+
 public:
     GBuffer(int width, int height);
     void prepareGeometryPass(int width, int height);

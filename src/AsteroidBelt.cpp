@@ -69,7 +69,7 @@ void AsteroidBelt::move(float &pickedAsteroidTheta) {
             if (i == pickedID) {
                 offsets[i] = glm::vec4(moveInOrbitWithTheta(offsets[i], ASTEROID_SPEED, pickedAsteroidTheta), 0.f);
             } else {
-                offsets[i] = glm::vec4(moveInOrbit(offsets[i], ASTEROID_SPEED), 0.f);
+                offsets[i] = glm::vec4(moveInOrbit(offsets[i], ASTEROID_SPEED, true), 0.f);
             }
         }
     }
