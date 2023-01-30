@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ForwardRender.hpp"
+#include "../headers/ForwardRender.hpp"
 
 ForwardRender::ForwardRender(int width, int height) {
     glGenFramebuffers(1, &forwardFBO);

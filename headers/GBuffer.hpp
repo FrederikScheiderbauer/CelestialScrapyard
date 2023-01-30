@@ -6,6 +6,7 @@
 #include "glad/glad.h"
 #include "ShaderProgram.hpp"
 #include "glm/vec3.hpp"
+#include "Quad.hpp"
 
 class GBuffer {
 private:
@@ -19,14 +20,6 @@ private:
     void bindToFBO();
     void bindToFBOMultiSample();
 
-    class Quad
-    {
-    private:
-        GLuint VAO;
-    public:
-        Quad();
-        void draw();
-    };
     std::unique_ptr<Quad> quad;
     std::unique_ptr<ShaderProgram> lightingPassShaderProgram;
 
