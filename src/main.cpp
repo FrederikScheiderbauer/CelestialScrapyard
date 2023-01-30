@@ -22,6 +22,7 @@
 #include "../headers/Tree.hpp"
 #include "../headers/LightSource.hpp"
 #include "../headers/GBuffer.hpp"
+#include "../headers/ForwardRender.hpp"
 
 using namespace std;
 
@@ -228,6 +229,7 @@ int main(void)
     glfwSetWindowUserPointer(window, &param);
     Skybox skybox = Skybox();
     GBuffer gBuffer = GBuffer(WIDTH, HEIGHT);
+    ForwardRender forwardRender = ForwardRender(WIDTH, HEIGHT);
     GBuffer reflectionBuffer = GBuffer(WIDTH, HEIGHT);
 
     //string obj_file = (string)Project_SOURCE_DIR + "/src/assets/LowpolyForestPack/low_poly_tree_1.obj";
@@ -312,18 +314,19 @@ int main(void)
             gBuffer.executeSSAOPassMultisample(current_width, current_height, radiusBiasPower);
         }
 
+        forwardRender.prepareForwardRender(current_width, current_height);
+
         glDepthMask(GL_FALSE);
-        
         gBuffer.executeLightingPass(useSSAO);
-        //bloom also write image into default framebuffer -> needs to be executed right after lighting pass
-        gBuffer.executeBloomPass();
         glDepthMask(GL_TRUE);
 
         //additional forward rendering
-        gBuffer.blitDepthAndStencilBuffer();
+        gBuffer.blitDepthAndStencilBuffer(forwardRender.getFBO());
         planet.drawParticles(current_width, current_height);
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
+        forwardRender.finishForwardRender();
+        forwardRender.executePostProcess();
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);

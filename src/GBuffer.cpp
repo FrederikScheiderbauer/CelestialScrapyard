@@ -15,7 +15,6 @@ const std::vector<GLenum> SHADER_TYPES = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 GBuffer::GBuffer(int width, int height) {
     lightingPassShaderProgram = std::make_unique<ShaderProgram>(LIGHTING_PASS_SHADER_PATHS, SHADER_TYPES);
     ssaoShaderProgram = std::make_unique<ShaderProgram>(SSAO_SHADER_PATHS, SHADER_TYPES);
-    bloomShaderProgram = std::make_unique<ShaderProgram>(BLOOM_SHADER_PATHS, SHADER_TYPES);
     quad = std::make_unique<Quad>();
 
     glGenFramebuffers(1, &gBuffer);
@@ -24,9 +23,6 @@ GBuffer::GBuffer(int width, int height) {
     glGenTextures(1, &gNormal);
     glGenTextures(1, &gAlbedoSpec);
     glGenTextures(1, &depthAndStencil);
-
-    glGenTextures(1, &lightingPassTexture);
-    glGenTextures(1, &bloomBuffer);
 
     glGenFramebuffers(1, &ssaoBuffer);
     glGenTextures(1, &ssaoTexture);
@@ -133,19 +129,19 @@ void GBuffer::allocateMultisampleTextures(int width, int height) {
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, depthAndStencil);
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_DEPTH24_STENCIL8, width, height,GL_TRUE);
 
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, lightingPassTexture);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, bloomBuffer);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, lightingPassTexture);
+//    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//
+//    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, bloomBuffer);
+//    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_RGBA16F, width, height, GL_TRUE);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ssaoTexture);
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, number_samples, GL_R16F, width, height, GL_TRUE);
@@ -180,20 +176,6 @@ void GBuffer::allocateTextures(int width, int height) {
 
     glBindTexture(GL_TEXTURE_2D, depthAndStencil);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-
-    glBindTexture(GL_TEXTURE_2D, lightingPassTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, ssaoTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
@@ -262,12 +244,12 @@ void GBuffer::finishGemoetryPassMultisample() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GBuffer::blitDepthAndStencilBuffer() {
+void GBuffer::blitDepthAndStencilBuffer(GLuint forwardBuffer) {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, forwardBuffer); // write to forward buffer
     glBlitFramebuffer(0, 0, allocatedWidth, allocatedHeight, 0, 0, allocatedWidth, allocatedHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBlitFramebuffer(0, 0, allocatedWidth, allocatedHeight, 0, 0, allocatedWidth, allocatedHeight, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, forwardBuffer);
 }
 
 void GBuffer::executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower) {
@@ -318,7 +300,6 @@ void GBuffer::executeLightingPass(bool useSSAO) {
     glBindImageTexture(1, gNormal, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(2, gAlbedoSpec, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(3, ssaoTexture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_R16F);
-    glBindImageTexture(4, lightingPassTexture, 0, GL_FALSE, 0,  GL_WRITE_ONLY, GL_RGBA16F);
 
     Camera* camera = Camera::get_Active_Camera();
     glm::vec3 cameraPos = camera->get_Camera_Position();
@@ -334,21 +315,6 @@ void GBuffer::executeLightingPass(bool useSSAO) {
 
     quad->draw();
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-}
-
-void GBuffer::executeBloomPass() {
-    const int NUM_PASSES = 5;
-    for (int i = 0; i < NUM_PASSES; ++i) {
-        bloomShaderProgram->use();
-        GLuint readBuffer = (i % 2 == 0) ? lightingPassTexture : bloomBuffer;
-        GLuint writeBuffer = (i % 2 == 1) ? lightingPassTexture : bloomBuffer;
-        glBindImageTexture(0, readBuffer, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
-        glBindImageTexture(1, writeBuffer, 0, GL_FALSE, 0,  GL_WRITE_ONLY, GL_RGBA16F);
-        bool lastPass = i == NUM_PASSES - 1;
-        glUniform1i(glGetUniformLocation(bloomShaderProgram->name, "lastPass"), lastPass);
-        quad->draw();
-        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    }
 }
 
 void GBuffer::prepareRefractionPass(int width, int height) {

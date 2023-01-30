@@ -29,9 +29,6 @@ private:
     GLuint ssaoBuffer;
     GLuint ssaoTexture;
 
-    std::unique_ptr<ShaderProgram> bloomShaderProgram;
-    GLuint lightingPassTexture, bloomBuffer;
-
     std::unique_ptr<ShaderProgram> refractionShaderProgram;
     std::unique_ptr<ShaderProgram> reflectionShaderProgram;
     GLuint refractionBuffer;
@@ -51,10 +48,9 @@ public:
     void executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower);
     void executeSSAOPassMultisample(int width, int height, glm::vec3 &radiusBiasPower);
     void executeLightingPass(bool useSSAO);
-    void executeBloomPass();
     void prepareRefractionPass(int width, int height);
     void finishRefractionPass();
-    void blitDepthAndStencilBuffer();
+    void blitDepthAndStencilBuffer(GLuint forwardBuffer);
 };
 
 
