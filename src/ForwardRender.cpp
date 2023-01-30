@@ -68,7 +68,7 @@ void ForwardRender::finishForwardRender() {
 }
 
 void ForwardRender::executePostProcess() {
-    const int NUM_PASSES = 5;
+    const int NUM_PASSES = 10;
     for (int i = 0; i < NUM_PASSES; ++i) {
         bloomShaderProgram->use();
         GLuint readBuffer = (i % 2 == 0) ? forwardTexture : bloomBuffer;

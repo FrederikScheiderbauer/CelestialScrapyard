@@ -4,6 +4,7 @@ layout (location = 1) in vec3 normal;
 
 out vec3 worldNormal;
 out vec3 worldPosition;
+out vec3 lightSourceColor;
 flat out int instanceId;
 
 uniform mat4 projection;
@@ -34,6 +35,14 @@ float hash11(inout float p)
     p *= p + 33.33;
     p *= p + p;
     return fract(p);
+}
+
+//https://www.shadertoy.com/view/4djSRW
+vec2 hash23(vec3 p3)
+{
+    p3 = fract(p3 * vec3(.1031, .1030, .0973));
+    p3 += dot(p3, p3.yzx+33.33);
+    return fract((p3.xx+p3.yz)*p3.zy);
 }
 
 //https://gist.github.com/neilmendoza/4512992#file-gistfile1-txt
@@ -86,6 +95,12 @@ void main()
 
         if (gl_InstanceID == 0) {
             worldPosition = vec3(lightModel * vec4(normalize(position), 1.0) + 3.f * offsets[gl_InstanceID]);
+            vec2 rand = hash23(position);
+            if (rand.x < 0.5) {
+                lightSourceColor = mix(vec3(1.0, 0.0, 0.0), vec3(1.0, 1.0, 0.0), rand.y);
+            } else {
+                lightSourceColor = mix(vec3(1.0), vec3(1.0, 1.0, 0.0), rand.y);
+            }
         } else {
             //worldPosition = vec3( rotation  *  model * vec4(position, 1.0) + offsets[gl_InstanceID]);
             worldPosition = vec3( rotation  * scalingMatrix* model * vec4(position, 1.0) + offsets[gl_InstanceID]);

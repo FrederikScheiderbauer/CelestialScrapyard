@@ -1,6 +1,7 @@
 #version 460 core
 in vec3 worldNormal;
 in vec3 worldPosition;
+in vec3 lightSourceColor;
 flat in int instanceId;
 
 layout (location = 0) out vec3 gPosition;
@@ -43,7 +44,7 @@ void main()
             gPosition = worldPosition;
             gNormal = normalize(worldNormal);
             if (instanceId == 0) {
-                gAlbedoSpec.rgb = vec3(1.0);
+                gAlbedoSpec.rgb = lightSourceColor;
                 gAlbedoSpec.a = LIGHTSOURCE_FLAG;
             } else {
                 gAlbedoSpec.rgb = vec3(0.5);
