@@ -157,7 +157,9 @@ void Planet::checkForVertexUpdate() {
                 }
             }
             glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(vertexUpdateQueue.front().craterCenter));
-            destroy_trees(collisionPoint,0.25f);
+            float asteroidSize = vertexUpdateQueue.front().asteroidSize;
+            float craterRadius = asteroidSize/10.0f;
+            destroy_trees(collisionPoint,craterRadius);
             vertexUpdateQueue.pop_front();
             vertexUpdateInProgress = false;
             dispatchVertexUpdate();
@@ -217,12 +219,12 @@ void Planet::drawForDepthMap(glm::vec3 &planet_info) {
     pineTreeModel.draw_for_depth_map(tree_transformation_matrices, planet_info);
 }
 
-void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed) {
+void Planet::addCrater(glm::vec3 throwDirection, float throwSpeed, float asteroidSize) {
     glm::vec3 pointOnUnitSphere = glm::normalize(throwDirection);
     glm::vec3 collisionPoint = std::get<0>(cubefaces[0]->displacePointOnUnitSphere(pointOnUnitSphere));
     float tCollision = glm::abs(collisionPoint.x / throwDirection.x);
     int collisionCounter = (tCollision - 1) / throwSpeed;
-    vertexUpdateQueue.push_back({pointOnUnitSphere, collisionCounter});
+    vertexUpdateQueue.push_back({pointOnUnitSphere, asteroidSize, collisionCounter});
     dispatchVertexUpdate();
     //destroy_trees(collisionPoint,0.35f);
 }
@@ -231,17 +233,18 @@ void Planet::dispatchVertexUpdate() {
     if (vertexUpdateInProgress || vertexUpdateQueue.empty())
         return;
     glm::vec3 center = vertexUpdateQueue.front().craterCenter;
-    currentVertexUpdate = std::async(std::launch::async, [this, center](){
-        return this->recomputeVertexDataAsync(center);
+    float asteroidSize = vertexUpdateQueue.front().asteroidSize;
+    currentVertexUpdate = std::async(std::launch::async, [this, center, asteroidSize](){
+        return this->recomputeVertexDataAsync(center, asteroidSize);
     });
     vertexUpdateInProgress = true;
 }
 
 
-std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 center) {
+std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 center, float asteroidSize) {
     std::array<bool, CUBE_NUM_FACES> changed;
     for (int i = 0; i < CUBE_NUM_FACES; ++i) {
-        changed[i] = cubefaces[i]->addCrater(center);
+        changed[i] = cubefaces[i]->addCrater(center, asteroidSize);
     }
     for(int i = 0; i < CUBE_NUM_FACES; ++i) {
         if (changed[i]) {

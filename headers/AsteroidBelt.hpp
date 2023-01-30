@@ -42,7 +42,7 @@ public:
     void draw(int width, int height, float &pickedAsteroidTheta);
     void drawForDepthMap();
     void pick(int width, int height, glm::vec2 mousePosition, float &pickedAsteroidTheta);
-    glm::vec3 throwTowardsCenter();
+    glm::vec3 throwTowardsCenter(float &asteroidSize);
     float getThrowSpeed();
     ~AsteroidBelt();
 };

@@ -34,6 +34,7 @@ private:
 
     struct VertexQueueItem {
         glm::vec3 craterCenter;
+        float asteroidSize;
         int collisionCounter;
     };
     std::deque<VertexQueueItem> vertexUpdateQueue;
@@ -66,8 +67,8 @@ public:
     void drawParticles(int width, int height);
     void draw(int width, int height, glm::vec3 &planet_info);
     void drawForDepthMap(glm::vec3 &planet_info);
-    void addCrater(glm::vec3 throwDirection, float asteroidSpeed);
-    std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center);
+    void addCrater(glm::vec3 throwDirection, float asteroidSpeed, float asteroidSize);
+    std::array<bool, CUBE_NUM_FACES> recomputeVertexDataAsync(glm::vec3 center, float asteroidSize);
     void create_Forests(unsigned long noiseSeed);
     void plant_trees(glm::vec3 forest_center,float radius);
     glm::vec3 getPlanetInfo();

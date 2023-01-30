@@ -46,7 +46,7 @@ public:
     void addEdgeNormals(std::array<std::unique_ptr<CubeFace>, CUBE_NUM_FACES> &cubefaces);
     void draw();
     void drawInstanced(int instanceCount);
-    bool addCrater(glm::vec3 center);
+    bool addCrater(glm::vec3 center, float asteroid_size);
     std::tuple<glm::vec3, float> displacePointOnUnitSphere(glm::vec3 pointOnUnitSphere);
     std::vector<glm::vec3> filter_vertices_from_map();
     std::vector<glm::vec3> filter_vertices_and_normals_from_map(Noise &noise);

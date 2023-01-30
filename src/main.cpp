@@ -60,12 +60,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         Planet *planet = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->planet;
         AsteroidBelt *belt = ((WindowPointerParameters*) glfwGetWindowUserPointer(window))->belt;
         //auto camera = LockedCamera::get_Active_Camera();
-        glm::vec3 throwDirection = belt->throwTowardsCenter();
+        float asteroidSize = 0.0f;
+        glm::vec3 throwDirection = belt->throwTowardsCenter(asteroidSize);
+        std::cout << asteroidSize << std::endl;
         if (throwDirection == glm::vec3(0.f)) {
             return;
         }
         //glm::vec3 intersectionOnUnitSphere = glm::normalize(camera->get_Camera_Position());
-        planet->addCrater(throwDirection, belt->getThrowSpeed());
+        planet->addCrater(throwDirection, belt->getThrowSpeed(),asteroidSize);
     }
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
     {
