@@ -25,12 +25,12 @@ void main() {
 
     vec4 result;
     // light source has alpha = 0 -> if result alpha does not add to 1 at least one pixel contained the light source
-    if (abs(blur.a - 9.0) >= 1E-5) {
+    if (abs(blur.a - 4.5) >= 1E-3) {
         result = blur / 9.0;
     } else {
         result = center;
     }
-
+    
     if (lastPass) {
         fragColor = result;
     } else {
