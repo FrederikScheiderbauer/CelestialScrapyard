@@ -38,17 +38,21 @@ glm::vec3 doOrbitalMovementForAsteroids(glm::vec3 &spherical, float speed) {
     float signedSpeed = speed * (glm::abs(spherical.z) < 0.5f * glm::pi<float>() ? 1.f : -1.f);
     //spherical.y += signedSpeed;
     float distance_to_center = glm::length(spherical);
-    spherical.y += signedSpeed* (glm::length(spherical) / 2); // adjust speed of object depending on distance to planet
+    float orbit_speed = 4/distance_to_center;
+    spherical.y += signedSpeed; // adjust speed of object depending on distance to planet
     spherical.y = std::fmod(spherical.y, glm::pi<float>());
     return sphericalToCartesian(spherical);
 }
 
 glm::vec3 moveInOrbit(glm::vec3 position, float speed, bool isAsteroid) {
     auto spherical = cartesianToSpherical(position);
+
     if (!isAsteroid) {
     return doOrbitalMovement(spherical, speed);
     } else {
-        return doOrbitalMovementForAsteroids(spherical, speed);
+        float distance_to_center = glm::length(position);
+        float orbit_speed = 4/distance_to_center;
+        return doOrbitalMovementForAsteroids(spherical, speed *orbit_speed);
     }
 }
 
