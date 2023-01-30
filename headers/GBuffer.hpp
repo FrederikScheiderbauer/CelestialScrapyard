@@ -52,7 +52,7 @@ private:
 
 public:
     GBuffer(int width, int height);
-    void prepareGeometryPass(int width, int height);
+    void prepareGeometryPass(int width, int height, bool is_MSAA_enabled);
     void finishGemoetryPass();
     void finishGemoetryPassMultisample();
     void executeSSAOPass(int width, int height, glm::vec3 &radiusBiasPower);

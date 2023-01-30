@@ -148,6 +148,7 @@ void processInput(GLFWwindow *window, float deltaTime)
 
 const int WIDTH = 512;
 const int HEIGHT = 512;
+bool is_MSAA_enabled = false;
 
 
 int main(void)
@@ -257,14 +258,21 @@ int main(void)
         glfwGetWindowSize(window, &current_width, &current_height);
 
         //Shadow Mapping
-        LightSource::getInstance().prepareDepthMapCreation();
-        //LightSource::getInstance().prepareDepthMapCreationMultisample();
+        if(!is_MSAA_enabled) {
+            LightSource::getInstance().prepareDepthMapCreation();
+        } else {
+            LightSource::getInstance().prepareDepthMapCreationMultisample();
+        }
 
         planet.drawForDepthMap(planet_info);
         asteroidBelt.drawForDepthMap();
 
-        LightSource::getInstance().finishDepthMapCreation(current_width, current_height);
-        //LightSource::getInstance().finishDepthMapCreationMultisample(current_width, current_height);
+        if(!is_MSAA_enabled) {
+            LightSource::getInstance().finishDepthMapCreation(current_width, current_height);
+        } else {
+            LightSource::getInstance().finishDepthMapCreationMultisample(current_width, current_height);
+        }
+        
 
         //Picking
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -280,7 +288,7 @@ int main(void)
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
         //deferred shading pass
-        gBuffer.prepareGeometryPass(current_width, current_height);
+        gBuffer.prepareGeometryPass(current_width, current_height,is_MSAA_enabled);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glStencilMask(0x00);
@@ -292,35 +300,20 @@ int main(void)
         if(shouldDrawOcean) {
             ocean.draw(current_width,current_height,planet_info);
         }
-        gBuffer.finishGemoetryPass();
-        //gBuffer.finishGemoetryPassMultisample();
+        if(!is_MSAA_enabled) {
+            gBuffer.finishGemoetryPass();
+        } else {
+            gBuffer.finishGemoetryPassMultisample();
+        }
 
-        /*
-        //calculate the reflection
-        reflectionBuffer.prepareGeometryPass(current_width, current_height);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glStencilMask(0x00);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-
-        asteroidBelt.draw(current_width, current_height, pickedAsteroidTheta);
-        skybox.draw(current_width, current_height);
-        reflectionBuffer.finishGemoetryPass();
-        */
-
-
-        /*
-        gBuffer.prepareRefractionPass(current_width,current_height);
-
-        ocean.draw();
-
-        gBuffer.finishRefractionPass();
-        */
-
-        gBuffer.executeSSAOPass(current_width, current_height, radiusBiasPower);
+        if(!is_MSAA_enabled) {
+            gBuffer.executeSSAOPass(current_width, current_height, radiusBiasPower);
+        } else {
+            gBuffer.executeSSAOPassMultisample(current_width, current_height, radiusBiasPower);
+        }
 
         glDepthMask(GL_FALSE);
+        
         gBuffer.executeLightingPass(useSSAO);
         //bloom also write image into default framebuffer -> needs to be executed right after lighting pass
         gBuffer.executeBloomPass();

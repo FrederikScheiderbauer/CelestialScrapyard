@@ -15,7 +15,11 @@ private:
     void setUniformMatrix(glm::mat4 matrix, std::string type);
 
     GLuint offsetBuffer;
+    GLuint scaleFactorBuffer;
     glm::vec4 *offsets;
+    glm::vec4 *scaleFactors;
+    //std::vector<glm::vec4> scaleFactors;
+    std::vector<float> scaleFactors2;
     const int NUM_ASTEROIDS = 150;
     const float ASTEROID_RADIUS = 0.05f;
     const float ASTEROID_SPEED = 0.001f;

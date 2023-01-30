@@ -229,14 +229,22 @@ void GBuffer::bindToFBOMultiSample() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, depthAndStencil, 0);
 }
 
-void GBuffer::prepareGeometryPass(int width, int height) {
+void GBuffer::prepareGeometryPass(int width, int height, bool is_MSAA_enabled) {
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     if (width != allocatedWidth || height != allocatedHeight) {
-        allocateTextures(width, height);
+        if(!is_MSAA_enabled) {
+            allocateTextures(width, height);
+        } else {
+            allocateMultisampleTextures(width, height);
+        }
+        
     }
 
-    bindToFBO();
-
+    if(!is_MSAA_enabled) {
+        bindToFBO();
+    } else {
+        bindToFBOMultiSample();
+    }
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }

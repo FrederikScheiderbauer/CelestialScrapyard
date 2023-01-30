@@ -1,6 +1,7 @@
 #version 460 core
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
+
 out vec3 worldNormal;
 out vec3 worldPosition;
 flat out int instanceId;
@@ -10,12 +11,17 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 lightSpaceMatrix;
 uniform int pickedID;
+uniform float scaleFactor;
 //0 = standard draw, 1 = write to stencil buffer, 2 = render outline
 uniform int outlining;
 uniform bool depthRender;
 
 layout(std430, binding = 0) buffer offsetBuffer {
     vec4 offsets[];
+};
+
+layout(std430, binding = 1) buffer scaleFactorBuffer {
+    vec4 scaleFactors[];
 };
 
 #define PI 3.1415926538
@@ -44,8 +50,29 @@ mat4 rotationMatrix(vec3 axis, float angle)
     0.0, 0.0, 0.0, 1.0);
 }
 
+mat4 generateScaleMatrix(vec3 scale) {
+    mat4 scale_Matrix;
+    for ( int x = 0; x < 4; x++ ) {
+        for ( int y = 0; y < 4; y++ ) {
+            if ( x == y && x < 3 ) {
+                scale_Matrix[x][y] = scale[y];
+            }  
+            else if (x == y) {
+                scale_Matrix[x][y] = 1.0;
+            } else {
+                scale_Matrix[x][y] = 0.0;
+            }
+        }
+    }
+    return scale_Matrix;
+}
+
 void main()
 {
+    vec3 scaling_factor = vec3(length(offsets[gl_InstanceID])) - vec3(2.0);
+    mat4 scalingMatrix = generateScaleMatrix(vec3(scaleFactors[gl_InstanceID]));
+    //mat4 scalingMatrix = generateScaleMatrix(scaling_factor);
+
     if (outlining > 0 && pickedID != gl_InstanceID) {
         worldPosition = vec3(0.0);
         gl_Position = vec4(0.0);
@@ -60,7 +87,8 @@ void main()
         if (gl_InstanceID == 0) {
             worldPosition = vec3(lightModel * vec4(normalize(position), 1.0) + 3.f * offsets[gl_InstanceID]);
         } else {
-            worldPosition = vec3(rotation * model * vec4(position, 1.0) + offsets[gl_InstanceID]);
+            //worldPosition = vec3( rotation  *  model * vec4(position, 1.0) + offsets[gl_InstanceID]);
+            worldPosition = vec3( rotation  * scalingMatrix* model * vec4(position, 1.0) + offsets[gl_InstanceID]);
         }
 
         if (depthRender) {
@@ -70,7 +98,7 @@ void main()
             if (gl_InstanceID == 0) {
                 worldNormal = vec3(rotation * lightModel * vec4(normalize(position), 0.0));
             } else {
-                worldNormal = vec3(rotation * model * vec4(normal, 0.0));
+                worldNormal = vec3(rotation *  model * vec4(normal, 0.0));
             }
             instanceId = gl_InstanceID;
         }

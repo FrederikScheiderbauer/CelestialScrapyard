@@ -25,6 +25,7 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
     }
 
     offsets = new glm::vec4[NUM_ASTEROIDS];
+    scaleFactors = new glm::vec4[NUM_ASTEROIDS];
     offsets[0] = glm::vec4(LightSource::getInstance().getPosition(), 0.f);
     for (int i = 1; i < NUM_ASTEROIDS; ++i) {
         glm::vec4 asteroidCenter;
@@ -41,12 +42,19 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
             }
         } while (minDistance < 4.f * ASTEROID_RADIUS);
         offsets[i] = asteroidCenter;
+        scaleFactors[i] = glm::vec4(glm::length(asteroidCenter)-2.0f);
     }
 
     glGenBuffers(1, &offsetBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * NUM_ASTEROIDS, offsets, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+    glGenBuffers(1, &scaleFactorBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, scaleFactorBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * NUM_ASTEROIDS, scaleFactors, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
 }
 
 void AsteroidBelt::setUniformMatrix(glm::mat4 matrix, std::string type) {
@@ -108,8 +116,8 @@ void AsteroidBelt::prepareDraw(int width, int height, bool outlining) {
     //view = camera2->get_View_Matrix();
     setUniformMatrix(view,"view");
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "depthRender"), false);
-
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, scaleFactorBuffer);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "picking"), picking);
     glUniform1i(glGetUniformLocation(asteroidBeltProgram->name, "pickedID"), pickedID);
 }
@@ -165,6 +173,7 @@ void AsteroidBelt::drawForDepthMap() {
     setUniformMatrix(model,"model");
 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, offsetBuffer);
+    //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, scaleFactorBuffer);
     executeDraw();
 }
 
