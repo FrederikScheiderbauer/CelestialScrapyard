@@ -68,21 +68,18 @@ void ForwardRender::finishForwardRender() {
 }
 
 void ForwardRender::executePostProcess() {
-//    const int NUM_PASSES = 5;
-//    for (int i = 0; i < NUM_PASSES; ++i) {
-//        bloomShaderProgram->use();
-//        GLuint readBuffer = (i % 2 == 0) ? forwardTexture : bloomBuffer;
-//        GLuint writeBuffer = (i % 2 == 1) ? forwardTexture : bloomBuffer;
-//        glBindImageTexture(0, readBuffer, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
-//        glBindImageTexture(1, writeBuffer, 0, GL_FALSE, 0,  GL_WRITE_ONLY, GL_RGBA16F);
-//        bool lastPass = i == NUM_PASSES - 1;
-//        glUniform1i(glGetUniformLocation(bloomShaderProgram->name, "lastPass"), lastPass);
-//        quad->draw();
-//        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-//    }
-    bloomShaderProgram->use();
-    glBindImageTexture(0, forwardTexture, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
-    quad->draw();
+    const int NUM_PASSES = 5;
+    for (int i = 0; i < NUM_PASSES; ++i) {
+        bloomShaderProgram->use();
+        GLuint readBuffer = (i % 2 == 0) ? forwardTexture : bloomBuffer;
+        GLuint writeBuffer = (i % 2 == 1) ? forwardTexture : bloomBuffer;
+        glBindImageTexture(0, readBuffer, 0, GL_FALSE, 0,  GL_READ_ONLY, GL_RGBA16F);
+        glBindImageTexture(1, writeBuffer, 0, GL_FALSE, 0,  GL_WRITE_ONLY, GL_RGBA16F);
+        bool lastPass = i == NUM_PASSES - 1;
+        glUniform1i(glGetUniformLocation(bloomShaderProgram->name, "lastPass"), lastPass);
+        quad->draw();
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    }
 }
 
 GLuint ForwardRender::getFBO() {

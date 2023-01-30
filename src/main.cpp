@@ -326,7 +326,9 @@ int main(void)
         skybox.draw(current_width, current_height);// render skybox as last object in the scene, for optimization purposes.
 
         forwardRender.finishForwardRender();
+        glDepthMask(GL_FALSE);
         forwardRender.executePostProcess();
+        glDepthMask(GL_TRUE);
 
         gui_Object.imgui_Frame_Setup();
         gui_Object.imgui_Camera_Control_Window(&is_Locked_Camera,&is_Free_Camera,&current_Camera_Speed);
