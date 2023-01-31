@@ -111,7 +111,7 @@ void Planet::setUniformMatrix(glm::mat4 matrix, std::string type)
 void Planet::handleCollisions() {
     for (auto &item : vertexUpdateQueue) {
         if (--item.collisionCounter <= 0) {
-            particleQueue.push_back({item.craterCenter, 0});
+            particleQueue.push_back({item.craterCenter,item.asteroidSize, 0});
         }
     }
 }
@@ -127,7 +127,7 @@ void Planet::updateParticles() {
                 float x = Random::getFromNormalDistribution();
                 float y = Random::getFromNormalDistribution();
                 float z = Random::getFromNormalDistribution();
-                float r = Random::getInRange(0.8f, 1.3f);
+                float r = Random::getInRange(0.9f, 1.4f) * (particleQueue[j].asteroidSize/2) ;
                 particle.Position = r * (particleHeight * particleQueue[j].craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
                 particle.CraterCenter = particleQueue[j].craterCenter;
                 particleSystem.emit(particle);
@@ -282,7 +282,7 @@ std::vector<glm::vec3> Planet::sanity_check(std::vector<glm::vec3>& vector) {
 
             results.push_back(vector[i]+glm::vec3(x_offset,y_offset,z_offset));
             results.push_back(vector[i+1]+glm::vec3(x_offset,y_offset,z_offset));
-            //results.push_back(vector[i]); activate this when tree position should not be randomized
+            //results.push_back(vector[i]); //activate this when tree position should not be randomized
             //results.push_back(vector[i+1]);
        }
     }

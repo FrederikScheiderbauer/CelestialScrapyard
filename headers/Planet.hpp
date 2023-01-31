@@ -40,6 +40,7 @@ private:
     std::deque<VertexQueueItem> vertexUpdateQueue;
     struct ParticleQueueItem {
         glm::vec3 craterCenter;
+        float asteroidSize;
         int particleCounter;
     };
     std::vector<ParticleQueueItem> particleQueue;
