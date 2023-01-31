@@ -87,10 +87,11 @@ void AsteroidBelt::move(float &pickedAsteroidTheta) {
 }
 
 
-glm::vec3 AsteroidBelt::throwTowardsCenter() {
+glm::vec3 AsteroidBelt::throwTowardsCenter(float &asteroidSize) {
     if (pickedID == -1)
         return glm::vec3(0.0f);
     glm::vec3 throwDirection = offsets[pickedID];
+    asteroidSize = scaleFactors[pickedID].x;
     throwInfos.push_back({throwDirection, 1.f, pickedID});
     pickedID = -1;
     return throwDirection;

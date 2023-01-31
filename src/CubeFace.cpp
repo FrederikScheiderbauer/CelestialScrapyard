@@ -223,9 +223,11 @@ CubeFace::~CubeFace() {
     delete[] indices;
 }
 
-bool CubeFace::addCrater(glm::vec3 center) {
-    float craterRadius = 0.2f;
-    float craterDepth = 0.4f;
+bool CubeFace::addCrater(glm::vec3 center, float asteroid_size) {
+    float craterRadius = asteroid_size /15.0f;
+    float craterDepth = craterRadius * 2.0f;
+    //float craterRadius = 0.2f;
+    //float craterDepth = 0.4f;
     //if all vertices are unchanged no update for the GPU is required
     bool changed = false;
     for (int y = 0; y < RESOLUTION; y++) {

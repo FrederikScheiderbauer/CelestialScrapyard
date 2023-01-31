@@ -45,7 +45,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     }
     return shadow / 9.0;
 }
-
+//https://lettier.github.io/3d-game-shaders-for-beginners/screen-space-reflection.html
 vec4 reflection_Calculation() {
     float maxDistance = 10;
     float resolution  = 0.3;
@@ -199,5 +199,11 @@ void main()
         fragColor = vec4(sum , 0.5);
         //imageStore(result, ivec2(fragCoord), vec4(sum , 1.0));
     }
-    //fragColor = reflection_Calculation();
+    
+    //float water_level = 1.0f;
+    //if(length(worldPosition) <= water_level) {
+        //vec4 uv = reflection_Calculation();
+        //vec2 imageCoords = vec2(uv.x * imageSize(gAlbedoSpec).x,uv.y * imageSize(gAlbedoSpec).y);
+        //fragColor = imageLoad(gAlbedoSpec, ivec2(imageCoords)).rgba;
+    //}
 }
