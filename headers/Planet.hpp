@@ -61,7 +61,8 @@ private:
     void destroy_trees(glm::vec3 crater_center,float radius);
     
     std::vector<glm::mat4> tree_transformation_matrices;
-    
+    float random_value_list[100];
+    std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector);
 public:
     Planet(unsigned long noiseSeed);
     void drawParticles(int width, int height);

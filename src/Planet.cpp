@@ -97,6 +97,9 @@ Planet::Planet(unsigned long noiseSeed) {
     //particle.VelocityVariation = { 3.0f, 1.0f };
     particle.Position = { 0.0f, 0.0f, 0.0f };
 
+    for ( int i = 0; i < 100; i++) {
+        random_value_list[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
+    }
     create_Forests(noiseSeed);
 }
 
@@ -256,10 +259,11 @@ std::array<bool, CUBE_NUM_FACES> Planet::recomputeVertexDataAsync(glm::vec3 cent
 //make sure there arent too many trees per side
 //make sure there each position vertex only appears once
 //make sure trees arent too close to each other
-std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
+std::vector<glm::vec3> Planet::sanity_check(std::vector<glm::vec3>& vector) {
     std::vector<glm::vec3> results;
     results.push_back(vector[0]);
     results.push_back(vector[1]);
+
 
     for (int i = 2; i < vector.size(); i+=2) {
         glm::vec3 pos_vertex = vector[i];
@@ -271,13 +275,15 @@ std::vector<glm::vec3> sanity_check(std::vector<glm::vec3>& vector) {
             }
         }
         if(to_be_added) {
-//            float rand_x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
-//            float rand_y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
-//            float rand_z = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/0.01f));
-//            results.push_back(vector[i]+glm::vec3(rand_x,rand_y,rand_z));
-//            results.push_back(vector[i+1]+glm::vec3(rand_x,rand_y,rand_z));
-            results.push_back(vector[i]);
-            results.push_back(vector[i+1]);
+                float x_offset = random_value_list[i % 100];
+                float y_offset = random_value_list[(i+1) % 100];
+                float z_offset = random_value_list[(i+2) % 100];
+
+
+            results.push_back(vector[i]+glm::vec3(x_offset,y_offset,z_offset));
+            results.push_back(vector[i+1]+glm::vec3(x_offset,y_offset,z_offset));
+            //results.push_back(vector[i]); activate this when tree position should not be randomized
+            //results.push_back(vector[i+1]);
        }
     }
     if(vector.size() > 10000) {
