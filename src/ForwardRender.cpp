@@ -67,6 +67,7 @@ void ForwardRender::finishForwardRender() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+//bloom based on: https://learnopengl.com/Advanced-Lighting/Bloom
 void ForwardRender::executePostProcess() {
     const int NUM_PASSES = 10;
     for (int i = 0; i < NUM_PASSES; ++i) {

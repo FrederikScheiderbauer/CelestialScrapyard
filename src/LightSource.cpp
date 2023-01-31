@@ -1,3 +1,4 @@
+//Shadow Mapping based on: //https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 #include "../headers/LightSource.hpp"
 #include "../headers/OrbitUtil.hpp"
 #include "glm/ext/matrix_clip_space.hpp"

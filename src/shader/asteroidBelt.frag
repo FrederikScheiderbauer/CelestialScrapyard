@@ -29,27 +29,30 @@ void main()
     if (depthRender) {
         return;
     }
-    if ((outlining > 0 && pickedID != instanceId) || (outlining == 0 && pickedID == instanceId)) {
-        discard;
-    }
+//    if ((outlining > 0 && pickedID != instanceId) || (outlining == 0 && pickedID == instanceId)) {
+//        discard;
+//    }
 
     if (picking) {
         //gPosition is at out location 0 for deferred shading -> replaces fragColor for picking
         gPosition = instanceIdToColor();
     } else {
-        if (outlining == 2) {
-            //gPosition is at out location 0 for deferred shading -> replaces fragColor for picking
-            gPosition = vec3(0.8, 0.0, 0.0);
+//        if (outlining == 2) {
+//            //gPosition is at out location 0 for deferred shading -> replaces fragColor for picking
+//            gPosition = vec3(0.8, 0.0, 0.0);
+//        } else {
+        gPosition = worldPosition;
+        gNormal = normalize(worldNormal);
+        if (instanceId == 0) {
+            gAlbedoSpec.rgb = lightSourceColor;
+            gAlbedoSpec.a = LIGHTSOURCE_FLAG;
+        } else if (instanceId == pickedID) {
+            gAlbedoSpec.rgb = vec3(0.8, 0.0, 0.0);
+            gAlbedoSpec.a = 0.f;
         } else {
-            gPosition = worldPosition;
-            gNormal = normalize(worldNormal);
-            if (instanceId == 0) {
-                gAlbedoSpec.rgb = lightSourceColor;
-                gAlbedoSpec.a = LIGHTSOURCE_FLAG;
-            } else {
-                gAlbedoSpec.rgb = vec3(0.5);
-                gAlbedoSpec.a = 0.f;
-            }
+            gAlbedoSpec.rgb = vec3(0.5);
+            gAlbedoSpec.a = 0.f;
         }
+        //}
     }
 }

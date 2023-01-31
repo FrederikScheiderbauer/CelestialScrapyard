@@ -1,3 +1,5 @@
+//deferred shading based on: https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+//SSAO based on: https://learnopengl.com/Advanced-Lighting/SSAO
 #include <iostream>
 #include "../headers/GBuffer.hpp"
 #include "config/config.h"

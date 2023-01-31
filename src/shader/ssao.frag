@@ -23,6 +23,7 @@ vec2 hash22(vec2 p)
     return fract((p3.xx+p3.yz)*p3.zy);
 }
 
+//SSAO based on: https://learnopengl.com/Advanced-Lighting/SSAO
 void main() {
     float RADIUS = radiusBiasPower.x;
     float BIAS = radiusBiasPower.y;
