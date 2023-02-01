@@ -127,8 +127,8 @@ void Planet::updateParticles() {
                 float x = Random::getFromNormalDistribution();
                 float y = Random::getFromNormalDistribution();
                 float z = Random::getFromNormalDistribution();
-                float r = Random::getInRange(0.9f, 1.4f) * (particleQueue[j].asteroidSize/2) ;
-                particle.Position = r * (particleHeight * particleQueue[j].craterCenter + 0.2f * glm::normalize(glm::vec3(x,y,z)));
+                float r = Random::getInRange(0.9f, 1.4f) ;
+                particle.Position = r * (particleHeight * particleQueue[j].craterCenter + (particleQueue[j].asteroidSize/2) * 0.15f * glm::normalize(glm::vec3(x,y,z)));
                 particle.CraterCenter = particleQueue[j].craterCenter;
                 particleSystem.emit(particle);
             }

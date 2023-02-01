@@ -33,16 +33,16 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
         //check that asteroids aren't too close, TODO: might run indefinitely if there are too many asteroids
         do {
             minDistance = std::numeric_limits<float>::max();
-            asteroidCenter = glm::vec4(getRandomPositionInOrbit(3.5f, 4.5f), 0.f);
+            asteroidCenter = glm::vec4(getRandomPositionInOrbit(3.5f, 5.0f), 0.f);
             for (int j = 0; j < i; ++j) {
                 float distance = glm::length(asteroidCenter - offsets[j]);
                 if (distance < minDistance) {
                     minDistance = distance;
                 }
             }
-        } while (minDistance < 4.f * ASTEROID_RADIUS);
+        } while (minDistance < 5.5f * ASTEROID_RADIUS);
         offsets[i] = asteroidCenter;
-        scaleFactors[i] = glm::vec4(glm::length(asteroidCenter)-2.0f);
+        scaleFactors[i] = glm::vec4(glm::length(asteroidCenter)-2.8f);
     }
 
     glGenBuffers(1, &offsetBuffer);
@@ -74,11 +74,11 @@ void AsteroidBelt::move(float &pickedAsteroidTheta) {
                 offsets[i] = glm::vec4{throwInfo->direction * throwInfo->t, 0.f};
             }
         } else {
-            if (i == pickedID) {
-                offsets[i] = glm::vec4(moveInOrbitWithTheta(offsets[i], ASTEROID_SPEED, pickedAsteroidTheta), 0.f);
-            } else {
+            //if (i == pickedID) {
+                //offsets[i] = glm::vec4(moveInOrbitWithTheta(offsets[i], ASTEROID_SPEED, pickedAsteroidTheta), 0.f);
+            //} else {
                 offsets[i] = glm::vec4(moveInOrbit(offsets[i], ASTEROID_SPEED, true), 0.f);
-            }
+            //}
         }
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, offsetBuffer);

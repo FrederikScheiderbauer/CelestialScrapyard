@@ -167,7 +167,7 @@ int main(void)
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(WIDTH, WIDTH, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(WIDTH, WIDTH, "Celestial Scrapyard", NULL, NULL);
     float lastX =  (float)WIDTH/2;
     float lastY = (float)HEIGHT/2;
     glm::vec3 first_camera_Position = glm::vec3(0.0f, 0.0f, 3.0f);
