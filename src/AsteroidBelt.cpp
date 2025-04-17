@@ -33,7 +33,7 @@ AsteroidBelt::AsteroidBelt(unsigned long noiseSeed) {
         //check that asteroids aren't too close, TODO: might run indefinitely if there are too many asteroids
         do {
             minDistance = std::numeric_limits<float>::max();
-            asteroidCenter = glm::vec4(getRandomPositionInOrbit(3.5f, 5.0f), 0.f);
+            asteroidCenter = glm::vec4(getRandomPositionInOrbit(3.6f, 5.0f), 0.f);
             for (int j = 0; j < i; ++j) {
                 float distance = glm::length(asteroidCenter - offsets[j]);
                 if (distance < minDistance) {
