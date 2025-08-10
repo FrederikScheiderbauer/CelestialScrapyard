@@ -23,6 +23,8 @@
 #include "../headers/LightSource.hpp"
 #include "../headers/GBuffer.hpp"
 #include "../headers/ForwardRender.hpp"
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/fwd.hpp"
 
 using namespace std;
 
@@ -156,9 +158,16 @@ bool is_MSAA_enabled = false;
 
 int main(void)
 {
+
+    glm::mat4 m(glm::vec4(1.f,0.f,0.f,0.f),glm::vec4(0.f,1.f,0.f,0.f),glm::vec4(0.f,0.f,1.f,0.f),glm::vec4(0.f,0.f,0.f,1.f));
+
+    glm::mat4 val = glm::rotate(m, 25.f, glm::vec3(1.f,0.f,0.f));
+
+    /*
+    val.length();
     GLFWwindow* window;
 
-    /* Initialize the library */
+    /* Initialize the library 
     if (!glfwInit())
         return -1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -166,7 +175,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    /* Create a windowed mode window and its OpenGL context */
+    /* Create a windowed mode window and its OpenGL context 
     window = glfwCreateWindow(WIDTH, WIDTH, "Celestial Scrapyard", NULL, NULL);
     float lastX =  (float)WIDTH/2;
     float lastY = (float)HEIGHT/2;
@@ -191,7 +200,7 @@ int main(void)
     float current_Camera_Speed = 0.5f;
     //
 
-    /* Make the window's context current */
+    /* Make the window's context current 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
@@ -242,7 +251,8 @@ int main(void)
     float pickedAsteroidTheta = 0.f;
     bool useSSAO = true;
     glm::vec3 radiusBiasPower = glm::vec3(0.45f, 0.05f, 10.0f);
-    /* Loop until the user closes the window */
+    /* Loop until the user closes the window 
+
     while (!glfwWindowShouldClose(window))
     {
         current_Time = std::chrono::system_clock::now();
@@ -250,14 +260,14 @@ int main(void)
         deltaTime = (float)elapsed_Time.count();
         //std::cout << "Elapsed Time: "<< elapsed_Time.count() << endl;
 
-        /*Input handling here*/
+        /*Input handling here
         processInput(window, (float)elapsed_Time.count());
 
-        /*Update Game state*/
+        /*Update Game state
         LightSource::getInstance().updatePosition();
         Camera::get_Active_Camera()->update_Camera_Shake();
 
-        /* Render here */
+        /* Render here 
         int current_width, current_height;
         glfwGetWindowSize(window, &current_width, &current_height);
 
@@ -337,10 +347,10 @@ int main(void)
         gui_Object.imgui_Debug_Window(&is_Wireframe,planet_info, pickedAsteroidTheta, useSSAO, radiusBiasPower, shouldDrawOcean);
         gui_Object.imgui_Render();
 
-        /* Swap front and back buffers */
+        /* Swap front and back buffers 
         glfwSwapBuffers(window);
 
-        /* Poll for and process events */
+        /* Poll for and process events 
         glfwPollEvents();
 
         last_Time = current_Time;
@@ -349,5 +359,7 @@ int main(void)
     gui_Object.imgui_Shutdown();
     skybox.shutdown();
     glfwTerminate();
+
+    */
     return 0;
 }
